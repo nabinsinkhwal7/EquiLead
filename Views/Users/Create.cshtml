@@ -1,0 +1,182 @@
+﻿@model EquidCMS.Models.MstUser
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3">
+                    <h4 class="Headingcolorbg">Registration</h4>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="alert alert-danger" style="font-size:14px" role="alert">
+                        <div class="col-sm-12">
+                            NOTE : Fields marked with (*) are compulsory fields
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3">
+                    <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">UserName<span class="text-danger">*</span></label>
+                        <input asp-for="UserName" class="form-control" required oninput="debouncedCheckUserExists()" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Password<span class="text-danger">*</span></label>
+                        <input type="password" asp-for="Password" class="form-control" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Role<span class="text-danger">*</span></label>
+                        <select asp-for="RoleId" class="form-select" asp-items="ViewBag.RoleId" required onclick="handleDropdowns(this.value)">
+                            <option value="">Select</option>
+                        </select>
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Name<span class="text-danger">*</span></label>
+                        <input asp-for="FullName" class="form-control" required onkeypress="return allowAlphabetic(event)" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Mobile<span class="text-danger">*</span></label>
+                        <input asp-for="Mobile" class="form-control" maxlength="10" required onkeypress="return isNumeric(event)" />
+                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input asp-for="EmailId" class="form-control" type="email" />
+                        <span asp-validation-for="EmailId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <textarea asp-for="Address" class="form-control"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-success float-end" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+@section Scripts {
+    <script>
+        let debounceTimer;
+
+        function debouncedCheckUserExists() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(checkUserExists, 300); // Adjust the delay as needed
+        }
+
+        function checkUserExists() {
+            const userName = document.getElementById('UserName').value;
+
+            if (!userName) {
+                return;
+            }
+
+            fetch(`/Users/UsernameExists?username=${encodeURIComponent(userName)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const validationMessage = document.querySelector('[asp-validation-for="UserName"]');
+                    if (data.exists) {
+                        validationMessage.textContent = 'Username already exists.';
+                        validationMessage.classList.add('text-danger');
+                    } else {
+                        validationMessage.textContent = 'Username is available.';
+                        validationMessage.classList.remove('text-danger');
+                        validationMessage.classList.add('text-success');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Attach debounced check to the input field
+        document.getElementById('UserName').addEventListener('input', debouncedCheckUserExists);
+
+
+        $(document).ready(function () {
+            $('#RoleId').change(function () {
+                handleDropdowns($(this).val());
+            });
+
+            // Initial state
+            handleDropdowns($('#RoleId').val());
+        });
+
+        function handleDropdowns(roleId) {
+            $('#StateDropdownContainer, #districtDropdownContainer, #blockDropdownContainer').hide().find('select').prop('disabled', true).removeAttr('required');
+
+            if (roleId === '1' || roleId === '7') {
+                $('#StateDropdownContainer, #districtDropdownContainer, #blockDropdownContainer').show().find('select').prop('disabled', false).attr('required', 'required');
+            } else if (roleId === '2') {
+                $('#StateDropdownContainer').show().find('select').prop('disabled', false).attr('required', 'required');
+            } else if (roleId === '3') {
+                $('#StateDropdownContainer, #districtDropdownContainer').show().find('select').prop('disabled', false).attr('required', 'required');
+            } else if (roleId === '6') {
+                $('#StateDropdownContainer, #districtDropdownContainer, #blockDropdownContainer').show().find('select').prop('disabled', false).attr('required', 'required');
+            }
+        }
+        function isNumeric(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+        function allowAlphabetic(event) {
+            var key = event.keyCode || event.which;
+            var keyChar = String.fromCharCode(key);
+            return /^[A-Za-z\s]+$/.test(keyChar);
+        }
+       
+    </script>
+}

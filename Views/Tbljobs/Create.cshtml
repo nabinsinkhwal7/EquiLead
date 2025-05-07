@@ -1,0 +1,350 @@
+﻿@model EquidCMS.Models.Tbljob
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%; /* Make sure the image fits inside the container */
+        max-height: 300px; /* Limit the height */
+        /*  display: none; /* Hide by default */ */
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="Tbljobs" asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3">
+                            <h4 class="Headingcolorbg">Jobs</h4>
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="alert alert-danger" style="font-size:14px" role="alert">
+                                <div class="col-sm-12">
+                                    NOTE: Fields marked with (*) are compulsory fields
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3">
+                            <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Jobtitle" class="control-label">Job Title<span class="text-danger">*</span></label>
+                                        <input asp-for="Jobtitle" class="form-control" />
+                                        <span asp-validation-for="Jobtitle" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Dateposted" class="control-label">Date Posted</label>
+                                        <input type="date" asp-for="Dateposted" class="form-control" />
+                                        <span asp-validation-for="Dateposted" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="City" class="control-label">City<span class="text-danger">*</span></label>
+                                        <input type="text" asp-for="City" class="form-control" />
+                                        <span asp-validation-for="City" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Workmode" class="control-label">Woking Mode<span class="text-danger">*</span></label>
+                                        <select asp-for="Workmode" class="form-control" asp-items="ViewBag.WDid"></select>
+                                        <span asp-validation-for="Workmode" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label asp-for="Roleoverview" class="control-label">Role Overview<span class="text-danger">*</span></label>
+                                    <input style="height:115px" asp-for="Roleoverview" class="form-control" />
+                                    <span asp-validation-for="Roleoverview" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4">
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label asp-for="Yearexperience" class="control-label">Year of Experience</label>
+                                        <select asp-for="Yearexperience" class="form-control" id="yearOfExperience">
+                                            <!-- Dropdown options will be populated by JavaScript -->
+                                        </select><span asp-validation-for="Yearexperience" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Maxsalary" class="control-label">Salary ( Range )</label>
+                                        <input asp-for="Maxsalary" class="form-control" type="number"/>
+                                        <span asp-validation-for="Maxsalary" class="text-danger"></span>
+                                        </div>
+                                    </div> <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Minsalary" class="control-label">Salary ( Range )</label>
+                                        <input asp-for="Minsalary" class="form-control" type="number" />
+                                        <span asp-validation-for="Minsalary" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        <div class="col-xl-4 col-lg-4">
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Jobpostinglink" class="control-label">Job Posting Link</label>
+                                        <input asp-for="Jobpostinglink" class="form-control" />
+                                        <span asp-validation-for="Jobpostinglink" class="text-danger"></span>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Applicationdeadline" class="control-label">Application Deadline</label>
+                                        <input type="date" asp-for="Applicationdeadline" class="form-control" />
+                                        <span asp-validation-for="Applicationdeadline" class="text-danger"></span>
+                                    </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Companyid" class="control-label">Company</label>
+                                        <select asp-for="Companyid" class="form-control" asp-items="ViewBag.Companyid"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Employeetype" class="control-label">Employment Type</label>
+                                        <select asp-for="Employeetype" class="form-control" asp-items="ViewBag.ETid"></select>
+                                        <span asp-validation-for="Employeetype" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Functionalcategory" class="control-label">Functional Category </label>                                       
+                                        <select asp-for="Functionalcategory" class="form-control" asp-items="ViewBag.FunctionalCategory"></select>
+                                        <span asp-validation-for="Functionalcategory" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Keyresponsibility" class="control-label">Job Description <span class="text-danger">*</span></label>
+                                        <textarea asp-for="Keyresponsibility" style="height:115px" class="form-control"></textarea>
+                                        <span asp-validation-for="Keyresponsibility" class="text-danger"></span>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                      <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Skill" class="control-label">Skill</label>
+                                        <textarea style="height:115px" asp-for="Skill" class="form-control" ></textarea>
+                                        <span asp-validation-for="Skill" class="text-danger"></span>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Education" class="control-label">Education</label>
+                                        <input style="height:115px" asp-for="Education" class="form-control" />
+                                        <span asp-validation-for="Education" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Experience" class="control-label">Experience</label>
+                                        <textarea style="height:115px" asp-for="Experience" class="form-control"></textarea>
+                                        <span asp-validation-for="Experience" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Leavepolicies" class="control-label">Leave Policies</label>
+                                        <select asp-for="Leavepolicies" class="form-control" asp-items=ViewBag.LeavePolicies>
+                                            <option value="">Select Leave Policy</option>
+                                        </select>
+                                        <span asp-validation-for="Leavepolicies" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Flexibleworkoption" class="control-label">Flexible Work Options</label>
+                                        <select asp-for="Flexibleworkoption" class="form-control" asp-items=ViewBag.FlexibleWorkOption>
+                                            <option value="">Select Flexible Work Option</option>
+                                        </select>
+                                        <span asp-validation-for="Flexibleworkoption" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Learninganddeveloment" class="control-label">Learning and Development</label>
+                                        <select asp-for="Learninganddeveloment" class="form-control" asp-items=ViewBag.LearningAndDevelopment>
+                                            <option value="">Select Learning & Development Option</option>
+                                        </select>
+                                        <span asp-validation-for="Learninganddeveloment" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Healthcareandwellness" class="control-label">Healthcare and Wellness</label>
+                                        <select asp-for="Healthcareandwellness" class="form-control" asp-items=ViewBag.HealthcareAndWellness>
+                                            <option value="">Select Healthcare & Wellness Option</option>
+                                        </select>
+                                        <span asp-validation-for="Healthcareandwellness" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Deiandwomenfriendlypolicies" class="control-label">DEI and Women Friendly Policies</label>
+                                        <select asp-for="Deiandwomenfriendlypolicies" class="form-control" multiple asp-items=ViewBag.DEIAndWomenFriendlyPolicies>
+                                            <option value="">Select DEI & Women Friendly Policy</option>
+                                        </select>
+                                        <span asp-validation-for="Deiandwomenfriendlypolicies" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="form-group" style="float: right">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+<script>
+    // Function to generate the year range and populate the dropdown
+    function populateYearDropdown() {
+        const startYear = 1; // Starting year (1 years experience)
+        const endYear = 50;  // Ending year (50 years experience)
+        const selectElement = document.getElementById("yearOfExperience");
+
+        // Clear any existing options in the dropdown
+        selectElement.innerHTML = "";
+
+        // Add a default "Select" option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = 0;
+        defaultOption.text = "Select Experience";
+        selectElement.appendChild(defaultOption);
+
+        // Loop through the range and add options for each year
+        for (let year = startYear; year <= endYear; year++) {
+            const option = document.createElement("option");
+            option.value = year;
+            option.text = year;
+            selectElement.appendChild(option);
+        }
+    }
+
+    // Call the function when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+        populateYearDropdown();
+    });
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

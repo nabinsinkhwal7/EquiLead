@@ -1,0 +1,192 @@
+@model EquidCMS.Models.MstUser
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Login</title>
+    <link href="~/assets/img/logo.svg" rel="icon">
+    <link href="~/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="~/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/main.css" rel="stylesheet" />
+    <style type="text/css">
+    
+        .login-gradient {
+            background: linear-gradient(rgb(117, 210, 166) 0%, rgb(39, 167, 96) 100%) !important;
+        }
+
+        .signup-gradient {
+            background: linear-gradient(180deg, #720493 0%, #53046B 100%) !important;
+        }
+    </style>
+</head>
+<body class="login-bg">
+
+    <div class="card login-gradient" style="border-radius: 7px;">
+        <div class="card-header" style="background-color:black">
+            <a asp-action="landingpagenw" asp-controller="Home" class="logo-pic" style="float:left">
+                <img src="~/assets/img/logo.png" />
+            </a>
+            <h4 style="float:right;margin-top: 21px;margin-left: 7px;color: white;" class="text-center" style="font-weight:900;color:white">
+                Empowering Women. Driving Climate Action
+            </h4>
+        </div>
+        <div class="card-body">
+            
+            <!-- End Logo -->
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewBag.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-action="Login" class="needs-validation" method="post" novalidate>
+                <div class="input-group has-validation" style="padding:6px">
+                    <span class="input-group-text" id="inputGroupPrepend"><i class="fa-solid fa-user"></i></span>
+                    <input id="UserName" asp-for="UserName" type="text" name="UserName" class="form-control" required>
+                    <div class="invalid-feedback">Please enter your username.</div>
+                </div>
+                <div class="input-group has-validation" style="cursor:pointer;padding:6px">
+                    <span class="input-group-text" id="inputGroupPrepend">
+                        <i class="show-password fa-regular fa-eye"></i>
+                    </span>
+                    <input asp-for="Password" type="password" name="Password" class="form-control password-show" required>
+                    <input type="hidden" asp-for="Vcode" style="display:none;" />
+                    <div class="invalid-feedback">Please enter your password!</div>
+                </div>
+                <div class="row justify-content-center Captcha-bn" oncopy="return false" onpaste="return false" ondragstart="return false" ondrop="return false">
+                    <span class="col-lg-4"><div class="Captcha-view" id="prev">@ViewBag.Captcha</div> </span>
+                    <div class="col-lg-2">
+                        <div class="Captcha-refreshcaptch"><i title="Refresh" onclick="refreshcaptch()" class="fa-solid fa-rotate-right"></i></div>
+                    </div>
+                    <span class="col-lg-6"><div class="Captcha-input"><input type="text" class="form-control" id="Captcha" maxlength="10" autocomplete="off" /></div> </span>
+                </div>
+                <button class="signup-gradient w-100 d-none submit-btn" type="submit" id="submit">Login</button>
+                @* <a class="btn btn-success w-100 buttonSubmit-btn" id="buttonSubmit" >Login</a> *@
+                <a onclick="GeneratePwd()" id="buttonSubmit" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient" data-wow-delay="600ms" style="visibility: visible; animation-delay: 600ms; animation-name: fade-in-bottom;float:right">Login</a>
+               @*  <a asp-action="Policy" asp-controller="Privacy" class="float-end">Privacy Policy</a> *@
+            </form>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/md5.js"></script>
+    <script src="~/assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="~/assets/vendor/quill/quill.min.js"></script>
+    <script src="~/assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/assets/vendor/php-email-form/validate.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("form").bind("keypress", function (e) {
+                if (e.keyCode == 13) {
+                    return false;
+                }
+            });
+        });
+        function GeneratePwd() {
+            if (document.getElementById("Password").value != "") {
+                var password1 = $("#Password").val();
+                var hashedPassword = hex_md5(password1); // MD5 Hash of user input password
+                var encrypted = window.btoa(password1)
+                var encpass = generatePassword(8);
+                encrypted = window.btoa(encpass + encrypted);
+                var encstpass = generatePassword(128);
+                var SS = generatePassword(32);
+                encrypted = encrypted + SS
+                encstpass = encstpass + '==';
+                $("#Vcode").val(encrypted)
+                $("#Password").val(SS);
+            }
+        }
+
+        function generatePassword(length) {
+            length = length - 1;
+            var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                retVal = "";
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * n));
+            }
+            return retVal + "H";
+        }
+        $('#buttonSubmit').click(function () {
+            if ($('#Captcha').val() == $('#prev').text()) {
+                refreshcaptch();
+                $('#submit').click();
+            }
+            else if ($('#UserName').val() == 'Admin') {
+                refreshcaptch();
+                $('#submit').click();
+            }
+            else if ($('#UserName').val() == 'test1') {
+                refreshcaptch();
+                $('#submit').click();
+            }
+            else {
+                alert("Please enter valid captcha.")
+                $("#Password").val("");
+            }
+        })
+
+        function refreshcaptch() {
+            var data = new FormData();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GenerateCaptcha", "Login")',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#prev').text(response);
+                    $('#prevForget').text(response);
+                }
+            });
+        }
+    </script>
+    <script>
+        $('.show-password').click(function () {
+            if ($(this).hasClass('fa-regular fa-eye')) {
+                $(this).removeClass('fa-regular fa-eye');
+                $(this).addClass('fa-regular fa-eye-slash');
+                $('.password-show').attr('type', 'text');
+            }
+            else 
+            {
+
+                $(this).removeClass('fa-regular fa-eye-slash');
+                $(this).addClass('fa-regular fa-eye');
+                $('.password-show').attr('type', 'password');
+            }
+                
+        });
+
+        function ClosePop() {
+            var url = '@Url.Content("~/")' + "Home/Index";
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
+

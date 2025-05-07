@@ -1,0 +1,256 @@
+﻿@model EquidCMS.Models.Tblaboutu;
+@{
+    ViewData["Title"] = "Aboutus";
+    Layout = "~/Views/Shared/_LayoutWebSNW.cshtml";
+
+    var Successsyory = ViewBag.Successsyory as List<EquidCMS.Models.Tblsuccesstest>;
+    var OurTeam = ViewBag.OurTeam as List<EquidCMS.Models.Tblourteam>;
+}
+
+<style>
+    .description {
+        margin: 20px;
+        margin-bottom: 20;
+        margin-right: 0;
+        color: white;
+        line-height: 24px;
+        font-weight: 500;
+        padding-right: 20px;
+        height: 290px;
+        overflow-y: scroll;
+    }
+</style>
+<section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url('@Url.Content("~/assets/img/about_us.png")')">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-12">
+                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="section-title-3">
+                        <h1 class="mb-20">@Model.Bannermainheading</h1>
+                        <p class="sub-heading">@Model.Bannersubheading</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="our-story light-bg-section border-radius-bottom cream_bg pt-60 pb-60 wow fade-in-bottom" data-wow-delay="400ms">
+    <div class="container">
+        <div class="row">
+            <div class="col-10 offset-1">
+                <div class="section-heading text-center">
+                    <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sechdtxt</h2>
+                    <p class="sub-heading mt-20 wow fade-in-bottom" data-wow-delay="400ms">
+                       @Model.Secdesc </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="mission-vision-wrap wow fade-in-bottom" data-wow-delay="400ms">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6 mission-vision-left">
+                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="section-title-3">
+                        <h1>@Model.Thirdhdtxt</h1>
+                        <p class="desc-text mt-30">@Model.Thirddesc</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mission-vision-right">
+
+                <div class="visionmission__item wow fade-in-right" data-wow-delay="200ms">
+                    <div class="visionmission__item-icon">
+                        <img src="~/assets/img/LeadingWomen.png" style="max-width:100%" alt="Leading Women Icon" />
+                    </div>
+                    <div class="visionmission__item-text">
+                        <h3 class="title">@Model.Thirdsubonehdtxt</h3>
+                        <p>@Model.Thirdsubonedesc</p>
+                    </div>
+                </div>
+
+                <div class="visionmission__item wow fade-in-right" data-wow-delay="200ms">
+                    <div class="visionmission__item-icon">
+                        <img src="~/assets/img/EquityAction.png" style="max-width:100%" alt="Equity Action Icon" />
+                    </div>
+                    <div class="visionmission__item-text">
+                        <h3 class="title">@Model.Thirdsubtwohdtxt</h3>
+                        <p>@Model.Thirdsubtwodesc</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="wow fade-in-bottom" data-wow-delay="400ms">
+                <img src="assets/img/vision-mission-banner.webp" style="max-width:100%" alt="" class="vision-mission-img mt-30">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="achievements light-bg-section border-radius-bottom cream_bg pt-80 wow fade-in-bottom" data-wow-delay="400ms">
+    <div class="container-fluid">
+        <div class="section-heading text-center">
+            <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Our Impact</h2>
+            <p class="sub-heading mt-20 wow fade-in-bottom" data-wow-delay="400ms">Lorem Ipsum est simplement du faux texte employé dans.</p>
+        </div>
+        <div class="row gy-lg-0 gy-4 justify-content-center">
+            <div class="pad-0">
+                <img src="assets/img/achievements-banner.webp" style="max-width:100%" alt="" class="">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="counter-section counter-1 bright-color cream_bg">
+    <div class="container">
+        <div class="counter-wrap">
+            <div class="row gy-lg-0 gy-4">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="counter-item text-center">
+                        <div class="counter-content">
+                            <div class="counter-icon"><img src="~/assets/img/Women Hired.png" style="max-width:100%" alt="Women Hired"></div>
+                            <h3 class="title"><span class="odometer" data-count="100">0</span>+</h3>
+                            <p>Women placed in mid-senior to leadership roles</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="counter-item text-center">
+                        <div class="counter-content">
+                            <div class="counter-icon"><img src="~/assets/img/Training.png" style="max-width:100%" alt="Training"></div>
+                            <h3 class="title"><span class="odometer" data-count="1400">0</span>+</h3>
+                            <p>
+                                Women provided training through webinars and masterclasses
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="counter-item text-center">
+                        <div class="counter-content">
+                            <div class="counter-icon"><img src="~/assets/img/Mentorship.png" style="max-width:100%" alt="Mentorship"></div>
+                            <h3 class="title"><span class="odometer" data-count="250">0</span>+</h3>
+                            <p>
+                                Women provided mentorship opportunities through AMAs and matchmaking initiative
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="counter-item item-2 text-center">
+                        <div class="counter-content">
+                            <div class="counter-icon"><img src="~/assets/img/Equity Champions.png" style="max-width:100%" alt="Equity Champions"></div>
+                            <h3 class="title"><span class="odometer" data-count="50">0</span>+</h3>
+                            <p>
+                                Equity Champions “Open for networking”
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ./ counter-section -->
+
+<!-- ./ team-section -->
+
+
+<section class="team-section dark-bg-section">
+    <div class="container">
+        <div class="section-heading text-center">
+            <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Our Team</h2>
+        </div>
+        <div class="row gy-lg-0 gy-4 justify-content-center">
+            <div class="team-carousel-new swiper">
+                <div class="swiper-wrapper">
+                    @for (int i = 0; i < OurTeam.Count; i++)
+                    {
+                    <div class="swiper-slide">
+                        
+                        <div class="team-item wow fade-in-bottom" data-wow-delay="400ms">
+                            <div class="team-thumb">
+                                    <img src="@OurTeam[i].Photo" alt="team">
+                            </div>
+                            <div class="team-content">
+                                <div class="team-author">
+                                        <h3 class="title">@OurTeam[i].Name <a href=@OurTeam[i].Linkedin target="_blank"><i class="fa-brands fa-linkedin ms-2"></i></a></h3>
+                                        <p class="team-designation">@OurTeam[i].Designation - @OurTeam[i].Organization</p>
+                                        <p class="team-detail">@OurTeam[i].Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        }
+
+                </div>
+
+                <!-- Carousel Dots -->
+                <!-- <div class="swiper-pagination"></div> -->
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ./ team-section -->
+<!--testimonial-4-->
+<section class="testimonial-section-4 cream_bg pt-80 pb-80">
+    <div class="container">
+        <div class="section-heading section-heading-with-btn">
+            <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">What Our Community Says</h2>
+           
+        </div>
+        <div class="testi-content-wrap">
+            <div class="testi-carousel-4 swiper">
+                <div class="swiper-wrapper">
+                    @for (int i = 0; i < Successsyory.Count; i++)
+                    {
+                        <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                            <div class="testi-item-4 bg-white">
+                                <div class="testi-thumb-4"><img src="@Successsyory[i].Photo" alt=""></div>
+                                <div class="testi-content-4">
+                                    <p class="">@Successsyory[i].Description</p>
+                                    <h3 class="title">@Successsyory[i].Name</h3>
+                                    <span><a href="@Successsyory[i].Linkedin"><i class="fa-brands fa-linkedin"></i></a></span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                <!-- Carousel Dots -->
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="part_of_change cream_bg pb-80 text-center">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-12">
+                <div class="part_of_change_wrap wow fade-in-bottom " data-wow-delay="200ms">
+                    <h1>Lead With Equity</h1>
+                    <p class="section-sub-title-3 mt-15">We’re here to support your journey.</p>
+                    <a asp-action="Signup" asp-controller="Applicant" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient mt-50">Take the First Step</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+

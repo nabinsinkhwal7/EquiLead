@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.png">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/fontawesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/venobox.min.css">
+    <link rel="stylesheet" href="~/assets/css/animate.min.css">
+    <link rel="stylesheet" href="~/assets/css/nice-select.css">
+    <link rel="stylesheet" href="~/assets/css/keyframe-animation.css">
+    <link rel="stylesheet" href="~/assets/css/odometer.min.css">
+    <link rel="stylesheet" href="~/assets/css/swiper.min.css">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+</head>
+<body>
+    <!-- header-area-start -->
+    <header class="header header-9 header-11 sticky-active">
+        <div class="primary-header primary-header-9 primary-header-11">
+            <div class="container">
+                <div class="primary-header-inner">
+                    <div class="header-logo d-lg-block wow fade-in-left" data-wow-delay="600ms">
+                        <a asp-action="landingpagenw" asp-controller="Home">
+                            <img src="~/assets/img/logo.png" alt="">
+                        </a>
+                    </div>
+                    <div class="header-menu-wrap header-menu-wrap-11 wow fade-in-top" data-wow-delay="600ms">
+                        <div class="mobile-menu-items">
+                            <ul class="sub-menu">
+                                <li><a asp-action="Create" asp-controller="LandingpageCMS">Landing Page</a></li>
+                                @* <li><a href="#">Talent</a></li>
+                                <li><a href="#">Community & Events</a></li>
+                                <li><a href="#">Resources</a></li> *@
+                            </ul>
+                            <!-- <div class="mt-30">
+                            <a href="#" class="rr-secondary-btn wow fade-in-right login-gradient me-3" data-wow-delay="600ms">Login</a>
+                            <a href="#" class="rr-secondary-btn wow fade-in-right signup-gradient" data-wow-delay="600ms">Sign Up</a>
+                            </div> -->
+                        </div>
+                    </div>
+                    <!-- /.header-menu-wrap -->
+                    <div class="header-right">
+                        <div class="header-contact">
+                           @*  <a href="#" class="rr-secondary-btn wow fade-in-right login-gradient" data-wow-delay="600ms">Login</a>
+                            <a href="#" class="rr-secondary-btn wow fade-in-right signup-gradient" data-wow-delay="600ms">Sign Up</a> *@
+                        </div>
+
+                        <div class="header-right-item">
+                            <a href="javascript:void(0)" class="mobile-side-menu-toggle">
+                                <i class="fa-sharp fa-solid fa-bars"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /.header-right -->
+                </div>
+                <!-- /.primary-header-inner -->
+            </div>
+        </div>
+    </header>
+    <!-- /.Main Header -->
+    <!-- /#popup-search-box -->
+
+    <div class="mobile-side-menu">
+        <div class="side-menu-content">
+            <div class="side-menu-head">
+                <a href="index.html"><img src="assets/img/logo.png" alt="logo"></a>
+                <button class="mobile-side-menu-close"><i class="fa-regular fa-xmark"></i></button>
+            </div>
+            <div class="side-menu-wrap"></div>
+        </div>
+    </div>
+    <!-- /.mobile-side-menu -->
+    <div class="mobile-side-menu-overlay"></div>
+
+    <!-- <div id="preloader">
+        <div class="preloader-close">x</div>
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div> -->
+    <!-- ./ preloader -->
+    <main id="main" class="main">
+        @RenderBody()
+    </main>
+        <footer class="footer-11__area footer-11 pt-60 wow fade-in-bottom " data-wow-delay="400ms">
+            <div class="container">
+                <div class="row mb-minus-30">
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="footer-11__widget widget-2 mb-40">
+                            <h3 class="footer-11__title">Quick Links</h3>
+                            <div class="footer-11__menu">
+                                <ul>
+                                    <li><a href="#">Jobs</a></li>
+                                    <li><a href="#">Network</a></li>
+                                    <li><a href="#">Resources</a></li>
+                                    <li><a href="#">About</a></li>
+                                    <li><a href="#">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-md-6">
+                        <div class="footer-11__widget widget-1 mb-40">
+                            <p class="footer-11__dec">Subscribe To Our Newsletter</p>
+                            <div class="footer-11__input">
+                                <input type="text" placeholder="Enter your E-mail Address">
+                                <div class="footer-11__btn">
+                                    <button type="submit" class="rr-secondary-btn btn-border">Subscribe</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6">
+                        <div class="footer-11__widget widget-4 mb-40">
+                            <h3 class="footer-11__title">Stay Update</h3>
+                            <div class="footer-11__contact">
+                                <div class="footer-11__contact__item">
+                                    <div class="footer-11__social">
+                                        <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                                        <a href="#">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+                                                <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+                                            </svg>
+                                        </a>
+                                        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright-area">
+                <div class="container">
+                    <div class="copyright-content text-center">
+                        <p>Copyrights ©2025 EquiLead. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- ./ footer-8-section -->
+
+        <div id="scrollup">
+            <button id="scroll-top" class="scroll-to-top"><i class="fa-regular fa-arrow-up-long"></i></button>
+        </div>
+        <!--scrollup-->
+        <!-- JS here -->
+    <script src="~/assets/js/vendor/jquary-3.6.0.min.js"></script>
+    <script src="~/assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <script src="~/assets/js/vendor/bootstrap-bundle.js"></script>
+    <script src="~/assets/js/vendor/imagesloaded-pkgd.js"></script>
+    <script src="~/assets/js/vendor/waypoints.min.js"></script>
+    <script src="~/assets/js/vendor/venobox.min.js"></script>
+    <script src="~/assets/js/vendor/odometer.min.js"></script>
+    <script src="~/assets/js/vendor/meanmenu.js"></script>
+    <script src="~/assets/js/vendor/smooth-scroll.js"></script>
+    <script src="~/assets/js/vendor/jquery.isotope.js"></script>
+    <script src="~/assets/js/vendor/wow.min.js"></script>
+    <script src="~/assets/js/vendor/swiper.min.js"></script>
+    <script src="~/assets/js/vendor/nice-select.js"></script>
+    <script src="~/assets/js/ajax-form.js"></script>
+    <script src="~/assets/js/slider.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+
+    <script>
+            var MR = function (X) {
+                return Math.random() * X;
+            },
+                TwL = TweenLite,
+                G = document.querySelectorAll(".circle");
+
+            function BTweens() {
+                var W = window.innerWidth,
+                    H = window.innerHeight,
+                    C = 40;
+                TwL.killDelayedCallsTo(BTweens);
+                TwL.delayedCall(C * 4, BTweens);
+                for (var i = G.length; i--;) {
+                    var c = C,
+                        BA = [],
+                        GWidth = G[i].offsetWidth,
+                        GHeight = G[i].offsetHeight;
+                    while (c--) {
+                        var SO = MR(1);
+                        BA.push({ x: MR(W - GWidth), y: MR(H - GHeight) });
+                    }
+                    if (G[i].T) {
+                        G[i].T.kill();
+                    }
+                    G[i].T = TweenMax.to(G[i], C * 4, {
+                        bezier: { timeResolution: 0, type: "soft", values: BA },
+                        delay: i * 0.35,
+                        ease: Linear.easeNone
+                    });
+                }
+            }
+            BTweens();
+            window.onresize = function () {
+                TwL.killDelayedCallsTo(BTweens);
+                TwL.delayedCall(0.4, BTweens);
+            };
+
+        </script>
+    @RenderSection("Styles", required: false)
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

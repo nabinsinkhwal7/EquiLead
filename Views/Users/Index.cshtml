@@ -1,0 +1,314 @@
+﻿@model IEnumerable<EquidCMS.Models.MstUser>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('#UserDetails').DataTable({
+            dom: 'lBfrtip',
+            buttons: ['excelHtml5'],
+            'info': false,
+            'lengthChange': false,
+            'autoWidth': false
+        })
+    })
+</script>
+
+<style>
+    .badge-success-alt {
+        background-color: #d7f2c2;
+        color: #7bd235;
+    }
+    .dt-search {
+        float: right;
+    }
+
+    .dt-paging {
+        float: right;
+        margin-top: 10px;
+    }
+
+
+    button.dt-button, div.dt-button, a.dt-button {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin-right: 0.333em;
+        padding: 0.5em 1em;
+        border: 1px solid #999;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.88em;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        background-color: #e9e9e9;
+        background-image: -webkit-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -moz-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -ms-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -o-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: linear-gradient(to bottom, #fff 0%, #e9e9e9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='white', EndColorStr='#e9e9e9');
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-decoration: none;
+        outline: none;
+    }
+
+    div.dt-buttons {
+        position: relative;
+        float: left;
+    }
+</style>
+
+<section id="AboutSection">
+    <div class="card">
+        <div class="card-body">
+            <div class="container-fluid mt-4">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="pagetitle">
+                            <h1>Users</h1>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6">
+                        <a asp-action="Create" class="btn btn-primary backtodetailbutton float-end">Add Users</a>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+                        <hr />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+                        <table id="UserDetails" class="table table-striped table-bordered cell-border nowrap">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        S.No.
+                                    </th>
+                                    <th>
+                                        Username
+                                    </th>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Mobile
+                                    </th>
+                                    <th>
+                                        Role
+                                    </th>
+                                    <th>
+                                        Email
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int a = 1;
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @a
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.UserName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FullName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Mobile)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Role.Role)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.EmailId)
+                                            </td>
+                                            <td>
+                                                @if (@item.IsActive == 1)
+                                                {
+                                                    <div class="badge rounded-pill text-bg-success">Active</div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="badge rounded-pill text-bg-danger">InActive</div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.Role.Role == "FLW")
+                                                {
+                                                    
+                                                    <a href="#" onclick="openModal('@item.UserId')" class="text-success edicon" title="Mapping Application" data-toggle="tooltip" data-placement="bottom"><i class="bi bi-window-plus"></i></a>
+                                                }
+                                                &nbsp;
+                                                <a asp-action="Edit" asp-route-id="@item.UserId" class="text-success edicon" title="Edit" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;
+
+                                                <a asp-action="Delete" asp-route-id="@item.UserId" class="text-danger edicon" title="Delete" data-toggle="tooltip" data-placement="bottom"><i class="fa-solid fa-trash" aria-hidden="true"></i></a>
+
+                                            </td>
+                                        </tr>
+                                        a += 1;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="myModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Map Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tblStartMap">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <table class="table table-bordered" id="modalTable">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="selectAll" onclick="toggleAll(this)"></th>
+                                            <th>App Id</th>
+                                            <th>ApplicationName</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="checkbox"></td>
+                                            @* <td>Data 1</td>
+                                            <td>Data 1</td> *@
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                        <div class="col-lg-4">
+                        </div>
+                        <div class="col-lg-4 float-end">
+                            <div class="float-end">
+                                <button type="button" class="btn btn-success" id="saveVissiblity" onclick="LinkGroup()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="UserId"  value="0"/>
+
+<script>
+    function openModal(userIdd) {
+        $('#UserId').val(userIdd);
+        $.ajax({
+            url: '@Url.Content("~/")' + "Users/ApplicationMapMark",
+            type: 'POST',
+            data: { "userIdd": userIdd },
+            
+            dataType: 'json',
+            success: function (data) {
+                populateTable(data.updatedApplications);
+            },
+            error: function (xhr, status, error) {
+                console.log('Error fetching data:', error);
+
+            }
+        });
+
+
+
+        var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        myModal.show();
+    }
+    function populateTable(data) {
+        var tableBody = document.getElementById('modalTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+        data.forEach(item => {
+            var row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input class="form-check-input" type="checkbox" ${item.isActive ? 'checked' : ''}></td>
+                <td>${item.appId}</td>
+                <td>${item.applicationName}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+
+    function toggleAll(source) {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+
+
+    function LinkGroup() {
+        var appStatuses = [];
+
+        $('input:checkbox').each(function () {
+            var isChecked = $(this).is(':checked');
+            var appId = $(this).closest('tr').find('td:eq(1)').text();
+            appStatuses.push({ AppId: appId, IsChecked: isChecked });
+        });
+
+        var uid = $("#UserId").val();
+        var requestData = {
+            AppStatuses: appStatuses,
+            UserId: uid
+        };
+        $.ajax({
+            url: '@Url.Action("SaveAppMappedUsers", "Users")',
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(requestData),
+            success: function (result) {
+                alert("Application Mapped Success");
+                $("#myModal").modal("hide");
+            },
+            error: function (xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                alert(err.Message);
+            }
+        });
+    }
+
+</script>
+

@@ -1,0 +1,187 @@
+﻿@model EquidCMS.Models.MstUser
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+ <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3">
+                    <h4 class="Headingcolorbg">Registration</h4>
+                </div>
+                <div class="col-xl-6 col-lg-6">
+                    <div class="alert alert-danger" style="font-size:14px" role="alert">
+                        <div class="col-sm-12">
+                            NOTE : Fields marked with (*) are compulsory fields
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3">
+                    <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">UserName</label>
+                        <input asp-for="UserName" class="form-control" disabled />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Role</label>
+                        <select asp-for="RoleId" required class="form-control form-select" asp-items="ViewBag.RoleId" disabled>
+                            <option value="0">Select</option>
+                        </select>
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Name</label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Mobile</label>
+                        <input asp-for="Mobile" class="form-control" maxlength="10"  required/>
+                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input asp-for="EmailId" class="form-control" />
+                        <span asp-validation-for="EmailId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        <textarea asp-for="Address" name="Address" class="form-control" required></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="submit" value="Update" class="btn btn-success float-end" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <input asp-for="UserName" type="hidden" />
+
+ </form>
+ <script>
+    $(document).ready(function () {
+        $('#Mobile').on('input', function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        $('#UserName').on('input', function () {
+            this.value = this.value.replace(/\s+/g, '');
+        });
+        drpManage();
+        $('#RoleId').change(function () {
+            drpManage();
+        });
+ 
+        $('.cstate').change(function () {
+            var stateId = $(this).val();
+            if (stateId != 0) {
+                $.ajax({
+                    url: "@Url.Action("GetDistricts", "Users")",
+                    type: 'GET',
+                    data: { stateId: stateId }, 
+                    success: function (response) {
+                        $('.cdistrict').empty();
+                        $('.cblock').empty();
+                        $('.cdistrict').append($('<option>').text('Select').attr('value', '0'));
+                        $.each(response, function (i, district) {
+                            $('.cdistrict').append($('<option>').text(district.district).attr('value', district.districtId));
+                        });
+                    }
+                     // $('.cblock').empty();
+                });
+            }
+        });
+        $('.cdistrict').change(function () {
+            var distId = $(this).val();
+            if (distId != 0) {
+                $.ajax({
+                    url: "@Url.Action("GetBlock", "Users")",
+                    type: 'GET',
+                    data: { districtId: distId },
+                    success: function (response) {
+                        $('.cblock').empty();
+                        $('.cblock').append($('<option>').text('Select').attr('value', '0'));
+                        $.each(response, function (i, district) {
+                            $('.cblock').append($('<option>').text(district.blockName).attr('value', district.blockId));
+                        });
+                    }
+
+
+                });
+            }
+        });
+
+    });
+
+
+    function drpManage()
+    {
+        var selectedValue = $("#RoleId").val();
+        if (selectedValue == '1' || selectedValue == '7') {
+            $('#StateDropdownContainer').removeClass('hidden');
+            $('#districtDropdownContainer').removeClass('hidden');
+            $('#blockDropdownContainer').removeClass('hidden');
+        }
+        else if (selectedValue == '2') {
+            $('#StateDropdownContainer').removeClass('hidden');
+            $('#districtDropdownContainer').addClass('hidden');
+            $('#blockDropdownContainer').addClass('hidden');
+
+            $('#districtDropdown').val('0');
+            $('#BlockId').val('0');
+        }
+        else if (selectedValue == '3') {
+            $('#StateDropdownContainer').removeClass('hidden');
+            $('#districtDropdownContainer').removeClass('hidden');
+            $('#blockDropdownContainer').addClass('hidden');
+
+            $('#BlockId').val('0');
+
+        }
+        else if (selectedValue == '6') {
+            $('#StateDropdownContainer').removeClass('hidden');
+            $('#districtDropdownContainer').removeClass('hidden');
+            $('#blockDropdownContainer').removeClass('hidden');
+
+        }
+        else {
+            $('#StateDropdownContainer').addClass('hidden');
+            $('#districtDropdownContainer').addClass('hidden');
+            $('#blockDropdownContainer').addClass('hidden');
+        }
+    }
+ </script>
+

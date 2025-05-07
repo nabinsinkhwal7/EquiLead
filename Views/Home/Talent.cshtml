@@ -1,0 +1,390 @@
+﻿@{
+    ViewData["Title"] = "Talent";
+    Layout = "~/Views/Shared/_LayoutWebSNW.cshtml";
+    var jobs = ViewBag.Jobs as List<EquidCMS.Models.Tbljob>;
+    var Comp = ViewBag.Comp as List<EquidCMS.Models.Tblcompany>;
+    var Cityid = ViewBag.Cityid as List<EquidCMS.Models.MstLookup>;
+    var WDid = ViewBag.WDid as List<EquidCMS.Models.MstLookup>;
+    var ETid = ViewBag.ETid as List<EquidCMS.Models.MstLookup>;
+    var FCid = ViewBag.FCid as List<EquidCMS.Models.MstLookup>;
+}
+<style>
+
+    /* Search box as first item */
+    .nice-select .search-wrapper {
+        padding: 5px 10px;
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 101;
+    }
+
+    .nice-select .search-box {
+        width: 100%;
+        padding: 6px 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        outline: none;
+        box-sizing: border-box;
+    }
+</style>
+
+<section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url(../assets/img/jobsbanner.png);">
+    <div style="display:none;">
+        Resume tips for women job seekers,
+        How to write a leadership resume,
+        Common interview questions for women leaders,
+        How to ace virtual job interviews,
+        Salary negotiation strategies for women
+    </div>
+
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-12">
+                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="section-title-3 text-center">
+                        <h1 class="mb-50">
+                            Find Your Next Leadership Role
+                        </h1>
+                        <p class="sub-heading">
+                            Your next career move is just one opportunity away—let’s get you there.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="job-filter-section cream_bg">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-12">
+                <div class="job-filter-wrap wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="job-filter-box">
+                        <div class="job-input input-seprator">
+                            <i class="fa fa-search"></i> <input type="text" id="desig" name="desig" class="form-control"
+                                                                placeholder="Search By Designations">
+                        </div>
+
+                        <div class="job-input">
+                            <i class="fa-sharp fa-solid fa-location-dot"></i><input type="text" id="locations" name="locations" class="form-control"
+                                                                                    placeholder="Search By Locations">
+                        </div>
+
+                        <div>
+                            <button id="submit" class=" rr-secondary-btn login-gradient" style="width:auto!important" onclick="getjob()">Explore Opportunities </button>
+                        </div>
+
+                    </div>
+                    <div class="contact-form-5">
+
+                        <div class="job-filter-tag-list">
+                            <div class="job-input input-seprator">
+                                <i class="fa fa-search"></i> <input type="text" id="roles" name="roles" class="form-control"
+                                                                    placeholder="Search By Role">
+                            </div>
+                        </div>
+
+                        <div class="job-filter-tag-list">
+                            <div class="job-input input-seprator">
+                                <i class="fa fa-search"></i> <input type="text" id="skills" name="Skills" class="form-control"
+                                                                    placeholder="Search By Skills">
+                            </div>
+                        </div>
+
+
+                        <div class="job-filter-tag-list">
+                            <div class="form-item-wrap">
+                                <div class="form-item">
+                                    <div class="nice-select" tabindex="0">
+                                        <span class="current">Work Mode</span>
+                                        <ul id="Workmode" class="list">
+                                            <li data-value="" class="option">All Work Mode</li>
+                                            @for (int i = 0; i < WDid.Count; i++)
+                                            {
+                                                <li data-value="@WDid[i].Lookupcode" class="option">@WDid[i].Description</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="job-filter-tag-list">
+                            <div class="form-item-wrap">
+                                <div class="form-item">
+                                    <div class="nice-select searchable-select" id="CompanySelect" tabindex="0">
+                                        <span class="current">Company</span>
+                                        <ul id="Compert" class="list" style="height:200px;overflow:auto;">
+                                            <li class="search-wrapper">
+                                                <input type="text" class="search-box" placeholder="Search Company..." />
+                                            </li>
+                                            <li data-value="" class="option">All Companies</li>
+                                            @for (int i = 0; i < Comp.Count; i++)
+                                            {
+                                                <li data-value="@Comp[i].Companyid" class="option">@Comp[i].Name</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="job-filter-tag-list">
+                            <div class="form-item-wrap">
+                                <div class="form-item">
+                                    <div class="nice-select" tabindex="0">
+                                        <span class="current">Functional Category</span>
+                                        <ul id="FCategory" class="list">
+                                            <li data-value="" class="option">All Functional Category</li>
+                                            @for (int i = 0; i < FCid.Count; i++)
+                                            {
+                                                <li data-value="@FCid[i].Lookupcode" class="option">@FCid[i].Description</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden input to hold selected value -->
+                        <input type="hidden" id="selectedCompany" name="selectedCompany" value="@ViewBag.SelectedCompany" />
+
+
+                        <div class="job-filter-tag-list">
+                            <div class="form-item-wrap">
+                                <div class="form-item">
+                                    <div class="nice-select" tabindex="0">
+                                        <span class="current">Experience From</span>
+                                        <ul id="JYear" class="list">
+                                            <li data-value="" class="option">All</li>
+                                            <li data-value="1" class="option">1</li>
+                                            <li data-value="2" class="option">2</li>
+                                            <li data-value="3" class="option">3</li>
+                                            <li data-value="4" class="option">4</li>
+                                            <li data-value="5" class="option">5</li>
+                                            <li data-value="6" class="option">6</li>
+                                            <li data-value="7" class="option">7</li>
+                                            <li data-value="8" class="option">8</li>
+                                            <li data-value="9" class="option">9</li>
+                                            <li data-value="10" class="option">10 +</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-filter-tag-list">
+                            <div class="form-item-wrap">
+                                <div class="form-item">
+                                    <div class="nice-select" tabindex="0">
+                                        <span class="current">Experience To</span>
+                                        <ul id="JYearTo" class="list">
+                                            <li data-value="" class="option">All</li>
+                                            <li data-value="1" class="option">1</li>
+                                            <li data-value="2" class="option">2</li>
+                                            <li data-value="3" class="option">3</li>
+                                            <li data-value="4" class="option">4</li>
+                                            <li data-value="5" class="option">5</li>
+                                            <li data-value="6" class="option">6</li>
+                                            <li data-value="7" class="option">7</li>
+                                            <li data-value="8" class="option">8</li>
+                                            <li data-value="9" class="option">9</li>
+                                            <li data-value="10" class="option">10 +</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="job-section border-radius-bottom cream_bg pt-80 pb-50">
+    <div class="container" id="partialContainer">
+        @Html.Partial("_JobPartial")
+    </div>
+</section>
+
+<section class="join-the-community">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="section-title-3 pe-4">
+                        <h1 class="mb-25">Access Leadership Opportunities That Move You Forward </h1>
+                        <p class="sub-heading" style="color:#fff">
+                            Whether you're looking for your next big role, mentorship, or networking opportunities, we’ve got you covered.
+                        </p>
+                        <a asp-action="Signup" asp-controller="Applicant" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient me-3"
+                           data-wow-delay="600ms">Sign Up for Job Alerts</a>
+                        <a href="https://www.linkedin.com/groups/14442135/" class="rr-secondary-btn btn-border wow fade-in-bottom blk_gradient"
+                           data-wow-delay="600ms">Join Our LinkedIn Community</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!--sponsor-section -->
+@* <div class="sponsor pt-60 pb-60 cream_bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-heading text-center">
+                    <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Popular companies</h2>
+                </div>
+            </div>
+            <div class="sponsor-carousel swiper">
+                <div class="swiper-wrapper">
+                    @for (int i = 0; i < Comp.Count; i++)
+                    {
+                    <div class="swiper-slide wow fade-in-left row"  data-wow-delay="200ms">
+                        <div class="sponsor-item text-center">
+                            <a href="#"><img src="../@Comp[i].Logo" alt="sponsor"></a>
+                        </div>
+                        <div class="sponsor-item text-center">
+                            <span>@Comp[i].Name</span>
+                    </div></div>
+                    }
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                        </div> *@
+<!-- Add jQuery before your custom JavaScript code -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script type="text/javascript">
+    function getjob(pageNumber = 1, pageSize = 24) {
+        // Collect the filter values
+        var desig = $('#desig').val(); // For designation input
+        var location = $('#locations').val(); // For location input
+        var role = $('#roles').val();
+        var skills = $('#skills').val();
+        var remote = $('#Workmode .option.selected').data('value');
+        var FSID = $('#FCategory .option.selected').data('value');
+        var company = $('#Compert .option.selected').data('value');
+        var experience = $('#JYear .option.selected').data('value');
+        var experienceTo = $('#JYearTo .option.selected').data('value');
+
+        // Create the filter object to send to the server
+        var filters = {
+            designation: desig,
+            jobLocation: location,
+            role: role,
+            skills: skills,
+            company: company,
+            experience: experience,
+            experienceTo: experienceTo,
+            remote: remote,
+            FSID: FSID,
+            pageNumber: pageNumber,
+            pageSize: pageSize
+        };
+
+        // Send the filter data via Ajax
+        $.ajax({
+            url: '/Home/FilterJobs', // Replace with your action URL
+            type: 'GET', // Or POST, depending on your server setup
+            data: filters, // Send filter data
+            success: function (response) {
+                // On success, update the DOM with the new partial view (or job listings)
+                if (response === null || response === '') {
+                    // Handle the case where response is null or empty
+                    console.warn("Received an empty or null response");
+                    $('#partialContainer').html('<p>No jobs found</p>'); // Display a default message
+                } else {
+                    // Update the DOM with the new partial view (or job listings)
+                    $('#partialContainer').html(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("There was an error loading the filtered jobs:", error);
+            }
+        });
+    }
+
+
+    function setupSearchableSelect(selectId, hiddenInputId) {
+        const select = document.getElementById(selectId);
+        const input = select.querySelector('.search-box');
+        const options = select.querySelectorAll('.option');
+        const current = select.querySelector('.current');
+        const list = select.querySelector('.list');
+
+        // Toggle dropdown
+        select.addEventListener('click', function (e) {
+            e.stopPropagation();
+
+            select.classList.toggle('open');
+            input.style.display = 'block';
+            input.focus();
+        });
+
+        // Filter options on search
+        input.addEventListener('input', function () {
+            const search = this.value.toLowerCase();
+            options.forEach(option => {
+                const text = option.innerText.toLowerCase();
+                option.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        });
+
+        // Select option
+        options.forEach(option => {
+            option.addEventListener('click', function (e) {
+                e.stopPropagation();
+
+                const value = this.getAttribute('data-value');
+                const text = this.innerText;
+
+                // Remove previous selected
+                options.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+
+                // Update current + hidden
+                current.innerText = text;
+                document.getElementById(hiddenInputId).value = value;
+
+                // Reset search + hide input + close dropdown
+                input.value = '';
+                input.style.display = 'none';
+                select.classList.remove('open');
+
+                // Reset list display
+                options.forEach(opt => opt.style.display = 'block');
+            });
+        });
+
+        // Click outside to close
+        document.addEventListener('click', function (e) {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
+                input.style.display = 'none';
+                input.value = '';
+                options.forEach(opt => opt.style.display = 'block');
+            }
+        });
+    }
+
+    // Init for Company dropdown
+    setupSearchableSelect('CompanySelect', 'selectedCompany');
+</script>

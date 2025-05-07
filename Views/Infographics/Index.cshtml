@@ -1,0 +1,235 @@
+﻿@using EquidCMS.Common
+@using EquidCMS.Models
+@model InfographicViewModel
+@{
+    ViewData["Title"] = "Infographic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    .dt-search {
+        float: right;
+    }
+
+    .dt-paging {
+        float: right;
+        margin-top: 10px;
+    }
+
+    div.dt-buttons {
+        position: relative;
+        float: left;
+    }
+
+    button.dt-button, div.dt-button, a.dt-button {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin-right: 0.333em;
+        padding: 0.5em 1em;
+        border: 1px solid #999;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.88em;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        background-color: #e9e9e9;
+        background-image: -webkit-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -moz-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -ms-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -o-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: linear-gradient(to bottom, #fff 0%, #e9e9e9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='white', EndColorStr='#e9e9e9');
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-decoration: none;
+        outline: none;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        $('#myDataTable').DataTable({
+            dom: 'lBfrtip',
+            buttons: ['excelHtml5'],
+            'info': false,
+            'lengthChange': false,
+            'autoWidth': false
+        })
+    })
+</script>
+<section id="AboutSection" class="mt-4 mb-4">
+    <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
+        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h2 class="PagemainHeading">Infographics</h2>
+        </div>
+        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table id="myDataTable" class="table table-bordered table-striped dt-responsive  w-100">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Heading</th>
+                        <th>Image</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int a = 1;
+                        @foreach (var item in Model.Records)
+                        {
+                            <tr>
+                                <td>
+                                    @a
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Infoheading)
+                                </td>
+                                <td>
+                                    <img src="@Url.Content(@item.Infoimage)" alt="Image Thumbnail" class="img-thumbnail" width="60" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-slide-to="@a">
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Infodesc)
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm edit-btn"
+                                            data-id="@item.Infogid"
+                                            data-infoheading="@item.Infoheading"
+                                            data-infodesc="@item.Infodesc">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm delete-button" data-id="@item.Infogid">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            a += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Form for adding a new entry -->
+    <section>
+        <div class="row">
+            <form id="formAction" asp-controller="Infographics" asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" id="NewEntry_Id" name="NewEntry.Infogid" />
+
+                <div class="row">
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="form-group">
+                            <label class="control-label">Heading<span class="text-danger">*</span></label>
+                            <input asp-for="NewEntry.Infoheading" class="form-control" required />
+                            </div>
+                        </div>
+                        
+                       <div class="col-xl-6 col-lg-6">
+                            <div class="form-group">
+                              <label class="control-label">Image<span class="text-danger">*</span></label>
+                                <input type="file" id="FileToUpload1" name="FileToUpload1" class="form-control" />
+                            </div>
+                        </div>
+                        </div>
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Description<span class="text-danger">*</span></label>
+                            <textarea asp-for="NewEntry.Infodesc" class="form-control" style="height:150px" required ></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                    
+
+                <div class="row" style="padding: 5px;">
+                    <div class="col-xl-12 col-lg-12">
+                        <div class="form-group" style="float: right;">
+                            <button id="submitButton" type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- Modal for Image Slider with Heading -->
+    
+</section>
+<script>
+    // Script to update the modal's carousel to the clicked image
+    document.querySelectorAll('[data-bs-target="#imageModal"]').forEach((image, index) => {
+        image.addEventListener('click', function () {
+            const carousel = document.querySelector('#imageCarousel');
+            const carouselItems = carousel.querySelectorAll('.carousel-item');
+            const targetIndex = index;
+
+            // Set the active class on the clicked image's carousel item
+            carouselItems.forEach(item => item.classList.remove('active'));
+            carouselItems[targetIndex].classList.add('active');
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $(".delete-button").click(function () {
+            var entryId = $(this).data("id");
+
+            if (confirm("Are you sure you want to delete this record?")) {
+                $.ajax({
+                    url: "/Infographics/Delete/" + entryId,
+                    type: "DELETE",  // ✅ Correct HTTP Method
+                    success: function (response) {
+                        alert("Record deleted successfully.");
+                        $("tr[data-id='" + entryId + "']").remove();  // ✅ Remove row without refresh
+                    },
+                    error: function (xhr) {
+                        alert("Error deleting record: " + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+
+    $(document).ready(function () {
+        $(".edit-btn").click(function () {
+            debugger;
+            console.log($(this).data("id"));
+            console.log($(this).data("infoheading"));
+            console.log($(this).data("infodesc"));
+            var id = $(this).data("id");
+            var Infoheading = $(this).data("infoheading");
+            var infoDesc = $(this).data("infodesc");
+
+
+            // ✅ Populate the form fields
+            $("#NewEntry_Id").val(id);
+            $("#NewEntry_Infoheading").val(Infoheading);
+            $("#NewEntry_Infodesc").val(infoDesc);
+
+            // ✅ Change form action to update
+            $("#formAction").attr("action", "/Infographics/Edit");
+            $("#submitButton").text("Update").css("background-color", "orange");
+        });
+    });
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('#successMessage').fadeOut('slow');
+        }, 5000); // 5000 milliseconds = 5 seconds
+    });
+</script>

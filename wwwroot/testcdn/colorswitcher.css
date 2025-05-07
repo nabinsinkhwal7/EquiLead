@@ -1,0 +1,190 @@
+.swtichblock
+{
+    position: fixed;
+    width: auto;
+    height: auto;
+    top: 20%;
+    left: 0px;
+    display: flex;
+    z-index: 9999;
+}
+.show-variants
+{
+    position: absolute;
+    top: 0;
+    right: -50px;   
+    width: 50px;
+    height: 50px;
+    z-index: 999999;
+}
+.show-variants button
+{
+
+    width: 100%;
+    height: 100%;
+    background-color: rgb(21,32,43);
+    cursor: pointer;
+    border: 0;
+    border-left: solid 1px #38444d;
+
+}
+.show-variants button i
+{
+    color: rgb(255,255,255);
+    font-size: 20px;
+}
+.switcher
+{
+    background-color: rgb(21,32,43);
+    max-width: 300px;
+    height: auto;
+    transition: 0.5s;
+    position: relative;
+    left: -300px;
+
+}
+.switcher_visible
+{
+    left: 0;
+}
+.palette_title
+{
+    text-transform: uppercase;
+    height: 50px;
+    width: 100%;
+    background-color: rgb(21,32,43);
+    text-align: center;
+    font-size: 16px;
+    display: grid;
+    place-content: center;
+    font-weight: bold;
+    color: rgb(255,255,255);
+    border-bottom: solid 1px #38444d;
+}
+.switch_color
+{
+    padding: 25px 30px 25px 30px;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.switch_color button
+{
+    height: 50px;
+    width: 50px;
+    margin: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    position: relative;
+    border: 0;
+}
+.active-scheme::after
+{
+    content: "\f00c";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 18px;
+    color: rgb(255,255,255);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    text-align: center;
+    place-items: center;
+
+}
+#reset i
+{
+    transition: 0.5s;
+}
+#reset:hover i
+{
+    transform: rotate(25deg);
+
+}
+#reset::after
+{
+    content: '' !important;
+}
+
+
+.ltr-rtl
+{
+    margin-top: 20px;
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+}
+.ltr-rtl button
+{
+    background-color: var(--secondary-color);
+    width: 50%;
+    color: rgb(255,255,255);
+    transition: 0.4s;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.ltr-rtl button::after
+{
+    text-align: right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.example
+{
+    background-color: var( --secondary-color);
+    width: 250px;
+    height: 250px;
+    display: grid;
+    position: absolute;
+    left: 50%;
+    align-content: center;
+    justify-content: center;
+    transition: 1s;
+}
+
+.switch_color .color1
+{
+    background-color: #d72631;
+}
+.switch_color .color2
+{
+    background-color: #a2d5c6;
+}
+.switch_color .color3
+{
+    background-color: #077b8a ;
+}
+.switch_color .color4
+{
+    background-color: #5c3c92;
+}
+.switch_color .color5
+{
+    background-color: #e52165 ;
+}
+.switch_color .color6
+{
+    background-color: #0d1137;
+}
+.switch_color .color7
+{
+    background-color: #f3ca20;
+}

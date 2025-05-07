@@ -1,0 +1,467 @@
+﻿@model EquidCMS.Models.Tblevent
+
+@{
+    ViewData["Title"] = "Events";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%; /* Make sure the image fits inside the container */
+        max-height: 300px; /* Limit the height */
+        /*  display: none; /* Hide by default */ */
+    }
+
+    /* Style the input fields */
+    .benefit-input {
+        margin-bottom: 10px; /* Space between input fields */
+    }
+
+    /* Style the remove button */
+    .remove-btn {
+        margin-left: 10px; /* Space between input and button */
+        display: inline-block; /* Ensures button is aligned properly */
+        padding: 5px 10px;
+        font-size: 12px;
+        background-color: #d9534f; /* Red color for the remove button */
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        /* Hover effect for remove button */
+        .remove-btn:hover {
+            background-color: #c9302c;
+        }
+
+    /* Optional: Hides the button initially */
+    .remove-btn {
+        display: none;
+    }
+
+    /* Optional: Show the remove button only when the input has focus or on hover */
+    .benefit-container:hover .remove-btn {
+        display: inline-block;
+    }
+    /* Error message container */
+    #error-message {
+        color: #dc3545; /* Bootstrap danger color */
+        font-size: 14px;
+        margin-top: 5px;
+        padding: 5px;
+        border: 1px solid #dc3545; /* Red border */
+        background-color: #f8d7da; /* Light red background */
+        border-radius: 4px;
+    }
+
+    /* Error messages under form inputs */
+    .text-danger {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="Event" asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3">
+                            <h4 class="Headingcolorbg">Events</h4>
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="alert alert-danger" style="font-size:14px" role="alert">
+                                <div class="col-sm-12">
+                                    NOTE: Fields marked with (*) are compulsory fields
+                                </div>
+                                <!-- Custom error message -->
+                                <div id="error-message" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3">
+                            <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Banner <span style="color:red">*</span></label>
+                                <!-- File input for image -->
+                                <input type="file" id="FileToUpload1" name="FileToUpload1" class="form-control" />
+                                <span asp-validation-for="EventBanner" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="form-group">
+                                <img id="imagePreview" class="image-preview" src="" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Event Type <span style="color:red">*</span></label>
+                                        <select id="EventTypeId" onchange="EventTypeFN(this.value)" asp-for="EventTypeId" class="form-select" asp-items="ViewBag.EVTYID"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Start Date <span style="color:red">*</span></label>
+                                        <input type="date" asp-for="Startdateofevent" class="form-control" />
+                                        <span asp-validation-for="Startdateofevent" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Time Start <span style="color:red">*</span></label>
+                                        <input type="time" asp-for="EventTimeStart" class="form-control" id="EventTimeStart" name="EventTimeStart" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Event Name <span style="color:red">*</span></label>
+                                        <input asp-for="EventName" class="form-control" />
+                                        <span asp-validation-for="EventName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">End Date </label>
+                                        <input type="date" asp-for="Enddateofevent" class="form-control" />
+                                        <span asp-validation-for="Enddateofevent" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Time End <span style="color:red">*</span></label>
+                                        <input type="time" asp-for="EventTimeEnd" class="form-control" id="EventTimeEnd" name="EventTimeEnd" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Event Description <span style="color:red">*</span></label>
+                                    <textarea asp-for="Descriptionofevent" style="height:215px" class="form-control"></textarea>
+                                    <span asp-validation-for="Descriptionofevent" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Virtual Link </label>
+                                        <input id="EventLink" asp-for="EventLink" placeholder="Virtual event link" class="form-control" />
+                                        <span asp-validation-for="EventLink" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Entry Type <span style="color:red">*</span></label>
+                                        <select onchange="EntryFN(this.value)" asp-for="EventPricingTypeId" class="form-select" asp-items="ViewBag.EPRID"></select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Ticket Price</label>
+                                        <input id="EventPricing" asp-for="EventPricing" class="form-control"/>
+                                        <span asp-validation-for="EventPricing" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Venue</label>
+                                        <input id="EventVenue" asp-for="EventVenue" class="form-control" />
+                                        <span asp-validation-for="EventVenue" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Agenda Document <span style="color:red">*</span></label>
+                                        <!-- File input for image -->
+                                        <input type="file" id="FileToUpload2" name="FileToUpload2" class="form-control" />
+                                        <span asp-validation-for="EventAgendaDoc" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Event Benefit </label>
+                                        <input id="Eventbenefit" asp-for="Eventbenefit" class="form-control" />
+                                        <span asp-validation-for="Eventbenefit" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Host Name <span style="color:red">*</span></label>
+                                        <input id="EventHost" asp-for="EventHost" class="form-control" />
+                                        <span asp-validation-for="EventHost" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Host Organization <span style="color:red">*</span></label>
+                                        <input id="EventHostOrg" asp-for="EventHostOrg" class="form-control" />
+                                        <span asp-validation-for="EventHostOrg" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Parking</label>
+                                        <input id="Parking" asp-for="Parking" class="form-control" />
+                                        <span asp-validation-for="Parking" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label class="control-label">Wheelchair Accessibility </label>
+                                            <input id="WheelChair" asp-for="WheelChair" class="form-control" />
+                                            <span asp-validation-for="WheelChair" class="text-danger"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="form-group">
+                                <label id="lbleventBenefits" class="control-label" for="EventBenefits">Speaker Name and Organization</label>
+                                <div id="eventBenefitsContainer">
+                                    <!-- Initial input field for adding benefits -->
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="eventBenefits" name="eventBenefits[]" class="form-control" placeholder="Add Speaker Name and Organization" aria-label="Add benefit" />
+                                        <div class="input-group-append">
+                                            <button id="btneventBenefits" type="button" class="btn btn-outline-secondary addBenefitBtn">Add Speaker Name and Organization</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="form-group" style="float: right">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('Enddateofevent').addEventListener('change', validateDates);
+    document.getElementById('Startdateofevent').addEventListener('change', validateDates);
+
+    function validateDates() {
+        const startDate = document.getElementById('Startdateofevent').value;
+        const endDate = document.getElementById('Enddateofevent').value;
+        const errorMessage = document.getElementById('error-message');
+
+        if (startDate && endDate) {
+            // Check if end date is before the start date
+            if (new Date(endDate) < new Date(startDate)) {
+                errorMessage.style.display = "block"; // Show error message
+                errorMessage.textContent = "End date cannot be earlier than the start date.";
+
+                // Clear the end date input field
+                document.getElementById('Enddateofevent').value = "";
+
+                // Scroll to the top of the page when error occurs
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth' // Optional: Adds smooth scrolling effect
+                });
+            } else {
+                errorMessage.style.display = "none"; // Hide error message if valid
+            }
+        }
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#EventLink').prop('disabled', true);
+        $('#EventSpeaker').prop('disabled', true);
+        $('#EventSpeakerOrg').prop('disabled', true);
+        // $('#EventHost').prop('disabled', true);
+        // $('#EventHostOrg').prop('disabled', true);
+        $('#WheelChair').prop('disabled', false);
+        $('#Parking').prop('disabled', false);
+        // $('#FileToUpload2').prop('disabled', true);
+        
+        // $('#lbleventBenefits').text('Event Benefits');
+        // $('#eventBenefits').attr('placeholder', 'Add event benefit');  // Change input placeholder
+        // $('#btneventBenefits').text('Add Benefit');
+
+        $('#EventPricing').prop('disabled', false);
+    });
+
+    function EntryFN(Val) {
+        if (Val == 1) {
+            $('#EventPricing').prop('disabled', false);
+        }
+        else 
+        {
+            $('#EventPricing').prop('disabled', true);
+        }
+    }
+
+    function EventTypeFN(Val){
+        if (Val == 1) {
+            $('#EventLink').prop('disabled', true);
+            $('#EventSpeaker').prop('disabled', true);
+            $('#EventSpeakerOrg').prop('disabled', true);
+            // $('#EventHost').prop('disabled', true);
+            // $('#EventHostOrg').prop('disabled', true);
+            $('#WheelChair').prop('disabled', false);
+            $('#Parking').prop('disabled', false);
+            // $('#FileToUpload2').prop('disabled', true);
+
+            $('#EventVenue').prop('disabled', false);
+            
+            // $('#lbleventBenefits').text('Event Benefits');
+            // $('#eventBenefits').attr('placeholder', 'Add event benefit');  // Change input placeholder
+            // $('#btneventBenefits').text('Add Benefit');
+        }
+        else
+        {
+            $('#EventLink').prop('disabled', false);
+            $('#EventSpeaker').prop('disabled', false);
+            $('#EventSpeakerOrg').prop('disabled', false);
+            // $('#EventHost').prop('disabled', false);
+            // $('#EventHostOrg').prop('disabled', false);
+            $('#WheelChair').prop('disabled', true);
+            $('#Parking').prop('disabled', true);
+            // $('#FileToUpload2').prop('disabled', false);
+            $('#eventBenefits').prop('disabled', false);
+            $('#btneventBenefits').prop('disabled', false);
+
+            $('#EventVenue').prop('disabled', true);
+
+            // $('#lbleventBenefits').text('Speaker Name and Organization');
+            // $('#eventBenefits').attr('placeholder', 'Speaker Name and Organization');  // Change input placeholder
+            //$('#btneventBenefits').text('Add Speaker Name and Organization');
+        }
+    } 
+    function EntryFN(value) {
+
+        $('#EventPricing').prop('disabled', false);
+        if (value == 2) {
+            $('#EventPricing').prop('disabled', true);
+        }
+    }
+
+    document.querySelector('.addBenefitBtn').addEventListener('click', function () {
+        // Create new input group for new benefit
+        var newBenefitGroup = document.createElement('div');
+        newBenefitGroup.classList.add('input-group', 'mb-3');
+
+        var newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'eventBenefits[]';
+        newInput.classList.add('form-control');
+        newInput.placeholder = 'Add Speaker Name and Organization';
+        newBenefitGroup.appendChild(newInput);
+
+        var newButtonContainer = document.createElement('div');
+        newButtonContainer.classList.add('input-group-append');
+        var newButton = document.createElement('button');
+        newButton.type = 'button';
+        newButton.classList.add('btn', 'btn-outline-secondary');
+        newButton.innerHTML = 'Remove';
+
+        // Add event listener to remove the input field
+        newButton.addEventListener('click', function () {
+            newBenefitGroup.remove();
+        });
+
+        newButtonContainer.appendChild(newButton);
+        newBenefitGroup.appendChild(newButtonContainer);
+
+        document.getElementById('eventBenefitsContainer').appendChild(newBenefitGroup);
+    });
+</script>
+
+<script>
+    // JavaScript to show image preview before uploading
+    document.getElementById("FileToUpload1").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const imagePreview = document.getElementById("imagePreview");
+            imagePreview.src = e.target.result; // Set the src of the image
+            imagePreview.style.display = "block"; // Make the image visible
+        };
+
+        if (file) {
+            reader.readAsDataURL(file); // Read the file and trigger the onload event
+        }
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+   
+}

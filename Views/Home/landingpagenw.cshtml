@@ -1,0 +1,500 @@
+﻿@model EquidCMS.Models.Tbllandingpage
+
+@{
+    Layout = "~/Views/Shared/_LayoutWebSNW.cshtml";
+    var jobs = ViewBag.Jobs as List<EquidCMS.Models.Tbljob>;
+    var Events = ViewBag.Events as List<EquidCMS.Models.Tblevent>;
+    var Successsyory = ViewBag.Successsyory as List<EquidCMS.Models.Tblsuccesstest>;
+    var firstSet = ViewBag.firstSet as List<EquidCMS.Models.TblSocialLinkdin>;
+    var secondSet = ViewBag.secondSet as List<EquidCMS.Models.TblSocialLinkdin>;
+    var thirdSet = ViewBag.thirdSet as List<EquidCMS.Models.TblSocialLinkdin>;
+
+    var infographic = ViewBag.infographic as List<EquidCMS.Models.Tblinfographic>;
+
+    var Cityid = ViewBag.Cityid as List<EquidCMS.Models.MstLookup>;
+    var WDid = ViewBag.WDid as List<EquidCMS.Models.MstLookup>;
+    var ETid = ViewBag.ETid as List<EquidCMS.Models.MstLookup>;
+}
+
+<style type="text/css">
+
+    .jocardminheight {
+       /*  min-height: 200px !important;
+        max-height: 200px !important; */
+    }
+
+    .job-card .job-detail h3.title {
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden; /* Hide text overflow */
+        text-overflow: ellipsis; /* Show ellipsis when text overflows */
+        max-width: 250px; /* Limit the width, adjust as needed */
+        display: block; /* Ensure it behaves as a block element */
+        text-decoration: none; /* Remove any link underline */
+    }
+
+    .job-card .job-detail p {
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden; /* Hide text overflow */
+        text-overflow: ellipsis; /* Show ellipsis when text overflows */
+        max-width: 300px; /* Limit the width, adjust as needed */
+        display: block; /* Ensure it behaves as a block element */
+    }
+
+    .ellipsis {
+        white-space: nowrap; /* Prevent the text from wrapping to the next line */
+        overflow: hidden; /* Hide any overflowed content */
+        text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    }
+</style>
+    <section class="hero-section hero-10 overflow-hidden">
+
+        <div class="et_pb_code_inner">
+            <div id="circles-container">
+              
+            </div>
+            <div class="container" style="position: absolute !important;
+            top: 50%;
+            bottom: auto;
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%) translateY(-50%);">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+                        <div class="hero-10__content wow fade-in-bottom" data-wow-delay="400ms">
+                            <h1 class="hero-10__title wow fade-in-bottom" data-wow-delay="200ms">@Model.Bannermainheading</h1>
+                            <p class="hero-10__dec wow fade-in-bottom" data-wow-delay="400ms">@Model.Bannersubheading</p>
+                        <a asp-action="Talent" asp-controller="Home" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient" data-wow-delay="600ms">@Model.Bannerbtnlfttext</a>
+                        <a asp-action="Signup" asp-controller="Applicant" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient" data-wow-delay="600ms">@Model.Bannerbtnrhstext</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+<section class="promo-section-4 infographic-sec career-card cream_bg pt-80 pb-80">
+        <div class="container">
+
+            <div class="section-heading text-center">
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sechdtxt <span>@Model.Secspn</span></h2>
+                <h4 class="sub-heading wow fade-in-bottom mt-50" data-wow-delay="200ms">@Model.Secdesc</h4>
+            </div>
+        <div class="blog-carousel-new swiper">
+            <div class="swiper-wrapper">
+                @for (int i = 0; i < infographic.Count; i++){
+                <div class="swiper-slide">
+                    <div class="post-card wow fade-in-bottom" data-wow-delay="200ms">
+                        <div class="post-thumb">
+                                <a href="#"><img src="@infographic[i].Infoimage" alt="post" height="402"></a>
+                        </div>
+                        <div class="post-content-wrap mt-30">
+                            <div class="post-content">
+                                <h3 class="title">
+                                        <a href="#">@infographic[i].Infoheading</a>
+                                    </h3>
+                                    <div class="read-more-container">
+                                        <p class="read-text collapsed">
+                                            @infographic[i].Infodesc
+
+                                        </p>
+                                        <button class="toggleBtn">Read More</button>
+
+                                    </div>
+                                <!-- <a href="#" class="read-more">Read More <i class="fa-sharp fa-regular fa-arrow-right"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            <!-- Carousel Dots -->
+            <div class="swiper-pagination"></div>
+
+            <!-- If we need navigation buttons -->
+            <!-- <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div> -->
+
+
+        </div>
+       @*  justify-content-center *@
+       @*  <div class="row gy-lg-0 gy-4 ">
+            @for (int i = 0; i < infographic.Count; i++)
+            {
+                <div class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="3" role="group" aria-label="4 / 6" style="width: 504.667px; margin-right: 30px;">
+                    <div class="post-card wow fade-in-bottom" data-wow-delay="200ms" style="visibility: visible; animation-delay: 200ms; animation-name: fade-in-bottom;">
+                        <div class="post-thumb">
+                            <a href="#"><img src="@infographic[i].Infoimage" alt="post"></a>
+                        </div>
+                        <div class="post-content-wrap mt-30">
+                            <div class="post-content">
+                                <h3 class="title">
+                                    <a href="#">@infographic[i].Infoheading</a>
+                                </h3>
+                                <p class="desc">
+                                    @infographic[i].Infodesc
+                                </p>
+                                <!-- <a href="#" class="read-more">Read More <i class="fa-sharp fa-regular fa-arrow-right"></i></a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div> *@
+           
+        </div>
+    </section>
+  
+    <section class="promo-section-4 jobs-opportunities border-radius-bottom cream_bg pt-40 pb-80">
+        <div class="container">
+
+            <div class="section-heading section-heading-with-btn">
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sec3mnhd</h2>
+                <a asp-action="Talent" asp-controller="Home" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">@Model.Sec3mnbtntext <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+            </div>
+
+            <div class="row gy-lg-1 gy-4">
+                @for (int i = 0; i < jobs.Count; i++)
+                {
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                        <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                        <div class="job-card jocardminheight ellipsis ">
+                            <div class="company-logo"><a href="@jobs[i].Company.Website"><img style="width: 80px;" src="~/@jobs[i].Company.Logo" alt="@jobs[i].Company.Name"></a></div>
+                                <div class="job-detail">
+                                <h5 title="@jobs[i].Jobtitle" class="title white"><a href="">@jobs[i].Jobtitle</a></h5>
+                                <p style="font-weight: 700;"><span>Company - </span>@jobs[i].Company.Name </p>
+                                <p style="font-weight: 700;"><span>Employment Type - </span>@ETid?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault()</p>
+                                <p style="font-weight: 700;"><span>Location - </span>@jobs[i].City</p>
+                                <a asp-action="JobDetail" asp-controller="Home" asp-route-id="@jobs[i].Jobid" class="commom-btn wow fade-in-right mx-2">Read More</a>
+                                <a href="@jobs[i].Jobpostinglink" class="rr-secondary-btn wow fade-in-right signup-gradient" onclick="trackJobClick(@jobs[i].Jobid)" target="_blank">Apply</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="customer-feedback__area overflow-hidden wow fade-in-bottom" data-wow-delay="400ms">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                        <div class="section-title-3">
+                            <h1>@Model.Sec4mnhd</h1>
+                            <p class="section-sub-title-3 mt-15">@Model.Sec4mndsc</p>
+                        <a asp-action="Signup" asp-controller="Applicant" class="section-btn mt-30">@Model.Sec4mnbtntxt <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="customer-feedback__slider">
+                        <div class="customer-feedback__slider-wrapper d-flex">
+                            <div class="swiper customer-feedback__slider-1 swiper customer-feedback__slider-1-first-reverse">
+                                <div class="swiper-wrapper">
+                                   @for (int i = 0; i < firstSet.Count; i++){
+                                    <div class="swiper-slide">
+                                        <div class="customer-feedback__slider-1__item">
+                                            <div class="customer-feedback__media">
+                                                <img src="@firstSet[i].Photo" alt="">
+                                            </div>
+                                            <h3>@firstSet[i].Name</h3>
+                                            <p>@firstSet[i].Post , @firstSet[i].Organization</p>
+                                            <a href="@firstSet[i].Linkdinlink"><i class="fa-brands fa-linkedin-in"></i></a>
+                                        </div>
+                                    </div>
+                                    }
+                                    
+                                    
+                               </div>
+                           </div>
+                          
+                            <div class="swiper customer-feedback__slider-2  swiper customer-feedback__slider-2-first-reverse">
+                                <div class="swiper-wrapper">
+                                    @for (int i = 0; i < secondSet.Count; i++){
+                                    <div class="swiper-slide">
+                                        <div class="customer-feedback__slider-1__item">
+                                            <div class="customer-feedback__media">
+                                                <img src="@secondSet[i].Photo" alt="">
+                                            </div>
+                                            <h3>@secondSet[i].Name</h3>
+                                            <p>@secondSet[i].Post , @secondSet[i].Organization</p>
+                                            <a href="@secondSet[i].Linkdinlink"><i class="fa-brands fa-linkedin-in"></i></a>
+                                        </div>
+                                    </div>
+                                    }
+                                   
+                                </div>
+                            </div>
+                            <div class="swiper customer-feedback__slider-3 swiper customer-feedback__slider-3-first-reverse">
+                                <div class="swiper-wrapper">
+                                    @for (int i = 0; i < thirdSet.Count; i++){
+                                    <div class="swiper-slide">
+                                        <div class="customer-feedback__slider-1__item">
+                                            <div class="customer-feedback__media">
+                                                <img src="@thirdSet[i].Photo" alt="">
+                                            </div>
+                                            <h3>@thirdSet[i].Name</h3>
+                                            <p>@thirdSet[i].Post , @thirdSet[i].Organization</p>
+                                            <a href="@thirdSet[i].Linkdinlink"><i class="fa-brands fa-linkedin-in"></i></a>
+                                        </div>
+                                    </div>
+                                    }
+                                    
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-section border-radius-bottom cream_bg pt-80 pb-80">
+        <div class="container">
+            <div class="section-heading section-heading-with-btn">
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sec5mnhd</h2>
+                <a asp-action="events" asp-controller="Home" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">@Model.Sec5mnbtntext <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+            </div>
+            <div class="row gy-lg-0 gy-4 justify-content-center">
+                @for (int i = 0; i < Events.Count; i++){
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                    <div class="post-card wow fade-in-bottom" data-wow-delay="200ms">
+                        <div class="post-thumb">
+                            <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events[i].Eventid"><img style="height:185px" src="@Events[i].EventBanner" alt="post"></a>
+                        </div>
+                        <div class="post-content-wrap">
+                            <ul class="post-meta">
+                                @if (@Events[i].Startdateofevent.ToString("dd-MM-yyyy") == @Events[i].Enddateofevent?.ToString("dd-MM-yyyy"))
+                                {
+                                    <li><span>Event</span> :- @Events[i].Startdateofevent.ToString("dd-MM-yyyy")</li>
+                                    <li><span>Time</span> :- @Events[i].EventTimeStart - @Events[i].EventTimeEnd</li>
+                                }
+                                else
+                                {
+                                    <li><span>Event</span> :- @Events[i].Startdateofevent.ToString("dd-MM-yyyy") - @Events[i].Enddateofevent?.ToString("dd-MM-yyyy")</li>
+                                    <li><span>Time</span> :- @Events[i].EventTimeStart - @Events[i].EventTimeEnd</li>
+                                }
+                            </ul>
+                            <div class="post-content ellipsis">
+                                <h3 class="title">
+                                    <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events[i].Eventid">@Events[i].EventName</a>
+                                </h3>
+                                <a class="read-more" onclick="openEvidenceModal(@Events[i].Eventid)">Register <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+               
+            </div>
+        </div>
+    </section>
+
+    <section class="resources_hub purple_bg pt-80 pb-80 wow fade-in-bottom" data-wow-delay="400ms">
+        <div class="container">
+            <div class="row align-items-center">
+
+                <div class="col-lg-6">
+                    <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                        <div class="section-title-3">
+                            <h1>@Model.Sec6hd</h1>
+                            <p class="section-sub-title-3 mt-15">@Model.Sec6dsc</p>
+                            <a asp-action="RSGallery" asp-controller="Home" class="section-btn mt-30">@Model.Sec6btntxt <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fade-in-right" data-wow-delay="600ms">
+                    <div class="row resources-card-vcenter">
+                        <div class="col-lg-10">
+                        <div class="resources_hub_card career_reports_card" style="width: 301px;   margin-left: 167px;">
+                            <a asp-action="RSGallery" asp-controller="Home"><img src="assets/img/career.png" alt=""></a>
+                                <h3 class="mt-15"><a href="">Career Reports</a></h3>
+                                @* <a href="" class="commom-btn">Download</a> *@
+                            </div>
+                            <div class="resources_hub_card resource_vid_card">
+                            <a asp-action="RSGallery" asp-controller="Home" ><img src="assets/img/video-thumb.png" alt=""></a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2" >
+                        <div class="resources_hub_card" style="display:none">
+                                <a href=""><img src="assets/img/articles.png" alt=""></a>
+                                <h3 class="mt-40 mb-20"><a href="">Articles & research <br>papers</a></h3>
+                            <a asp-action="RSGallery" asp-controller="Home" class="commom-btn mt-30">Read Online</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!--testimonial-4-->
+    <section id="TestimonialSec" class="testimonial-section-4 cream_bg pt-80 pb-80">
+        <div class="container">
+            <div class="section-heading section-heading-with-btn">
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sec7hd</h2>
+                <a href="#" style="display:none" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">@Model.Sec7btntxt <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+            </div>
+            <div class="testi-content-wrap">
+                <div class="testi-carousel-4 swiper">
+                    <div class="swiper-wrapper">
+                        @for (int i = 0; i < Successsyory.Count; i++)
+                        {
+                            <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                                <div class="testi-item-4 bg-white">
+                                    <div class="testi-thumb-4"><img src="@Successsyory[i].Photo" alt=""></div>
+                                    <div class="testi-content-4">
+                                    <p class="">@Successsyory[i].Description</p>
+                                        <h3 class="title">@Successsyory[i].Name</h3>
+                                        <span><a href="@Successsyory[i].Linkedin"><i class="fa-brands fa-linkedin"></i></a></span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                    </div>
+                    <!-- Carousel Dots -->
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="part_of_change cream_bg pb-80 text-center">
+        <div class="container">
+            <div class="row align-items-center">
+
+                <div class="col-lg-12">
+                    <div class="part_of_change_wrap wow fade-in-bottom " data-wow-delay="200ms">
+                        <h1>@Model.Sec8hd</h1>
+                        <p class="section-sub-title-3 mt-15">@Model.Sec8dsc</p>
+                    <a asp-action="Signup" asp-controller="Applicant" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient mt-50">@Model.Sec8btntxt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<!-- Evidence Modal (Bootstrap Modal) -->
+<div class="modal fade" id="evidenceModal" tabindex="-1" aria-labelledby="evidenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="evidenceModalLabel">Register</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="SaveParticipant" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="EventID" name="EventID" />
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Name<span class="text-danger">*</span></label>
+                                <input id="name"  class="form-control" required name="Name" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Email<span class="text-danger">*</span></label>
+                                <input id="email" type="email" class="form-control" required name="Emailid" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label  class="control-label">Mobile No<span class="text-danger">*</span></label>
+                                <input id="MB" type="text" class="form-control" required name="mobileno" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Linkedin</label>
+                                <input id="lkdin" class="form-control" name="linkedin" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Reusable function to send job click tracking
+    function trackJobClick(jobId) {
+        debugger;
+        if (!jobId) return;
+        $.ajax({
+            url: '/Home/JobApplyClickTrack',
+            type: 'POST',
+            data: ({ jobId: jobId })
+        });
+    }
+    function showMessage(event) {
+        event.preventDefault(); // Prevents form submission
+        alert("Event sucessfully applied");
+        // You can also submit the form after showing the message
+        document.getElementById('yourForm').submit(); // Submit the form programmatically
+    }
+
+    // Open the modal for adding evidence with the correct EventID
+    function openEvidenceModal(eventID) {
+       
+        document.getElementById('EventID').value = eventID;
+        
+        debugger;
+        $.ajax({
+            url: '/Home/GetApplicantsDetails',
+            method: 'GET',
+            data: { id: eventID },
+            success: function (response) {
+               
+                if (response === "NO") {
+                    console.log(response);
+                    var myModal = new bootstrap.Modal(document.getElementById('evidenceModal'));
+                    myModal.show();
+                } else {
+                    console.log(response);
+                    debugger;
+                    $('#name').val(response.fullName);
+                    $('#email').val(response.email);
+                    $('#MB').val(response.phoneNumber);
+                    $('#lkdin').val(response.linkedinProfile);
+
+                    var myModal = new bootstrap.Modal(document.getElementById('evidenceModal'));
+                    myModal.show();
+                }
+            }
+        });
+        
+       
+    }
+
+</script>
+<script>
+        document.querySelectorAll(".read-more-container").forEach(container => {
+    const text = container.querySelector(".read-text");
+    const button = container.querySelector(".toggleBtn");
+
+    button.addEventListener("click", () => {
+     const isCollapsed = text.classList.contains("collapsed");
+
+     text.classList.toggle("collapsed", !isCollapsed);
+     text.classList.toggle("expanded", isCollapsed);
+     button.textContent = isCollapsed ? "Read Less" : "Read More";
+
+    
+    });
+    });
+
+</script>

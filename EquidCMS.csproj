@@ -1,0 +1,96 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Tblevents\**" />
+    <Compile Remove="Views\TbljobsBCK\**" />
+    <Content Remove="Views\Tblevents\**" />
+    <Content Remove="Views\TbljobsBCK\**" />
+    <EmbeddedResource Remove="Views\Tblevents\**" />
+    <EmbeddedResource Remove="Views\TbljobsBCK\**" />
+    <None Remove="Views\Tblevents\**" />
+    <None Remove="Views\TbljobsBCK\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\AdminController.cs" />
+    <Compile Remove="Controllers\TbleventsController.cs" />
+    <Compile Remove="Controllers\TbljobsControllerBCK.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Shared\Error.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="MailKit" Version="4.10.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="MimeKit" Version="4.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\Evidence\" />
+    <Folder Include="wwwroot\assets\Infographic\" />
+    <Folder Include="wwwroot\assets\SuccessPhoto\" />
+    <Folder Include="wwwroot\assets\RSDocument\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Applicant\Login.cshtml" />
+    <None Include="Views\Applicant\Register.cshtml" />
+    <None Include="Views\Applicant\Signup.cshtml" />
+    <None Include="Views\Applicant\verifyotp.cshtml" />
+    <None Include="Views\Event\Create.cshtml" />
+    <None Include="Views\Event\Edit.cshtml" />
+    <None Include="Views\Event\Index.cshtml" />
+    <None Include="Views\MstLookup\Create.cshtml" />
+    <None Include="Views\MstLookup\Index.cshtml" />
+    <None Include="wwwroot\assets\fonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\assets\fonts\fa-duotone-900.woff2" />
+    <None Include="wwwroot\assets\fonts\fa-light-300.woff2" />
+    <None Include="wwwroot\assets\fonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\assets\fonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\assets\fonts\fa-thin-100.woff2" />
+    <None Include="wwwroot\assets\img\footer-bg.webp" />
+    <None Include="wwwroot\assets\img\hero_bg.webp" />
+    <None Include="wwwroot\assets\img\not-found.svg" />
+    <None Include="wwwroot\assets\js\ajax-form.js" />
+    <None Include="wwwroot\assets\js\main.js" />
+    <None Include="wwwroot\assets\js\slider.js" />
+    <None Include="wwwroot\assets\js\vendor\bootstrap-bundle.js" />
+    <None Include="wwwroot\assets\js\vendor\imagesloaded-pkgd.js" />
+    <None Include="wwwroot\assets\js\vendor\jquary-3.6.0.min.js" />
+    <None Include="wwwroot\assets\js\vendor\jquery.isotope.js" />
+    <None Include="wwwroot\assets\js\vendor\meanmenu.js" />
+    <None Include="wwwroot\assets\js\vendor\modernizr-2.8.3-respond-1.4.2.min.js" />
+    <None Include="wwwroot\assets\js\vendor\nice-select.js" />
+    <None Include="wwwroot\assets\js\vendor\odometer.min.js" />
+    <None Include="wwwroot\assets\js\vendor\smooth-scroll.js" />
+    <None Include="wwwroot\assets\js\vendor\swiper.min.js" />
+    <None Include="wwwroot\assets\js\vendor\venobox.min.js" />
+    <None Include="wwwroot\assets\js\vendor\waypoints.min.js" />
+    <None Include="wwwroot\assets\js\vendor\wow.min.js" />
+    <None Include="wwwroot\uploads\applicant\resume\b5dfffe6-6ef5-4e6d-b0e4-ad6a6be43efc_Reservoir Reminder SMS templates.docx" />
+    <None Include="wwwroot\uploads\applicant\resume\e19ecd4d-90fe-47ba-b06e-3a35e2f4dcce_Untitled 1.docx" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,578 @@
+﻿@model EquidCMS.Models.Tbllandingpage
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_LayoutCMSNW.cshtml";
+    var jobs = ViewBag.Jobs as List<EquidCMS.Models.Tbljob>;
+    var Events = ViewBag.Events as List<EquidCMS.Models.Tblevent>;
+}
+
+<hr />
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%; /* Make sure the image fits inside the container */
+        max-height: 300px; /* Limit the height */
+       /*  display: none; /* Hide by default */ */
+    }
+
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection1" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <section class="hero-section hero-10 overflow-hidden">
+                    <div id="circles-container">
+                      @*   <div id="circle1" class=""></div>
+                        <div id="circle2" class=""></div> *@
+                        <!-- <div id="circle3" class="circle"></div> -->
+                    </div>
+                    <div class="container" style="position: absolute !important;top: 50%;bottom: auto;left: 50%;right: auto;transform: translateX(-50%) translateY(-50%);">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+                            <div class="hero-10__content wow fade-in-bottom" data-wow-delay="400ms" style="visibility: visible; animation-delay: 400ms; animation-name: fade-in-bottom;">
+                                <input placeholder="Enter Heading" class="form-control" type="text" asp-for="Bannermainheading" name="Bannermainheading" value="@Model.Bannermainheading">
+                                <input placeholder="Enter Sub Heading" class="form-control" type="text" asp-for="Bannersubheading" name="Bannersubheading" value="@Model.Bannersubheading" style="margin-top:12px;height: 110px;margin-bottom: 10px;">
+                                <input placeholder="Button Text" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient" type="text" asp-for="Bannerbtnlfttext" name="Bannerbtnlfttext" value="@Model.Bannerbtnlfttext">
+                                <input placeholder="Button Text" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient" type="text" asp-for="Bannerbtnrhstext" name="Bannerbtnrhstext" value="@Model.Bannerbtnrhstext">
+                               @*  <a href="#" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient" data-wow-delay="600ms" style="visibility: visible; animation-delay: 600ms; animation-name: fade-in-bottom;">Find My Next Job</a>
+                                <a href="#" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient" data-wow-delay="600ms" style="visibility: visible; animation-delay: 600ms; animation-name: fade-in-bottom;">Join the Community</a> *@
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection2" enctype="multipart/form-data">
+            <section class="promo-section-4 career-card cream_bg pt-80 pb-80">
+                <div class="container">
+
+                    <div class="section-heading text-center">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6" style="padding-top:-9px;">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sechdtxt" value="@Model.Sechdtxt" asp-for="Sechdtxt" style="height:66px;width:400px;float:right;">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms" style="visibility: visible; animation-delay: 400ms; animation-name: fade-in-bottom;"><span style="float:left"><input placeholder="Enter Text" class="form-control" type="text" name="Secspn" value="@Model.Secspn" asp-for="Secspn"></span></h2>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:5px">
+                            <div class="col-xl-12 col-lg-12 col-md-12">
+                                <input placeholder="Enter Text" class="form-control" type="text" asp-for="Secdesc" name="Secdesc" value="@Model.Secdesc" id="Secdesc" style="height:50px;">
+                            </div>
+                        </div>
+                        @*<h4 class="sub-heading wow fade-in-bottom mt-50" data-wow-delay="200ms">You know the next step you want to take. We are here to help you get there.</h4> *@
+
+                    </div>
+
+                    <div class="row gy-lg-1 gy-4">
+                        <div class="col-10 offset-1">
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-4 col-md-6">
+                                    <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                                        <div class="promo-card purple_bg">
+                                            <input type="file" id="seccrd1Upload" name="seccrd1Upload" class="form-control" />
+                                            <img id="prvseccrd1Upload" src="~/assets/img/jobs.png" alt="">
+                                            <input placeholder="Enter Text" class="form-control" type="text" asp-for="Sectile1hd" name="Sectile1hd" value="@Model.Sectile1hd" id="Sectile1hd">
+                                            @* <h3 class="title white"><a href="">Jobs</a></h3> *@
+                                            <a href="#" class="promo-btn" style="margin-top:5px">Learn More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-6">
+                                    <div class="wow fade-in-bottom" data-wow-delay="400ms">
+                                        <div class="promo-card light_green_bg">
+                                            <input type="file" id="seccrd2Upload" name="seccrd2Upload" class="form-control" />
+                                            <img id="prvseccrd2Upload" src="~/assets/img/network.png" alt="">
+                                            <input placeholder="Enter Text" class="form-control" type="text" asp-for="Sectile2hd" name="Sectile2hd" value="@Model.Sectile2hd" id="Sectile2hd">
+                                            <a href="#" class="promo-btn" style="margin-top:5px">Learn More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-6">
+                                    <div class="wow fade-in-bottom" data-wow-delay="600ms">
+                                        <div class="promo-card light_blue_bg">
+                                            <input type="file" id="seccrd3Upload" name="seccrd3Upload" class="form-control" />
+                                            <img id="prvseccrd3Upload" src="~/assets/img/resources.png" alt="">
+                                            <input placeholder="Enter Text" class="form-control" type="text" asp-for="Sectile3hd" name="Sectile3hd" value="@Model.Sectile3hd" id="Sectile3hd">
+                                            <a href="#" class="promo-btn" style="margin-top:5px">Learn More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection3" enctype="multipart/form-data">
+            <section class="promo-section-4 jobs-opportunities border-radius-bottom cream_bg pt-40 pb-80">
+                <div class="container">
+
+                    <div class="section-heading section-heading-with-btn">
+                        <div class="row" style="width:100%">
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sec3mnhd" value="@Model.Sec3mnhd" asp-for="Sec3mnhd" style="height:50px;">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Button Text" class="commom-btn-purple wow fade-in-right form-control" type="text" name="Sec3mnbtntext" value="@Model.Sec3mnbtntext" asp-for="Sec3mnbtntext">
+                            </div>
+                        </div>
+                        @* <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Jobs & Opportunities</h2>
+                        <a href="#" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">View All Opportunities <i class="fa-sharp fa-regular fa-arrow-right"></i></a> *@
+                    </div>
+                    <div class="row gy-lg-1 gy-4">
+                        @for (int i = 0; i < jobs.Count; i++)
+                        {
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                                    <div class="job-card">
+                                        <div class="company-logo"><a href="#"><img src="~/assets/img/company-logo.png" alt=""></a></div>
+                                        <div class="job-detail">
+                                            <h3 class="title white"><a href="">@jobs[i].Jobtitle</a></h3>
+                                            <p>@jobs[i].Companyid / @jobs[i].Employeetype / Full-time</p>
+                                            <a href="#" class="commom-btn wow fade-in-right mx-2">Save</a> <a href="#" class="rr-secondary-btn wow fade-in-right signup-gradient">Apply</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection4" enctype="multipart/form-data">
+            <section class="customer-feedback__area overflow-hidden wow fade-in-bottom" data-wow-delay="400ms">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                                <div class="section-title-3">
+                                    <input placeholder="Enter Heading" class="form-control" type="text" name="Sec4mnhd" value="@Model.Sec4mnhd" asp-for="Sec4mnhd" style="height:66px;width:400px;">
+                                    <input placeholder="Enter Description" class="form-control" type="text" name="Sec4mndsc" value="@Model.Sec4mndsc" asp-for="Sec4mndsc" style="height:44px;width:604px;margin-top:13px;">
+                                    <input placeholder="Enter Button Text" class="form-control" type="text" name="Sec4mnbtntxt" value="@Model.Sec4mnbtntxt" asp-for="Sec4mnbtntxt" style="margin-top:10px;width: 203px;border-radius: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="customer-feedback__slider">
+                                <div class="customer-feedback__slider-wrapper d-flex">
+                                    <div class="swiper customer-feedback__slider-1 swiper customer-feedback__slider-1-first-reverse">
+                                        <div class="swiper-wrapper">
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper customer-feedback__slider-2">
+                                        <div class="swiper-wrapper">
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper customer-feedback__slider-3 swiper customer-feedback__slider-3-first-reverse">
+                                        <div class="swiper-wrapper">
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="swiper-slide">
+                                                <div class="customer-feedback__slider-1__item">
+                                                    <div class="customer-feedback__media">
+                                                        <img src="assets/img/community1.png" alt="">
+                                                    </div>
+                                                    <h3>Aruna Roy</h3>
+                                                    <p>Empowering Workers</p>
+                                                    <a href=""><i class="fa-brands fa-linkedin-in"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection5" enctype="multipart/form-data">
+            <section class="blog-section border-radius-bottom cream_bg pt-80 pb-80">
+                <div class="container">
+                    <div class="section-heading section-heading-with-btn">
+                        <div class="row" style="width:100%">
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sec5mnhd" value="@Model.Sec5mnhd" asp-for="Sec5mnhd" style="height:50px;">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Button Text" class="commom-btn-purple wow fade-in-right form-control" type="text" name="Sec5mnbtntext" value="@Model.Sec5mnbtntext" asp-for="Sec5mnbtntext">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-lg-0 gy-4 justify-content-center">
+                        @for (int i = 0; i < Events.Count; i++)
+                        {
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                                <div class="post-card wow fade-in-bottom" data-wow-delay="200ms">
+                                    <div class="post-thumb">
+                                        <a href="#"><img src="~@Events[1].EventBanner" alt="post"></a>
+                                    </div>
+                                    <div class="post-content-wrap">
+                                        <ul class="post-meta">
+                                            <li><span>Event</span> :- @Events[i].Startdateofevent - @Events[i].Enddateofevent</li>
+                                            <li><span>Time</span> :- @Events[i].EventTimeStart -  @Events[i].EventTimeEnd</li>
+                                        </ul>
+                                        <div class="post-content">
+                                            <h3 class="title">
+                                                <a href="#">@Events[i].EventName</a>
+                                            </h3>
+                                            <p class="desc">
+                                                @Events[i].Descriptionofevent
+                                            </p>
+                                            <a href="#" class="read-more">Read More <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection6" enctype="multipart/form-data">
+            <section class="resources_hub purple_bg pt-80 pb-80 wow fade-in-bottom" data-wow-delay="400ms">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                                <div class="section-title-3">
+                                    <input placeholder="Enter Heading" class="form-control" type="text" name="Sec6hd" value="@Model.Sec6hd" asp-for="Sec6hd" style="height:66px;width:400px;">
+                                    <input placeholder="Enter Description" class="form-control" type="text" name="Sec6dsc" value="@Model.Sec6dsc" asp-for="Sec6dsc" style="height:44px;width:604px;margin-top:13px;">
+                                    <input placeholder="Enter Button Text" class="form-control" type="text" name="Sec6btntxt" value="@Model.Sec6btntxt" asp-for="Sec6btntxt" style="margin-top:10px;width: 203px;border-radius: 13px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 wow fade-in-right" data-wow-delay="600ms">
+                            <div class="row resources-card-vcenter">
+                                <div class="col-lg-5">
+                                    <div class="resources_hub_card career_reports_card">
+                                        <a href=""><img src="~/assets/img/career.png" alt=""></a>
+                                        <h3 class="mt-15"><a href="">Career Reports</a></h3>
+                                        <a href="" class="commom-btn">Download</a>
+                                    </div>
+                                    <div class="resources_hub_card resource_vid_card">
+                                        <a href=""><img src="~/assets/img/video-thumb.png" alt=""></a>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-7">
+                                    <div class="resources_hub_card">
+                                        <a href=""><img src="~/assets/img/articles.png" alt=""></a>
+                                        <h3 class="mt-40 mb-20"><a href="">Articles & research <br>papers</a></h3>
+                                        <a href="" class="commom-btn mt-30">Read Online</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection7" enctype="multipart/form-data">
+            <section class="testimonial-section-4 cream_bg pt-80 pb-80">
+                <div class="container">
+                    <div class="section-heading section-heading-with-btn">
+                        <div class="row" style="width:100%">
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sec7hd" value="@Model.Sec7hd" asp-for="Sec7hd" style="height:50px;">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                <input placeholder="Button Text" class="commom-btn-purple wow fade-in-right form-control" type="text" name="Sec7btntxt" value="@Model.Sec7btntxt" asp-for="Sec7btntxt">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testi-content-wrap">
+                        <div class="testi-carousel-4 swiper">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                                    <div class="testi-item-4 bg-white">
+                                        <div class="testi-thumb-4"><img src="assets/img/testimonials1.png" alt="testi"></div>
+                                        <div class="testi-content-4">
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                                            <h3 class="title">Rahul Das</h3>
+                                            <span><a href="#"><i class="fa-brands fa-linkedin"></i></a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                                    <div class="testi-item-4 bg-white">
+                                        <div class="testi-thumb-4"><img src="assets/img/testimonials1.png" alt="testi"></div>
+                                        <div class="testi-content-4">
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                                            <h3 class="title">Rahul Das</h3>
+                                            <span><a href="#"><i class="fa-brands fa-linkedin"></i></a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                                    <div class="testi-item-4 bg-white">
+                                        <div class="testi-thumb-4"><img src="assets/img/testimonials1.png" alt="testi"></div>
+                                        <div class="testi-content-4">
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                                            <h3 class="title">Rahul Das</h3>
+                                            <span><a href="#"><i class="fa-brands fa-linkedin"></i></a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide wow fade-in-bottom" data-wow-delay="200ms">
+                                    <div class="testi-item-4 bg-white">
+                                        <div class="testi-thumb-4"><img src="assets/img/testimonials1.png" alt="testi"></div>
+                                        <div class="testi-content-4">
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                                            <h3 class="title">Rahul Das</h3>
+                                            <span><a href="#"><i class="fa-brands fa-linkedin"></i></a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Carousel Dots -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+        <form asp-controller="LandingpageCMS" asp-action="UpdateSection8" enctype="multipart/form-data">
+
+            <section class="part_of_change cream_bg pb-80 text-center">
+                <div class="container">
+                    <div class="row align-items-center">
+
+                        <div class="col-lg-12">
+                            <div class="part_of_change_wrap wow fade-in-bottom " data-wow-delay="200ms">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sec8hd" value="@Model.Sec8hd" asp-for="Sec8hd" style="height:100px;margin-bottom:10px">
+                                <input placeholder="Enter Text" class="form-control" type="text" name="Sec8dsc" value="@Model.Sec8dsc" asp-for="Sec8dsc" style="height:50px;">
+                                <input placeholder="Enter Text" class="rr-secondary-btn btn-border wow fade-in-bottom login-gradient mt-50" type="text" name="Sec8btntxt" value="@Model.Sec8btntxt" asp-for="Sec8btntxt">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // JavaScript to show image preview before uploading
+        document.getElementById("seccrd1Upload").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("prvseccrd1Upload");
+                imagePreview.src = e.target.result; // Set the src of the image
+                imagePreview.style.display = "block"; // Make the image visible
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Read the file and trigger the onload event
+            }
+        });
+        document.getElementById("seccrd2Upload").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("prvseccrd2Upload");
+                imagePreview.src = e.target.result; // Set the src of the image
+                imagePreview.style.display = "block"; // Make the image visible
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Read the file and trigger the onload event
+            }
+        });
+        document.getElementById("seccrd3Upload").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("prvseccrd3Upload");
+                imagePreview.src = e.target.result; // Set the src of the image
+                imagePreview.style.display = "block"; // Make the image visible
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Read the file and trigger the onload event
+            }
+        });
+    </script>
+}

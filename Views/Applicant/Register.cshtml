@@ -1,0 +1,433 @@
+﻿@model EquidCMS.Dto.ApplicantRegistrationModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Register</title>
+    <link href="~/assets/img/logo.svg" rel="icon">
+    <link href="~/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="~/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/main.css" rel="stylesheet" />
+    <style type="text/css">
+
+        .login-gradient {
+            background: linear-gradient(rgb(117, 210, 166) 0%, rgb(39, 167, 96) 100%) !important;
+        }
+
+        .signup-gradient {
+            background: linear-gradient(180deg, #720493 0%, #53046B 100%) !important;
+        }
+    </style>
+</head>
+<body class="account-bg">
+
+    <div class="card login-gradient" style="border-radius: 7px;">
+        <div class="card-header" style="background-color:black">
+            <a asp-action="Login" asp-controller="Applicant" class="logo-pic" style="float:left">
+                <img src="~/assets/img/logo.png" />
+            </a>
+            <h4 style="float:right;margin-top: 21px;margin-left: 7px;color: white;" class="text-center" style="font-weight:900;color:white">
+                Empowering Women. Driving Climate Action
+            </h4>
+        </div>
+        <div class="container d-flex justify-content-center align-items-center" style="height: 75vh;">
+            <div class="card p-4" style="width: 850px;">
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                }
+
+                <form asp-action="Register" method="post" enctype="multipart/form-data" id="registrationForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Bootstrap Tabs -->
+                    <ul class="nav nav-tabs" id="registrationTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1">Registration Details</a>
+                        </li>
+                        @*   <li class="nav-item">
+                        <a class="nav-link" id="tab2-tab" data-bs-toggle="tab" href="#tab2">Personal Details</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" id="tab3-tab" data-bs-toggle="tab" href="#tab3">Additional Enhancements</a>
+                        </li> *@
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content mt-3">
+                        <!-- Step 1: Account Details -->
+                        <div class="tab-pane fade show active" id="tab1">
+                            <h4>Account Details</h4>
+                            <div class="row mt-2">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Pronouns</label>
+                                        <select asp-for="Pronouns" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.Pronouns">
+                                        </select>
+                                        <span asp-validation-for="Pronouns" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Full Name <span class="text-danger">*</span></label>
+                                        <input asp-for="FullName" class="form-control" required onkeypress="return allowAlphabetic(event)" />
+                                        <span asp-validation-for="FullName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Email <span class="text-danger">*</span></label>
+                                        <input asp-for="Email" class="form-control" type="email" value="@ViewBag.Email" required readonly />
+                                        <input type="hidden" asp-for="Email" value="@ViewBag.Email" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="control-label">Gender</label>
+                                        <select asp-for="Gender" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.Gender">
+                                        </select>
+                                        <span asp-validation-for="Gender" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Password <span class="text-danger">*</span></label>
+                                        <div class="position-relative">
+                                            <input type="password" asp-for="Password" class="form-control " required id="passwordField" />
+                                            <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 " id="togglePassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Phone Number <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <select asp-for="CountryCode" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.CountryCode">
+                                            </select>
+                                            <input asp-for="PhoneNumber" class="form-control" maxlength="10" required onkeypress="return isNumeric(event)" />
+                                        </div>
+                                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- LinkedIn and Portfolio -->
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">LinkedIn Profile</label>
+                                        <input asp-for="LinkedInProfile" class="form-control" type="url" placeholder="Enter LinkedIn profile URL" />
+                                        <span asp-validation-for="LinkedInProfile" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Location (City, Country)</label>
+                                        <input asp-for="Location" class="form-control" type="text" placeholder="Enter your city, country" />
+                                        <span asp-validation-for="Location" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Referral Code</label>
+
+                                        @if (Context.Session.GetString("ReferredBy") != null)
+                                        {
+                                            <input asp-for="ReferralCode" class="form-control"
+                                                   value="@Context.Session.GetString("ReferredBy")"
+                                                   readonly />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="ReferralCode" class="form-control"
+                                                   placeholder="Enter referral code (if any)" />
+                                        }
+
+                                        <span asp-validation-for="ReferralCode" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="submit" value="Register" class="btn btn-success float-end mt-3" />
+                            @* <button type="button" class="btn btn-primary float-end next-tab mt-3" data-target="#tab2" id="nextButton" disabled>Next</button> *@
+                        </div>
+
+                        <!-- Step 2: Personal Details -->
+                        @* <div class="tab-pane fade" id="tab2">
+                        <h4>Personal Details</h4>
+                        <div class="row mt-2">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Job Role / Title</label>
+                        <input asp-for="JobRole" class="form-control" />
+                        </div>
+                        </div>
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Industry</label>
+                        <select asp-for="Industry" class="form-select" asp-items="ViewBag.IndustryId">
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="row mt-2">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Experience Level</label>
+                        <select asp-for="ExperienceLevel" class="form-select"  asp-items="ViewBag.ExperenceLevel">
+
+                        </select>
+                        </div>
+                        </div>
+
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>LinkedIn Profile</label>
+                        <input asp-for="LinkedInProfile" class="form-control" type="url" />
+                        </div>
+                        </div>
+                        </div>
+                        <div class="row mt-2">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Skills</label>
+                        <select asp-for="Skills" class="form-select" multiple >
+                        </select>
+                        </div>
+                        </div>
+
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Preferred Job Type</label>
+                        <select asp-for="PreferredJobType" class="form-select" asp-items="ViewBag.JobType">
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="row mt-2">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Location / Preferred Work Location</label>
+                        <input asp-for="Location" class="form-control" placeholder="Enter location or preferred work location" />
+                        </div>
+                        </div>
+                        </div>
+
+                        <!-- Buttons to navigate between tabs -->
+                        <button type="button" class="btn btn-secondary prev-tab mt-3" data-target="#tab1">Previous</button>
+                        <button type="button" class="btn btn-primary float-end next-tab mt-3" data-target="#tab3">Next</button>
+                        </div> *@
+
+                        <!-- Step 3: Additional Enhancements -->
+                        @* <div class="tab-pane fade" id="tab3">
+                        <h4>Additional Enhancements</h4>
+                        <div class="row mt-2">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>Upload Resume</label>
+                        <input type="file" asp-for="ResumeFilePath" class="form-control" />
+                        </div>
+                        </div>
+
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label>How Did You Hear About Us?</label>
+                        <select asp-for="ReferralSource" class="form-select" asp-items="ViewBag.ReferralSource">
+                        <option value="">Select</option>
+                        <option value="Referral">Referral</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Event">Event</option>
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+
+                        <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" asp-for="ReceiveJobAlerts">
+                        <label class="form-check-label">Receive Job Alerts & Updates</label>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary prev-tab mt-3" data-target="#tab2">Previous</button>
+                        </div> *@
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+
+    <!-- Add JavaScript to handle validation and enable/disable the "Next" button -->
+    <script>
+        // Validate the form and enable the "Next" button if valid
+        const form = document.getElementById('registrationForm');
+        const nextButton = document.getElementById('nextButton');
+
+        // Function to check if the form is valid
+        function validateForm() {
+            if (form.checkValidity()) {
+                nextButton.disabled = false;  // Enable the "Next" button
+            } else {
+                nextButton.disabled = true;   // Disable the "Next" button
+            }
+        }
+
+        // Event listener for the form's input elements to check validity on change
+        form.addEventListener('input', function () {
+            validateForm();
+        });
+
+        // Initially validate the form on page load
+        validateForm();
+
+        // Handle the "Next" button click to move to the next tab
+        nextButton.addEventListener('click', function () {
+            if (form.checkValidity()) {
+                // Move to the next tab (tab2)
+                $('#tab2-tab').tab('show');
+            }
+        });
+    </script>
+    <!-- JavaScript for Tab Navigation -->
+    <script>
+
+        document.querySelectorAll('.next-tab').forEach(button => {
+            button.addEventListener('click', function () {
+                var target = this.getAttribute('data-target');
+                var tab = new bootstrap.Tab(document.querySelector(target + '-tab'));
+                tab.show();
+            });
+        });
+
+        document.querySelectorAll('.prev-tab').forEach(button => {
+            button.addEventListener('click', function () {
+                var target = this.getAttribute('data-target');
+                var tab = new bootstrap.Tab(document.querySelector(target + '-tab'));
+                tab.show();
+            });
+        });
+
+        function isNumeric(event) {
+            var key = event.keyCode || event.which;
+            return (key >= 48 && key <= 57);
+        }
+
+        function allowAlphabetic(event) {
+            var key = event.keyCode || event.which;
+            return (key >= 65 && key <= 90) || (key >= 97 && key <= 122) || key === 32;
+        }
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/md5.js"></script>
+    <script src="~/assets/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/vendor/chart.js/chart.umd.js"></script>
+    <script src="~/assets/vendor/quill/quill.min.js"></script>
+    <script src="~/assets/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="~/assets/vendor/php-email-form/validate.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("form").bind("keypress", function (e) {
+                if (e.keyCode == 13) {
+                    return false;
+                }
+            });
+        });
+        function GeneratePwd() {
+            if (document.getElementById("Password").value != "") {
+                var password1 = $("#Password").val();
+                var hashedPassword = hex_md5(password1); // MD5 Hash of user input password
+                var encrypted = window.btoa(password1)
+                var encpass = generatePassword(8);
+                encrypted = window.btoa(encpass + encrypted);
+                var encstpass = generatePassword(128);
+                var SS = generatePassword(32);
+                encrypted = encrypted + SS
+                encstpass = encstpass + '==';
+                $("#Vcode").val(encrypted)
+                $("#Password").val(SS);
+            }
+        }
+
+        function generatePassword(length) {
+            length = length - 1;
+            var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                retVal = "";
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * n));
+            }
+            return retVal + "H";
+        }
+
+
+    </script>
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            var passwordField = document.getElementById("passwordField");
+            var icon = this.querySelector("i");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        });
+    </script>
+    <script>
+
+        function isNumeric(event) {
+            var charCode = (event.which) ? event.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+
+        function allowAlphabetic(event) {
+            var key = event.keyCode || event.which;
+            var keyChar = String.fromCharCode(key);
+            return /^[A-Za-z\s]+$/.test(keyChar);
+        }
+
+    </script>
+
+</body>
+</html>
+

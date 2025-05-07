@@ -1,0 +1,209 @@
+﻿@model IEnumerable<EquidCMS.Models.Tblcompany>
+
+@{
+    ViewData["Title"] = "Company";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+
+    .dt-search {
+        float: right;
+    }
+
+    .dt-paging {
+        float: right;
+        margin-top: 10px;
+    }
+
+    div.dt-buttons {
+        position: relative;
+        float: left;
+    }
+
+    button.dt-button, div.dt-button, a.dt-button {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin-right: 0.333em;
+        padding: 0.5em 1em;
+        border: 1px solid #999;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.88em;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        background-color: #e9e9e9;
+        background-image: -webkit-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -moz-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -ms-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -o-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: linear-gradient(to bottom, #fff 0%, #e9e9e9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='white', EndColorStr='#e9e9e9');
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-decoration: none;
+        outline: none;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        $('#myDataTable').DataTable({
+            dom: 'lBfrtip',
+            buttons: ['excelHtml5'],
+            'info': false,
+            'lengthChange': false,
+            'autoWidth': false
+        })
+    })
+</script>
+<section id="AboutSection" class="mt-4 mb-4">
+    <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
+        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h2 class="PagemainHeading">Company</h2>
+        </div>
+        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            <div class="pull-right">
+                <a asp-controller="tblcompanies" asp-action="Create" class="btn btn-primary signup-gradient backtodetailbutton float-end">Add Company</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table id="myDataTable" class="table table-bordered table-striped dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Company</th>
+                        <th>Logo</th>
+                        <th>Website</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int a = 1;
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @a
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    <img src="/@Url.Content(@item.Logo)" style="cursor" alt="Image Thumbnail" class="img-thumbnail" width="60" data-bs-toggle="modal" data-bs-target="#imageModal" data-bs-slide-to="@a">
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Website)
+                                </td>
+                                <td>
+                                    <a asp-controller="tblcompanies" asp-action="Edit" asp-route-id="@item.Companyid" class="btn btn-primary btn-sm edit-btn">Edit</a>
+                                    <button class="btn btn-danger btn-sm delete-button" data-id="@item.Companyid">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            a += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<script>
+    // Script to update the modal's carousel to the clicked image
+    document.querySelectorAll('[data-bs-target="#imageModal"]').forEach((image, index) => {
+        image.addEventListener('click', function () {
+            const carousel = document.querySelector('#imageCarousel');
+            const carouselItems = carousel.querySelectorAll('.carousel-item');
+            const targetIndex = index;
+
+            // Set the active class on the clicked image's carousel item
+            carouselItems.forEach(item => item.classList.remove('active'));
+            carouselItems[targetIndex].classList.add('active');
+        });
+    });
+</script>
+<script>
+   $(document).ready(function () {
+    // Event delegation for delete button (for event deletion)
+    $(document).on("click", ".delete-button", function () {
+        var entryId = $(this).data("id");
+
+        if (confirm("Are you sure you want to delete this record?")) {
+            $.ajax({
+                url: "/tblcompanies/Delete/" + entryId,
+                type: "POST",
+                success: function (response) {
+                    alert("Record deleted successfully.");
+                    location.reload(); // Refresh the page after deletion
+                },
+                error: function () {
+                    alert("Error deleting record.");
+                }
+            });
+        }
+    });
+
+    // Reinitialize event handlers after each DataTable draw
+    $('#myDataTable').on('draw.dt', function () {
+       
+    });
+});
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        setTimeout(function () {
+            $('#successMessage').fadeOut('slow');
+        }, 5000); // 5000 milliseconds = 5 seconds
+    });
+</script>
+
+<!-- Modal for Image Slider with Heading -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @*   <div class="modal-header">
+            <h5 class="modal-title" id="imageModalLabel">Resources</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div> *@
+            <div class="modal-body signup-gradient" style="padding:0.5rem">
+                <!-- Carousel -->
+                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @foreach (var item in Model)
+                        {
+                            <div class="carousel-item @(a == 1 ? "active" : "")">
+                                <!-- Image and Heading -->
+                                <div>
+                                    <h3 style="color:white;font-weight:800;">@item.Name</h3>  <!-- Heading Display -->
+                                    <img src="@Url.Content(@item.Logo)" class="d-block w-100" alt="@item.Name">
+                                </div>
+                            </div>
+                            a += 1;
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

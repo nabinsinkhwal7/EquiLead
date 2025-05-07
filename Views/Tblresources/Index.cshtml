@@ -1,0 +1,118 @@
+﻿@model IEnumerable<EquidCMS.Models.Tblresource>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Rshead)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rsimage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rsshortdescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rsage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Isverified)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Isrelatedrs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Isdeleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ispublic)
+            </th>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.Rsversion)
+            </th>
+          
+            <th>
+                @Html.DisplayNameFor(model => model.Createdby)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Createdon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updatedby)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updatedon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Theme)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rshead)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rsimage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rsshortdescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rsage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Isverified)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Isrelatedrs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Isdeleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ispublic)
+            </td>
+          
+            <td>
+                @Html.DisplayFor(modelItem => item.Rsversion)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.Createdby)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Createdon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updatedby)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updatedon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Theme.ThemeId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Resourceid">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Resourceid">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Resourceid">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,273 @@
+﻿@model EquidCMS.Models.Tblresource
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%; /* Make sure the image fits inside the container */
+        max-height: 300px; /* Limit the height */
+       /*  display: none; /* Hide by default */ */
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="RS" asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3">
+                            <h4 class="Headingcolorbg">Resources</h4>
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="alert alert-danger" style="font-size:14px" role="alert">
+                                <div class="col-sm-12">
+                                    NOTE: Fields marked with (*) are compulsory fields
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3">
+                            <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4">
+                            <input style="display:none" asp-for="Resourceid" class="form-control" />
+
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Title <span style="color:red">*</span></label>
+                                        <input asp-for="Rshead" class="form-control" />
+                                        <span asp-validation-for="Rshead" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label asp-for="Topic" class="control-label">Topic </label>
+                                        <select asp-for="Topic" class="form-control" multiple asp-items="ViewBag.ThemeId"></select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+                                        <textarea asp-for="Rsshortdescription" class="form-control" ></textarea>
+                                        <span asp-validation-for="Rsshortdescription" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Document</label>
+                                        <input asp-for="Rsdocument" hidden class="form-control" />
+                                        <!-- File input for image -->
+                                        <input type="file" id="FileToUpload2" name="FileToUpload2" class="form-control" />
+
+                                        <span asp-validation-for="Rsdocument" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Thumbnail</label>
+                                        <input asp-for="Rsimage" hidden class="form-control" />
+                                        <!-- File input for image -->
+                                        <input type="file" id="FileToUpload1" name="FileToUpload1" class="form-control" />
+
+                                        <span asp-validation-for="Rsimage" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Category <span style="color:red">*</span></label>
+                                        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="margin-top: 12px;">
+                                        <label class="control-label">Resource Type <span style="color:red">*</span></label>
+                                        <select asp-for="Rsdocumenttypeid" class="form-select" asp-items="ViewBag.Rsdocumenttypeid"></select>
+                                    </div>
+                                </div>
+                               </div>
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Free Access</label>
+                                        <div class="form-check form-switch">
+                                            <!-- Using a checkbox to toggle 'IsPublic' field -->
+                                            <input asp-for="Ispublic" type="checkbox" class="form-check-input" id="Ispublic" />
+                                            <label class="form-check-label" for="Ispublic">Yes </label>
+                                        </div>
+                                        <span asp-validation-for="Ispublic" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Is Link</label>
+                                        <div class="form-check form-switch">
+                                            <!-- Using a checkbox to toggle 'IsPublic' field -->
+                                            <input type="checkbox" class="form-check-input" id="IsLink" />
+                                            <label class="form-check-label" for="IsLink">Yes</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Is Published</label>
+                                        <div class="form-check form-switch">
+                                            <!-- Using a checkbox to toggle 'IsPublic' field -->
+                                            <input asp-for="Isverified" type="checkbox" class="form-check-input"  />
+                                            <label class="form-check-label" for="Isverified">Yes</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Resource Video Link</label>
+                                        <!-- Image preview container -->
+                                        <input asp-for="RsvideoLink" class="form-control" id="RsvideoLink" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <img id="imagePreview" class="image-preview" src="@(!string.IsNullOrEmpty(Model.Rsimage) ? Model.Rsimage : Url.Content("~/assets/img/ImagePreview.png"))" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="form-group" style="float: right">
+                                <input type="submit" value="Update" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // JavaScript to show image preview before uploading
+        document.getElementById("FileToUpload1").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("imagePreview");
+                imagePreview.src = e.target.result; // Set the src of the image
+                imagePreview.style.display = "block"; // Make the image visible
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Read the file and trigger the onload event
+            }
+        });     // Function to generate the year range and populate the dropdown
+        function populateYearDropdown(selectedYear) {
+            const startYear = 1991; // Starting year (0 years experience)
+            const endYear = 2050;  // Ending year (50 years experience)
+            const selectElement = document.getElementById("Rsage");
+
+            // Clear any existing options in the dropdown
+            selectElement.innerHTML = "";
+
+            // Add a default "Select" option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.text = "Select Age";
+            selectElement.appendChild(defaultOption);
+
+            // Loop through the range and add options for each year
+            for (let year = startYear; year <= endYear; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                if (year === selectedYear) {
+                    option.selected = true; // Pre-select the current year of experience
+                }
+                selectElement.appendChild(option);
+            }
+        }
+
+        // Call the function when the page loads and pass the selected year from the controller
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const age = @Model.Rsage;  // Use 0 as fallback if no value exists
+            populateYearDropdown(age);
+        });
+    </script>
+ <script>
+    // Wait for the document to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the checkbox and input elements
+        const isLinkCheckbox = document.getElementById('IsLink');
+        const videoLinkInput = document.getElementById('RsvideoLink');
+        const fileInput = document.getElementById('FileToUpload2');
+        
+        // Set the checkbox state based on the Razor value (@Model.RsvideoLink)
+        const videoLinkExists = '@Model.RsvideoLink' !== 'null' && '@Model.RsvideoLink' !== ''; // Check if RsvideoLink is not null or empty
+
+        // Set the checkbox state based on the existence of the RsvideoLink value
+        isLinkCheckbox.checked = videoLinkExists;
+
+        // Function to toggle input states
+        function toggleInputState() {
+            if (isLinkCheckbox.checked) {
+                videoLinkInput.disabled = false; // Enable the video link input
+                fileInput.disabled = true; // Disable the file input
+            } else {
+                videoLinkInput.disabled = true; // Disable the video link input
+                fileInput.disabled = false; // Enable the file input
+            }
+        }
+
+        // Call the function to set the initial state
+        toggleInputState();
+
+        // Add event listener to toggle input state when the checkbox changes
+        isLinkCheckbox.addEventListener('change', toggleInputState);
+    });
+</script>
+}

@@ -1,0 +1,55 @@
+﻿@using EquidCMS.Models
+@model MstLookup
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Lookup Data";
+}
+
+<section class="container-fluid mt-4">
+    <h3>Create New Lookup Data</h3>
+<form asp-action="Create" method="post">
+        <div class="form-group">
+            <label>Hint Details</label>
+            <select asp-for="Lookupflag" class="form-control" asp-items="ViewBag.LookupDropdown" onchange="updateHintDetails()"></select>
+        </div>
+
+    <div class="form-group">
+        <label>Lookup Code</label>
+        <input asp-for="Lookupcode" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Language ID</label>
+        <input asp-for="Languageid" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Sequence Number</label>
+        <input asp-for="Seqno" class="form-control" readonly />
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        <input asp-for="Description" class="form-control" placeholder="Enter Description" required />
+    </div>
+
+    <div class="form-check">
+        <input asp-for="Active" class="form-check-input" type="checkbox" checked />
+        <label class="form-check-label">Active</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>
+
+</section>
+
+<script>
+    function updateHintDetails() {
+        var dropdown = document.getElementById("Lookupflag");
+        var selectedHintDetails = dropdown.options[dropdown.selectedIndex].text; // Get selected hint details text
+
+        // Redirect to Create action with selectedHintDetails
+        var url = '@Url.Action("Create", "MstLookup")' + '?selectedHintDetails=' + encodeURIComponent(selectedHintDetails);
+        window.location.href = url;
+    }
+</script>

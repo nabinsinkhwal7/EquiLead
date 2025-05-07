@@ -1,0 +1,110 @@
+﻿@model EquidCMS.Models.Tblresource
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Tblresource</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Resourceid" />
+            <div class="form-group">
+                <label asp-for="Rshead" class="control-label"></label>
+                <input asp-for="Rshead" class="form-control" />
+                <span asp-validation-for="Rshead" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rsimage" class="control-label"></label>
+                <input asp-for="Rsimage" class="form-control" />
+                <span asp-validation-for="Rsimage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rsshortdescription" class="control-label"></label>
+                <input asp-for="Rsshortdescription" class="form-control" />
+                <span asp-validation-for="Rsshortdescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rsage" class="control-label"></label>
+                <input asp-for="Rsage" class="form-control" />
+                <span asp-validation-for="Rsage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ThemeId" class="control-label"></label>
+                <select asp-for="ThemeId" class="form-control" asp-items="ViewBag.ThemeId"></select>
+                <span asp-validation-for="ThemeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Isverified" class="control-label"></label>
+                <input asp-for="Isverified" class="form-control" />
+                <span asp-validation-for="Isverified" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Isrelatedrs" class="control-label"></label>
+                <input asp-for="Isrelatedrs" class="form-control" />
+                <span asp-validation-for="Isrelatedrs" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Isdeleted" /> @Html.DisplayNameFor(model => model.Isdeleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ispublic" class="control-label"></label>
+                <input asp-for="Ispublic" class="form-control" />
+                <span asp-validation-for="Ispublic" class="text-danger"></span>
+            </div>
+            @* <div class="form-group">
+                <label asp-for="Rsimagebuttonlink" class="control-label"></label>
+                <input asp-for="Rsimagebuttonlink" class="form-control" />
+                <span asp-validation-for="Rsimagebuttonlink" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Rsversion" class="control-label"></label>
+                <input asp-for="Rsversion" class="form-control" />
+                <span asp-validation-for="Rsversion" class="text-danger"></span>
+            </div>
+           @*  <div class="form-group">
+                <label asp-for="Relatedresourceid" class="control-label"></label>
+                <input asp-for="Relatedresourceid" class="form-control" />
+                <span asp-validation-for="Relatedresourceid" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="Createdby" class="control-label"></label>
+                <input asp-for="Createdby" class="form-control" />
+                <span asp-validation-for="Createdby" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Createdon" class="control-label"></label>
+                <input asp-for="Createdon" class="form-control" />
+                <span asp-validation-for="Createdon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Updatedby" class="control-label"></label>
+                <input asp-for="Updatedby" class="form-control" />
+                <span asp-validation-for="Updatedby" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Updatedon" class="control-label"></label>
+                <input asp-for="Updatedon" class="form-control" />
+                <span asp-validation-for="Updatedon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

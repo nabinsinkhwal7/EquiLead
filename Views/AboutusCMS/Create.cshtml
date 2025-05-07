@@ -1,0 +1,114 @@
+﻿@model EquidCMS.Models.Tblaboutu
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_LayoutCMSAU.cshtml";
+}
+
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 300px;
+    }
+
+    .form-control {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="AboutusCMS" asp-action="Update" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url(@Model.Bannerimglink);">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-12">
+                            <div class="wow fade-in-bottom" data-wow-delay="200ms">
+                                <div class="section-title-3">
+                                    @* <input class="form-control" type="text" asp-for="Bannerimglink" name="Bannerimglink" placeholder="Banner Image URL"> *@
+                                    <input class="form-control" type="text" asp-for="Bannermainheading" name="Bannermainheading" placeholder="Main Heading">
+                                    <textarea class="form-control" asp-for="Bannersubheading" name="Bannersubheading" placeholder="Sub Heading"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="our-story light-bg-section border-radius-bottom cream_bg pt-60 pb-60 wow fade-in-bottom" data-wow-delay="400ms">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-10 offset-1">
+                            <div class="section-heading text-center">
+                                <input class="form-control" type="text" asp-for="Sechdtxt" name="Sechdtxt" placeholder="Section Heading">
+                                <textarea class="form-control" asp-for="Secdesc" name="Secdesc" placeholder="Second Section Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mission-vision-wrap wow fade-in-bottom" data-wow-delay="400ms">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mission-vision-left">
+                            <div class="wow fade-in-bottom" data-wow-delay="200ms">
+                                <div class="section-title-3">
+                                    <input class="form-control" type="text" asp-for="Thirdhdtxt" name="Thirdhdtxt" placeholder="Mission & Vision Heading">
+                                    <textarea class="form-control" asp-for="Thirddesc" name="Thirddesc" placeholder="Mission & Vision Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 mission-vision-right">
+                            <div class="visionmission__item wow fade-in-right" data-wow-delay="200ms">
+                                <div class="visionmission__item-icon">
+                                    <i class="fal fa-eye"></i>
+                                </div>
+                                <div class="visionmission__item-text">
+                                    <input class="form-control" type="text" asp-for="Thirdsubonehdtxt" name="Thirdsubonehdtxt" placeholder="Third sub one Heading">
+                                    <textarea class="form-control" asp-for="Thirdsubonedesc" name="Thirdsubonedesc" placeholder="Third sub one Description"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="visionmission__item wow fade-in-right" data-wow-delay="200ms">
+                                <div class="visionmission__item-icon">
+                                    <i class="fal fa-bullseye-arrow"></i>
+                                </div>
+                                <div class="visionmission__item-text">
+                                    <input class="form-control" type="text" asp-for="Thirdsubtwohdtxt" name="Thirdsubtwohdtxt" placeholder="Third sub two Heading">
+                                    <textarea class="form-control" asp-for="Thirdsubtwodesc" name="Thirdsubtwodesc" placeholder="Third sub two Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="wow fade-in-bottom" data-wow-delay="400ms">
+                            <img src="assets/img/vision-mission-banner.webp" alt="" class="vision-mission-img mt-30">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="row" style="padding:5px">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="form-group" style="float: right">
+                        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr />
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

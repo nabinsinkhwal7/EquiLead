@@ -1,0 +1,159 @@
+﻿@model EquidCMS.Models.Tblcompany
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<style type="text/css">
+    .control-label {
+        font-weight: 800;
+    }
+
+    .image-preview {
+        max-width: 100%; /* Make sure the image fits inside the container */
+        max-height: 300px; /* Limit the height */
+        /*  display: none; /* Hide by default */ */
+    }
+
+    /* Style the input fields */
+    .benefit-input {
+        margin-bottom: 10px; /* Space between input fields */
+    }
+
+    /* Style the remove button */
+    .remove-btn {
+        margin-left: 10px; /* Space between input and button */
+        display: inline-block; /* Ensures button is aligned properly */
+        padding: 5px 10px;
+        font-size: 12px;
+        background-color: #d9534f; /* Red color for the remove button */
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        /* Hover effect for remove button */
+        .remove-btn:hover {
+            background-color: #c9302c;
+        }
+
+    /* Optional: Hides the button initially */
+    .remove-btn {
+        display: none;
+    }
+
+    /* Optional: Show the remove button only when the input has focus or on hover */
+    .benefit-container:hover .remove-btn {
+        display: inline-block;
+    }
+    /* Error message container */
+    #error-message {
+        color: #dc3545; /* Bootstrap danger color */
+        font-size: 14px;
+        margin-top: 5px;
+        padding: 5px;
+        border: 1px solid #dc3545; /* Red border */
+        background-color: #f8d7da; /* Light red background */
+        border-radius: 4px;
+    }
+
+    /* Error messages under form inputs */
+    .text-danger {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-controller="tblcompanies" asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <section>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3">
+                            <h4 class="Headingcolorbg">Company</h4>
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="alert alert-danger" style="font-size:14px" role="alert">
+                                <div class="col-sm-12">
+                                    NOTE: Fields marked with (*) are compulsory fields
+                                </div>
+                                <!-- Custom error message -->
+                                <div id="error-message" style="display: none;"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3">
+                            <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Name <span style="color:red">*</span></label>
+                                        <input asp-for="Name" class="form-control" />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Logo <span style="color:red">*</span></label>
+                                        <input type="file" id="FileToUpload2" name="FileToUpload2" class="form-control" />
+                                        <span asp-validation-for="Logo" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="control-label">Overview <span style="color:red">*</span></label>
+                                    <input asp-for="Overview" class="form-control" />
+                                    <span asp-validation-for="Overview" class="text-danger"></span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12">
+                            <div class="row mt-2">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Website <span style="color:red">*</span></label>
+                                        <input asp-for="Website" class="form-control" />
+                                        <span asp-validation-for="Website" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Sociallink" class="control-label"></label>
+                                        <input asp-for="Sociallink" class="form-control" />
+                                        <span asp-validation-for="Sociallink" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-12">
+                            <div class="form-group" style="float: right">
+                                <input type="submit" value="Save" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+

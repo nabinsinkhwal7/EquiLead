@@ -1,0 +1,456 @@
+﻿@model IEnumerable<EquidCMS.Models.Tblresource>
+@{
+    ViewData["Title"] = "Resources";
+    Layout = "~/Views/Shared/_LayoutWebSNW.cshtml";
+    var CategoryRS = ViewBag.CategoryRS as List<EquidCMS.Models.MstLookup>;
+    var TopicRS = ViewBag.TopicRS as List<EquidCMS.Models.MstLookup>;
+    var selectedCategory = ViewBag.SelectedCategory as int?;
+    var selectedTopic = ViewBag.SelectedTopic as int?;
+}<style>
+     .pagination .page-item.active .page-link {
+         background-color: #6a1b9a;
+         border-color: #6a1b9a;
+         color: white;
+     }
+
+     .pagination .page-link {
+         color: #6a1b9a;
+     }
+
+         .pagination .page-link:hover {
+             background-color: #eee;
+         }
+
+     .searchable-select .search-box {
+         width: 100%;
+         padding: 5px 10px;
+         border: none;
+         border-bottom: 1px solid #ccc;
+         outline: none;
+         font-size: 14px;
+         box-sizing: border-box;
+     }
+
+     .searchable-select .list {
+         overflow-y: auto;
+     }
+     /* Keep base dropdown style */
+     .nice-select {
+         position: relative;
+         display: block;
+         background: #fff;
+         border-radius: 5px;
+         padding: 10px;
+         cursor: pointer;
+         user-select: none;
+         margin: 3px;
+     }
+
+         /* Keep current selection styled */
+         .nice-select .current {
+             display: inline-block;
+             font-size: 16px;
+             color: #333;
+         }
+
+         /* Make the search box look natural inside dropdown */
+         .nice-select .search-box {
+             display: none;
+             width: 100%;
+             border: none;
+             border-bottom: 1px solid #ccc;
+             padding: 5px 10px;
+             box-sizing: border-box;
+             font-size: 14px;
+             margin-top: 5px;
+         }
+
+         /* Keep dropdown list styling */
+         .nice-select .list {
+             display: none;
+             background: #fff;
+             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+             overflow-y: auto;
+             margin-top: 5px;
+             position: absolute;
+             width: 100%;
+             z-index: 100;
+         }
+
+         /* Show list when open */
+         .nice-select.open .list {
+             display: block;
+         }
+
+         /* Option styles */
+         .nice-select .option {
+             padding: 10px;
+             font-size: 14px;
+             color: #333;
+         }
+
+             .nice-select .option:hover {
+                 background-color: #f2f2f2;
+                 cursor: pointer;
+             }
+
+     .description {
+         margin: 20px;
+         margin-bottom: 20;
+         margin-right: 0;
+         color: white;
+         line-height: 24px;
+         font-weight: 500;
+         padding-right: 20px;
+         height: 150px;
+         overflow-y: scroll;
+     }
+</style>
+
+<section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url(/assets/img/ResourceBanner.png);">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <div class="col-lg-12">
+                <div class="wow fade-in-bottom " data-wow-delay="200ms">
+                    <div class="section-title-3">
+                        <h1 class="mb-20">Equity in Action</h1>
+                        <p class="sub-heading">Explore guides, toolkits, and research to build more inclusive and equitable workplaces.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<a href="#leadership-resources" style="display:none;">Executive coaching for women professionals</a>
+<a href="#career-advancement-tips" style="display:none;">Career advancement tips for women leaders</a>
+
+<!--our-project-section 4-->
+<section class="job-filter-section cream_bg">
+    <div class="container">
+        <div class="row align-items-center">
+
+            <form method="get" asp-action="RSGallery" id="rsFilterForm">
+
+                <div class="col-lg-12">
+                    <div class="job-filter-wrap wow fade-in-bottom " data-wow-delay="200ms">
+                        <div class="contact-form-5">
+
+                            <div class="job-filter-tag-list">
+                                <!-- Search Title -->
+                                <div class="job-input input-seprator">
+                                    <i class="fa fa-search"></i>
+                                    <input type="text" name="searchKeyword" value="@ViewBag.SearchKeyword" class="form-control" placeholder="Search by title">
+                                </div>
+
+                            </div>
+
+                            <div class="job-filter-tag-list">
+                                <div class="form-item-wrap">
+                                    <!-- Topic Dropdown First -->
+                                    <div class="form-item" >
+                                        <div class="nice-select searchable-select" id="TopicSelect" tabindex="0">
+                                            <span class="current">
+                                                @(ViewBag.SelectedTopic != null
+                                                    ? (TopicRS.FirstOrDefault(t => t.Lookupcode.ToString() == ViewBag.SelectedTopic.ToString())?.Description ?? "Topic")
+                                                    : "Topic")
+                                            </span>
+                                            <ul id="TopicList" class="list">
+                                                <li>
+                                                    <input type="text" class="search-box" placeholder="Search Topic..." style="display: none;" />
+                                                </li>
+                                                <li data-value="" class="option">All Topics</li>
+                                                @foreach (var topic in TopicRS)
+                                                {
+                                                    <li data-value="@topic.Lookupcode" class="option">@topic.Description</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="job-filter-tag-list">
+                                <div class="form-item-wrap">
+
+                                    <!-- Category Dropdown Second -->
+                                    <div class="form-item" >
+                                        <div class="nice-select searchable-select" id="CategorySelect" tabindex="0">
+                                            <span class="current">
+                                                @(ViewBag.SelectedCategory != null
+                                                    ? (CategoryRS.FirstOrDefault(c => c.Lookupcode.ToString() == ViewBag.SelectedCategory.ToString())?.Description ?? "Category")
+                                                    : "Category")
+                                            </span>
+                                            <ul id="CategoryList" class="list">
+                                                <li>
+                                                    <input type="text" class="search-box" placeholder="Search Category..." style="display: none;" />
+                                                </li>
+                                                <li data-value="" class="option">All Categories</li>
+                                                @foreach (var cat in CategoryRS)
+                                                {
+                                                    <li data-value="@cat.Lookupcode" class="option">@cat.Description</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Hidden Inputs -->
+                            <input type="hidden" name="selectedCategory" id="selectedCategory" value="@ViewBag.SelectedCategory" />
+                            <input type="hidden" name="selectedTopic" id="selectedTopic" value="@ViewBag.SelectedTopic" />
+
+
+                            <!-- Submit -->
+                            <div class="job-filter-tag-list">
+                                <button type="submit" class="rr-secondary-btn login-gradient" style="margin:2px;width:auto!important">Filter Resources</button>
+                            </div>
+                            <div class="job-filter-tag-list">
+                                <a href="@Url.Action("RSGallery")" class="rr-secondary-btn login-gradient" style="margin:2px;width:auto!important" type="button">Clear Filters</a>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </form>
+
+
+        </div>
+        @if (Model != null && Model.Any(x => x.Isverified == true))
+        {
+            <div class="row filter-items">
+                @foreach (var RSList in Model.Where(x => x.Isverified == true))
+                {
+                    <div class="col-lg-4 col-md-6 single-item careerGuides" data-title="@RSList.Rshead">
+                        <div class="project-item-4 wow fade-in-left" data-wow-delay="300ms">
+                            <div class="project-thumb">
+                                <img src="@(string.IsNullOrEmpty(RSList.Rsimage) ? Url.Content("~/assets/RSImage/ResourcesDefaultIcon.png") : RSList.Rsimage)" alt="@RSList.Rshead">
+                            </div>
+                            <div class="project-content">
+                                <div class="tag-list-new">
+
+                                    @foreach (var Topic in RSList.Topic)
+                                    {
+                                        @foreach (var LookTopic in TopicRS.Where(p => p.Lookupcode == Topic))
+                                        {
+                                            <a data-titleTP="@LookTopic.Description">@LookTopic.Description</a>
+                                        }
+                                    }
+                                    @for (int i = 0; i < CategoryRS.Count; i++)
+                                    {
+                                        if (CategoryRS[i].Lookupcode == RSList.CategoryId)
+                                        {
+                                            <a data-titleCG="@CategoryRS[i].Description">@CategoryRS[i].Description</a>
+                                        }
+                                        //CategoryRS
+                                    }
+
+                                </div>
+                                <h3 class="title ellipsis">
+                                    @{
+                                        var resourceLink = RSList.Rsdocumenttypeid == 1 ? RSList.Rsdocument : RSList.RsvideoLink;
+                                    }
+                                    <a onclick="trackResourceClick(@RSList.Resourceid)" href="@resourceLink" target="_blank">@RSList.Rshead</a>
+                                </h3>
+                                <p class="description">@RSList.Rsshortdescription</p>
+                                <a href="@resourceLink" class="rr-secondary-btn  login-gradient" onclick="trackResourceClick(@RSList.Resourceid)" target="_blank">View</a>
+
+                            </div>
+                            
+                        </div>
+                    </div>
+                }
+
+            </div>
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-4">
+
+                        <!-- Previous -->
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               href="@Url.Action("RSGallery", new {
+                       searchKeyword = ViewBag.SearchKeyword,
+                       selectedCategory = ViewBag.SelectedCategory,
+                       selectedTopic = ViewBag.SelectedTopic,
+                       page = ViewBag.CurrentPage - 1
+                   })"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                   href="@Url.Action("RSGallery", new {
+                           searchKeyword = ViewBag.SearchKeyword,
+                           selectedCategory = ViewBag.SelectedCategory,
+                           selectedTopic = ViewBag.SelectedTopic,
+                           page = i
+                       })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Next -->
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link "
+                               href="@Url.Action("RSGallery", new {
+                       searchKeyword = ViewBag.SearchKeyword,
+                       selectedCategory = ViewBag.SelectedCategory,
+                       selectedTopic = ViewBag.SelectedTopic,
+                       page = ViewBag.CurrentPage + 1
+                   })"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-warning" role="alert">
+                    No resources found matching your filters. Try adjusting your search.
+                </div>
+            </div>
+        }
+
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                The resource is private. Please log in to access it.
+            </div>
+            <div class="modal-footer">
+                <a class="rr-secondary-btn wow fade-in-right login-gradient" href="/Applicant/Login">Login</a>
+                <a class="rr-secondary-btn wow fade-in-right signup-gradient" href="/Applicant/Signup">Sign Up</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    function checkRSDownload(DocLink, Ispublic) {
+        debugger;
+        $.ajax({
+            url: '/Home/GetSessionValue',
+            method: 'GET',
+            success: function (response) {
+
+                if (Ispublic === 'True') {
+                    window.location.href = DocLink; // Public document, allow download
+                } else if (response.isLoggedIn === null) {
+                    var exampleModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                    exampleModal.show(); // Show login modal
+                } else {
+
+                    window.location.href = DocLink; // Private document, but user is logged in
+                }
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+
+
+    // Reusable function to send resource click tracking
+    function trackResourceClick(resourceId) {
+        debugger;
+        if (!resourceId) return;
+
+        $.ajax({
+            url: '/Home/resourceApplyClickTrack',
+            type: 'POST',
+            data: ({ resourceId: resourceId })
+        });
+    }
+</script>
+<script>
+    function setupSearchableSelect(selectId, hiddenInputId) {
+        const select = document.getElementById(selectId);
+        const input = select.querySelector('.search-box');
+        const current = select.querySelector('.current');
+        const list = select.querySelector('.list');
+        const options = select.querySelectorAll('.option');
+
+        select.addEventListener('click', (e) => {
+            e.stopPropagation(); // prevent bubbling
+            // Toggle dropdown open/close
+            select.classList.toggle('open');
+
+            if (select.classList.contains('open')) {
+                input.style.display = 'block';
+                input.focus();
+            } else {
+                input.style.display = 'none';
+                input.value = '';
+                filterOptions('', select);
+            }
+        });
+
+        // Handle option selection
+        options.forEach(option => {
+            option.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const value = this.getAttribute('data-value');
+                document.getElementById(hiddenInputId).value = value;
+                current.innerText = this.innerText;
+
+                // Hide input and close dropdown
+                input.style.display = 'none';
+                input.value = '';
+                filterOptions('', select);
+                select.classList.remove('open');
+            });
+        });
+
+        // Filter options as user types
+        input.addEventListener('input', function () {
+            filterOptions(this.value, select);
+        });
+
+        function filterOptions(search, select) {
+            const options = select.querySelectorAll('.option');
+            const lowerSearch = search.toLowerCase();
+            options.forEach(option => {
+                const text = option.innerText.toLowerCase();
+                option.style.display = text.includes(lowerSearch) ? 'block' : 'none';
+            });
+        }
+
+        // Close dropdown if clicked outside
+        document.addEventListener('click', function (e) {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
+                input.style.display = 'none';
+                input.value = '';
+                filterOptions('', select);
+            }
+        });
+    }
+
+    setupSearchableSelect('TopicSelect', 'selectedTopic');
+    setupSearchableSelect('CategorySelect', 'selectedCategory');
+</script>
+

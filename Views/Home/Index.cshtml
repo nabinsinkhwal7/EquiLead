@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    <p><strong>Total Clicks:</strong> @ViewBag.TotalClicks</p>
+
+    <h4>Clicks by Resource</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Resource</th>
+                <th>Click Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ClicksByResource)
+            {
+                <tr>
+                    <td>@item.ResourceName</td>
+                    <td>@item.ClickCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4>Clicks Over Time</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Resource</th>
+                <th>Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ClicksOverTime)
+            {
+                <tr>
+                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                    <td>@item.ResourceName</td>
+                    <td>@item.Clicks</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+

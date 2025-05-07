@@ -1,0 +1,192 @@
+﻿@model IEnumerable<EquidCMS.Models.Tblevent>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Numberofattended)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descriptionofevent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Startdateofevent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Enddateofevent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Isvalidate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Createdby)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Createdon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updatedby)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updatedon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Evidenceid)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventVenue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventLink)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventRegistrationLink)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventSpeaker)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventSpeakerOrg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventHost)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventHostOrg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventPricing)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventAgendaDoc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Parking)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WheelChair)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Event)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventPricingType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EventType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Theme)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numberofattended)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descriptionofevent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Startdateofevent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enddateofevent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Isvalidate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Createdby)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Createdon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updatedby)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updatedon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Evidenceid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventVenue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventLink)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventRegistrationLink)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventSpeaker)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventSpeakerOrg)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventHost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventHostOrg)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventPricing)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventAgendaDoc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Parking)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WheelChair)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Event.Eventid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventPricingType.Eventpricingtypeid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EventType.Eventtypeid)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Theme.ThemeId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Eventid">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Eventid">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Eventid">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

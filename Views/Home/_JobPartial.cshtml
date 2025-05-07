@@ -1,0 +1,245 @@
+﻿
+@{
+    var jobs = ViewData["Jobs"] as List<EquidCMS.Models.Tbljob>;
+    var companies = ViewData["Comp"] as List<EquidCMS.Models.Tblcompany>;
+    var cityIds = ViewData["Cityid"] as List<EquidCMS.Models.MstLookup>;
+    var workTypes = ViewData["WDid"] as List<EquidCMS.Models.MstLookup>;
+    var employeeTypes = ViewData["ETid"] as List<EquidCMS.Models.MstLookup>;
+    int pageNumber = (int)ViewData["PageNumber"];
+    int pageSize = (int)ViewData["PageSize"];
+    int totalPages = (int)ViewData["TotalPages"];
+    int totalJobs = (int)ViewData["TotalJobs"];
+}
+
+<style>
+    .pagination-controls {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .jocardminheight {
+        /*  min-height: 200px !important;
+            max-height: 200px !important; */
+    }
+
+    .job-card .job-detail h3.title {
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden; /* Hide text overflow */
+        text-overflow: ellipsis; /* Show ellipsis when text overflows */
+        max-width: 250px; /* Limit the width, adjust as needed */
+        display: block; /* Ensure it behaves as a block element */
+        text-decoration: none; /* Remove any link underline */
+    }
+
+    .job-card .job-detail p {
+        white-space: nowrap; /* Prevent wrapping */
+        overflow: hidden; /* Hide text overflow */
+        text-overflow: ellipsis; /* Show ellipsis when text overflows */
+        max-width: 300px; /* Limit the width, adjust as needed */
+        display: block; /* Ensure it behaves as a block element */
+    }
+
+    .ellipsis {
+        white-space: nowrap; /* Prevent the text from wrapping to the next line */
+        overflow: hidden; /* Hide any overflowed content */
+        text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .company-logo {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+</style>
+
+<div class="row gy-lg-0 gy-4 justify-content-center">
+     @if (jobs != null && jobs.Count > 0)
+    {
+    @for (int i = 0; i < jobs.Count; i++)
+    {
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+            <div class="job-list-card wow fade-in-bottom" data-wow-delay="200ms">
+
+                <div class="job-list-card-header">
+                    <div class="company-list-logo">
+                        <a onclick="openEvidenceModal(this)"  
+                           data-company-name="@jobs[i].Company.Name"
+                           data-website="@jobs[i].Company.Website"
+                           data-logo="/@jobs[i].Company.Logo"
+                           data-SC="@jobs[i].Company.Sociallink"
+                               data-about="@jobs[i].Company.Overview">
+                                <img style="width: 80px;height:80px;" src="~/@jobs[i].Company.Logo" alt="@jobs[i].Company.Name">
+                            </a>
+                    </div>
+                    <div class="job-list-title-wrap ellipsis">
+                        <h3 title="@jobs[i].Company.Name" class="job-list-title">@jobs[i].Company.Name</h3>
+                        <p class="job-list-sub-title ellipsis">@jobs[i].Jobtitle</p>
+                    </div>
+                    @* <i class="fa-solid fa-bookmark"></i> *@
+                </div>
+
+                <div class="job-list-card-mid row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                    <ul>
+                        
+                        <li><i class="fa-solid fa-briefcase"></i> @jobs[i].Yearexperience Years</li>
+                        <li><i class="fa-solid fa-indian-rupee-sign"></i> @jobs[i].Minsalary -- @jobs[i].Maxsalary</li>
+                        <li>
+                                @if (@employeeTypes?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault() == "" || @employeeTypes?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault() == null)
+                                {
+                                    <i class="fa-solid fa-user-tie-hair"></i>
+
+                                    <span>---</span>
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-user-tie-hair"></i>
+
+                                    @employeeTypes?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault()
+                                }
+
+
+                        </li>
+
+                    </ul>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <ul>
+                            
+                            <li>
+                                @if (@workTypes?.Where(p => p.Lookupcode == @jobs[i].Workmode).Select(p => p.Description).FirstOrDefault() == "" || @workTypes?.Where(p => p.Lookupcode == @jobs[i].Workmode).Select(p => p.Description).FirstOrDefault() == null)
+                                {
+                                    <i class="fa-solid fa-dungeon"></i>
+
+                                    <span>---</span>
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-dungeon"></i>
+                                    @workTypes?.Where(p => p.Lookupcode == @jobs[i].Workmode).Select(p => p.Description).FirstOrDefault()
+                                }
+
+
+                            </li>
+                            
+                            <li>
+                                <i class="fa-solid fa-clock"></i>
+                                @jobs[i].Applicationdeadline
+                            </li>
+                            
+                            
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="job-list-card-footer">
+                    <div class="d-flex post-time"><a asp-action="JobDetail" asp-controller="Home" asp-route-id="@jobs[i].Jobid" class="rr-secondary-btn wow fade-in-right signup-gradient">Read More</a> </div>
+                    <div class="d-flex">
+                        @*  <a href="#"
+                    class="rr-secondary-btn wow fade-in-right login-gradient me-4">Early Applicant</a> *@
+                            <a href="@jobs[i].Jobpostinglink" class="rr-secondary-btn wow fade-in-right signup-gradient " onclick="trackJobClick(@jobs[i].Jobid)" 
+   target="_blank">Quick Apply</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p>No jobs found.</p>
+        </div>
+    }
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-controls">
+    <div>
+        <span>Page @pageNumber of @totalPages | Total Jobs: @totalJobs</span>
+    </div>
+
+    <div>
+        <div>
+            <!-- First and Previous buttons -->
+            <button class="btn btn-primary signup-gradient" @(pageNumber <= 1 ? "disabled" : "") onclick="getjob(1, @pageSize)">First</button>
+            <button class="btn btn-primary signup-gradient" @(pageNumber <= 1 ? "disabled" : "") onclick="getjob(@(pageNumber - 1), @pageSize)">Previous</button>
+
+            <!-- Next and Last buttons -->
+            <button class="btn btn-primary signup-gradient" @(pageNumber >= totalPages ? "disabled" : "") onclick="getjob(@(pageNumber + 1), @pageSize)">Next</button>
+            <button class="btn btn-primary signup-gradient" @(pageNumber >= totalPages ? "disabled" : "") onclick="getjob(@totalPages, @pageSize)">Last</button>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Company Detail Modal -->
+<div class="modal fade" id="companyModal" tabindex="-1" aria-labelledby="companyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="companyModalLabel">Company Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <img id="companyLogo" src="" alt="Company Logo" class="company-logo">
+                    </div>
+                    <div class="col-md-8">
+                        <h4 id="companyName"></h4>
+                        <p><strong>website:</strong> <span id="website"></span></p>
+                        <p><strong>Social Link:</strong> <span id="SC"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <h5>About Us</h5>
+                <p id="companyAbout"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function openEvidenceModal(button) {
+
+        // Get data attributes from the button
+        var companyName = button.getAttribute('data-company-name');
+        var SC = button.getAttribute('data-SC');
+        var website = button.getAttribute('data-website');
+        var logo = button.getAttribute('data-logo');
+        var about = button.getAttribute('data-about');
+
+        // Set modal content dynamically
+        document.getElementById('companyName').textContent = companyName;
+        document.getElementById('website').textContent = website;
+        document.getElementById('SC').textContent = SC;
+        document.getElementById('companyLogo').src = logo;
+        document.getElementById('companyAbout').textContent = about;
+
+        var myModal = new bootstrap.Modal(document.getElementById('companyModal'));
+        myModal.show();
+    }
+</script>
+<script>
+    // Reusable function to send job click tracking
+     function trackJobClick(jobId) {
+         debugger;
+         if (!jobId) return;
+
+         $.ajax({
+             url: '/Home/JobApplyClickTrack',
+             type: 'POST',
+             data:({ jobId: jobId })
+         });
+     }
+
+</script>

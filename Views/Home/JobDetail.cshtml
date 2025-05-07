@@ -1,0 +1,334 @@
+﻿@model EquidCMS.Models.Tbljob
+
+@{
+    ViewData["Title"] = "EventDetail";
+    Layout = "~/Views/Shared/_LayoutWebSNW.cshtml";
+    var data = Model;
+    var WDid = ViewBag.WDid as List<EquidCMS.Models.MstLookup>;
+    var ETid = ViewBag.ETid as List<EquidCMS.Models.MstLookup>;
+    var FunctionalCategory = ViewBag.FunctionalCategory as List<EquidCMS.Models.MstLookup>;
+    var LeavePolicies = ViewBag.LeavePolicies as List<EquidCMS.Models.MstLookup>;
+    var FlexibleWorkOption = ViewBag.FlexibleWorkOption as List<EquidCMS.Models.MstLookup>;
+    var LearningAndDevelopment = ViewBag.LearningAndDevelopment as List<EquidCMS.Models.MstLookup>;
+    var HealthcareAndWellness = ViewBag.HealthcareAndWellness as List<EquidCMS.Models.MstLookup>;
+    var DEIAndWomenFriendlyPolicies = ViewBag.DEIAndWomenFriendlyPolicies as List<EquidCMS.Models.MstLookup>;
+}
+<style>
+
+    .dt-search {
+        float: right;
+    }
+
+    .dt-paging {
+        float: right;
+        margin-top: 10px;
+    }
+
+    div.dt-buttons {
+        position: relative;
+        float: left;
+    }
+
+    button.dt-button, div.dt-button, a.dt-button {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin-right: 0.333em;
+        padding: 0.5em 1em;
+        border: 1px solid #999;
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: 0.88em;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        background-color: #e9e9e9;
+        background-image: -webkit-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -moz-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -ms-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: -o-linear-gradient(top, #fff 0%, #e9e9e9 100%);
+        background-image: linear-gradient(to bottom, #fff 0%, #e9e9e9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='white', EndColorStr='#e9e9e9');
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-decoration: none;
+        outline: none;
+    }
+</style>
+<style>
+    .ulinner {
+        /* list-style: none; */
+        padding: 0;
+        /* display: flex; */
+        gap: 10px;
+        font-size:20px;
+    }
+
+    .liinner {
+        display: flex;
+        align-items: flex-start;
+        background: #f4f4f4;
+        border-radius: 8px;
+    }
+
+    .badge {
+        color: black;
+        font-size: 18px;
+        padding: 4px 8px;
+        margin-right: 8px;
+        margin-left: 10px;
+        text-align: left;
+        font-weight: normal;
+        margin-top:6px;
+    }
+
+    .p {
+    }
+</style>
+<section class="event-detail-page cream_bg pt-80 pb-80">
+    <div class="container">
+        <div class="row">
+        <div class="col-lg-12 mb-80">
+            <div class="event-head-wrap">
+                <div class="event-head">
+                    <div>
+                            <span><a href="#"><img style="height:100px" src="~/@Model.Company.Logo" alt=""></a></span> <h1 style="float:right">@Model.Jobtitle</h1>
+                        <hr />
+                            <ul class="ulinner">
+                                <li class="liinner">Company <p class="badge">@Model.Company.Name</p> </li>
+                                <li class="liinner">Location <p class="badge">@Model.City</p> </li>
+                                <li class="liinner">Employment Type <p class="badge">@ETid?.Where(p => p.Lookupcode == @Model.Employeetype).Select(p => p.Description).FirstOrDefault()</p></li>
+                                @if (Model.Functionalcategory == null) { }
+                                else
+                                {
+                                    <li class="liinner">
+                                        Functional Category
+                                        @{
+                                            var descriptions = new System.Text.StringBuilder();
+                                            if (Model.Functionalcategory != null)
+                                            {
+                                                int count = Model.Functionalcategory.Count();
+                                                int currentIndex = 0;
+
+                                                foreach (var item in Model.Functionalcategory)
+                                                {
+                                                    var description = FunctionalCategory?.FirstOrDefault(p => p.Lookupcode == item)?.Description;
+                                                    if (description != null)
+                                                    {
+                                                        descriptions.Append(description);
+                                                        currentIndex++;
+
+                                                        // Add a comma if it's not the last item
+                                                        if (currentIndex < count)
+                                                        {
+                                                            descriptions.Append("<br />");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        <p class="badge">@Html.Raw(descriptions.ToString())</p>
+                                    </li>
+                                }
+                              
+                                
+                                @if (@Model.Yearexperience == null || @Model.Yearexperience == 0){}else
+                                {
+                                    <li class="liinner">Years <p class="badge">@Model.Yearexperience</p></li>
+                                }
+                                @if (@Model.Maxsalary == null) { }
+                                else
+                                {
+                                    <li class="liinner">Salary <p class="badge">@Model.Minsalary - @Model.Maxsalary</p></li>
+                                }
+                                @if (@Model.Dateposted?.ToString("dd-MMM-yyyy") == null) { }
+                                else
+                                {
+                                    <li class="liinner">Date Posted <p class="badge">@Model.Dateposted?.ToString("dd-MMM-yyyy")</p></li>
+                                }
+                                @if (@Model.Applicationdeadline?.ToString("dd-MMM-yyyy") == null) { }
+                                else
+                                {
+                                    <li class="liinner">Application Deadline <p class="badge">@Model.Applicationdeadline?.ToString("dd-MMM-yyyy")</p></li>
+                                }
+                               
+                               
+                                
+                            </ul>
+                       
+                    </div>
+                    <hr />
+                        <div>
+                            <h4 style="color:#720493 !important;">About @Model.Company.Name</h4>
+                            <hr />
+                            <p>@Model.Company.Overview</p>
+                            <ul class="ulinner">
+                                <li class="liinner">Website <p class="badge"><a href="@Model.Company.Website" >@Model.Company.Website </a></p> </li>
+                            </ul>
+                            <hr />
+                        </div>
+                        <div>
+                            <h4 style="color:#720493 !important;">Overview of the Role</h4>
+                            <hr />
+                            <p>@Model.Roleoverview</p>
+                        </div>
+                        <div>
+                            <h4 style="color:#720493 !important;">Job Description</h4>
+                            <hr />
+                            <p>@Html.Raw(@Model.Keyresponsibility?.Replace("\r\n", "<br/>"))</p>
+                        </div>
+                        <div>
+                            <hr />
+                            <h4 style="color:#720493 !important;">Required &amp; Preferred Qualifications</h4>
+                            <hr />
+                            <h5 style="color:#720493 !important;">Skill</h5>
+                            <p>@Html.Raw(@Model.Skill?.Replace("\r\n", "<br/>"))</p>
+                            <h5 style="color:#720493 !important;">Education</h5>
+                            <p>@Model.Education</p>
+                            <h5 style="color:#720493 !important;">Experience</h5>
+                            <p>@Model.Experience</p>
+                        </div>
+                        <div>
+                            <hr />
+                            <h4 style="color:#720493 !important;">Company Policies</h4>
+                            <hr />
+                            <h5 style="color:#720493 !important;">Leave Policies</h5>
+                            @{
+                                var leavePolicies = new System.Text.StringBuilder();
+                                if (Model.Leavepolicies != null)
+                                {
+                                    int count = Model.Leavepolicies.Count();
+                                    int currentIndex = 0;
+
+                                    foreach (var item in Model.Leavepolicies)
+                                    {
+                                        var description = LeavePolicies?.FirstOrDefault(p => p.Lookupcode == item)?.Description;
+                                        if (description != null)
+                                        {
+                                            leavePolicies.Append(description);
+                                            currentIndex++;
+
+                                            // Add a comma if it's not the last item
+                                            if (currentIndex < count)
+                                            {
+                                                leavePolicies.Append("<br />");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            <p>@Html.Raw(leavePolicies.ToString())</p>
+                            <h5 style="color:#720493 !important;">Learning &amp; Development</h5>
+                            @{
+                                var learningAndDevelopment = new System.Text.StringBuilder();
+                                if (Model.Learninganddeveloment != null)
+                                {
+                                    int count = Model.Learninganddeveloment.Count();
+                                    int currentIndex = 0;
+
+                                    foreach (var item in Model.Learninganddeveloment)
+                                    {
+                                        var description = LearningAndDevelopment?.FirstOrDefault(p => p.Lookupcode == item)?.Description;
+                                        if (description != null)
+                                        {
+                                            learningAndDevelopment.Append(description);
+                                            currentIndex++;
+
+                                            // Add a comma if it's not the last item
+                                            if (currentIndex < count)
+                                            {
+                                                learningAndDevelopment.Append("<br />");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            <p>@Html.Raw(learningAndDevelopment.ToString())</p>
+                            <h5 style="color:#720493 !important;">Healthcare &amp; Wellness</h5>
+                            @{
+                                var healthcareAndWellness = new System.Text.StringBuilder();
+                                if (Model.Healthcareandwellness != null)
+                                {
+                                    int count = Model.Healthcareandwellness.Count();
+                                    int currentIndex = 0;
+
+                                    foreach (var item in Model.Healthcareandwellness)
+                                    {
+                                        var description = HealthcareAndWellness?.FirstOrDefault(p => p.Lookupcode == item)?.Description;
+                                        if (description != null)
+                                        {
+                                            healthcareAndWellness.Append(description);
+                                            currentIndex++;
+
+                                            // Add a comma if it's not the last item
+                                            if (currentIndex < count)
+                                            {
+                                                healthcareAndWellness.Append("<br />");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            <p>@Html.Raw(healthcareAndWellness.ToString())</p>
+                            <h5 style="color:#720493 !important;">DEI &amp; Women-Friendly Policies</h5>
+                            @{
+                                var deiAndWomenFriendlyPolicies = new System.Text.StringBuilder();
+                                if (Model.Deiandwomenfriendlypolicies != null)
+                                {
+                                    int count = Model.Deiandwomenfriendlypolicies.Count();
+                                    int currentIndex = 0;
+
+                                    foreach (var item in Model.Deiandwomenfriendlypolicies)
+                                    {
+                                        var description = DEIAndWomenFriendlyPolicies?.FirstOrDefault(p => p.Lookupcode == item)?.Description;
+                                        if (description != null)
+                                        {
+                                            deiAndWomenFriendlyPolicies.Append(description);
+                                            currentIndex++;
+
+                                            // Add a comma if it's not the last item
+                                            if (currentIndex < count)
+                                            {
+                                                deiAndWomenFriendlyPolicies.Append("<br />");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            <p>@Html.Raw(deiAndWomenFriendlyPolicies.ToString())</p>
+                            <p></p>
+                        </div>
+                        
+                </div>   
+            </div>
+        </div>
+        </div>
+        <div class="row">
+            
+
+            <div class="col-lg-6 mb-80" style="float:left">
+                <i class="fa-solid fa-clock"></i>
+                @if (Model.Applicationdeadline != null)
+                {
+                    @("Last Date To Apply : " + Model.Applicationdeadline?.ToString("dd-MMM-yyyy"))
+                }
+                else
+                {
+                    @: <!-- Empty value -->
+                }
+                </div>
+                <div class="col-lg-6 mb-80" >
+                <a style="float:right" href="@Model.Jobpostinglink" class="rr-secondary-btn wow fade-in-right signup-gradient">Quick Apply</a>
+                </div>
+
+            
+        </div>
+    </div>
+    
+</section>
+
+

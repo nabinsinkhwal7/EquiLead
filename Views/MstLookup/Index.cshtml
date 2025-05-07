@@ -1,0 +1,197 @@
+﻿@using EquidCMS.Models
+@model IEnumerable<MstLookup>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Lookup Data";
+    var selected = ViewBag.SelectedHintDetails;
+}
+
+<section class="container-fluid mt-4">
+    <!-- Dropdown for filtering -->
+    <div class="row mb-4">
+        <div class="row mb-4" style="border-bottom: 2px solid black; padding-bottom: 10px;">
+            <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h2 class="PagemainHeading">Lookup Data</h2>
+            </div>
+        </div>
+        <!-- Category Dropdown (Triggers Refresh) -->
+        <div class="col-md-4">
+            <label for="hintDetailsDropdown" class="form-label">Category</label>
+            <select id="hintDetailsDropdown" class="form-control" onchange="filterTable()">
+                <option value="">Select a Category</option>
+                @foreach (var hintDetail in ViewBag.HintDetails as List<string>)
+                {
+                    <option value="@hintDetail" selected="@(hintDetail == ViewBag.SelectedHintDetails ? "selected" : null)">
+                        @hintDetail
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Description Input -->
+        <div class="col-md-4">
+            <label for="Description" class="form-label">Description</label>
+            <input type="hidden" id="Lookupcode" name="Lookupcode" value="0" /> <!-- Hidden field for ID -->
+            <input type="text" id="Description" name="Description" class="form-control" placeholder="Enter Description" required />
+        </div>
+
+        <!-- Save/Update Button -->
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="button" id="saveButton" class="btn btn-success" onclick="saveLookup()">Save</button>
+        </div>
+
+    </div>
+
+    <!-- Table to display lookup data -->
+    <div class="row">
+        <div class="col">
+            @if (!Model.Any())
+            {
+                <h2>No records found. Please select a category.</h2>
+            }
+            else
+            {
+                <table class="table table-bordered table-striped" id="lookupTable">
+                    <thead>
+                        <tr>
+                            <th>S.N</th>
+                            <th>Description</th>
+                            <th>Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Select((value, index) => new { value, index }))
+                        {
+                            <tr>
+                                <td>@(item.index + 1)</td>
+                                <td>@item.value.Description</td>
+                                <td>
+                                    <span id="status-@item.value.Lookupcode">
+                                        @(item.value.Active ? "✅ Active" : "❌ Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="updateLookup(@item.value.Lookupcode, '@item.value.Description')">Edit</button>
+                                    <button class="btn btn-danger" onclick="toggleActive(@item.value.Lookupcode, @(item.value.Active.ToString().ToLower()))">
+                                        @(item.value.Active ? "Deactivate" : "Activate")
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</section>
+<script>
+    // Check for TempData messages and display alert
+    document.addEventListener("DOMContentLoaded", function () {
+        var message = '@TempData["Message"]';
+        var messageType = '@TempData["MessageType"]';
+
+        if (message) {
+            if (messageType === "success") {
+                alert(message); // Success alert
+            } else if (messageType === "error") {
+                alert("❌ " + message); // Error alert
+            }
+        }
+    });
+</script>
+<script>
+    // Function to enable/disable the Create button based on category selection
+    function filterTable() {
+        var selectedHintDetails = document.getElementById("hintDetailsDropdown").value;
+      
+
+        // Update the URL with selected hint details (for the filter)
+        var url = '@Url.Action("Index", "MstLookup")'; // URL to the controller action
+        if (selectedHintDetails) {
+            url += '?selectedHintDetails=' + selectedHintDetails; // Append selected value to the URL
+        }
+        window.location.href = url; // Redirect to the same action with the selected parameter
+    }
+
+    function updateLookup(lookupCode, description) {
+        document.getElementById("Lookupcode").value = lookupCode; // Set hidden Lookupcode field
+        document.getElementById("Description").value = description; // Set description
+        document.getElementById("saveButton").innerText = "Update"; // Change button text
+    }
+
+    function saveLookup() {
+        var selectedHintDetails = document.getElementById("hintDetailsDropdown").value;
+        var description = document.getElementById("Description").value;
+        var lookupCode = document.getElementById("Lookupcode").value;
+
+        if (!selectedHintDetails) {
+            alert("Please select a category before saving.");
+            return;
+        }
+        if (!description.trim()) {
+            alert("Please enter a description.");
+            return;
+        }
+
+        var url = lookupCode === "0"
+            ? '@Url.Action("Create", "MstLookup")'
+            : '@Url.Action("Update", "MstLookup")'; // If Lookupcode exists, update instead of creating
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                Lookupcode: lookupCode,
+                Description: description,
+                SelectedHintDetails: selectedHintDetails
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(lookupCode === "0" ? "Lookup saved successfully!" : "Lookup updated successfully!");
+                    window.location.reload(); // Refresh the page
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while saving.");
+            });
+    }
+    function toggleActive(lookupCode, isActive) {
+        var selectedHintDetails = document.getElementById("hintDetailsDropdown").value;
+
+        if (!selectedHintDetails) {
+            alert("Please select a category first!");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to " + (isActive ? "deactivate" : "activate") + " this lookup?")) {
+            return;
+        }
+
+        fetch('@Url.Action("ToggleActive", "MstLookup")', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `lookupCode=${lookupCode}&selectedHintDetails=${encodeURIComponent(selectedHintDetails)}&isActive=${isActive}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Status updated successfully!");
+                    document.getElementById(`status-${lookupCode}`).innerText = data.newStatus; // Update UI
+                    window.location.reload(); // Refresh the page
+                } else {
+                    alert("Error updating status: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while updating the status.");
+            });
+    }
+
+</script>

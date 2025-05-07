@@ -1,0 +1,173 @@
+/*L-desktop*/
+
+@media (min-device-width:  1600px)
+{
+    
+}
+
+/*L-laptops*/
+@media(max-width: 1440px)
+{
+
+
+    .wrapper
+    {
+        width: 80%;
+    }
+    .main-heading
+    {
+        font-size: 40px;
+    }
+    .thankyou .wrapper
+    {
+        width: 90%;
+    }
+    .contact
+    {
+        height: auto;
+    }
+    .thankyou-inner
+    {
+        height: auto;
+    }
+    
+}
+
+/*laptops/tablets*/
+@media(max-width: 1024px)
+{
+    .lap-50
+    {
+        width: 50%;
+        margin-bottom: 20px;
+    }
+    .wrapper
+    {
+        width: 90%;
+    }
+    .main-heading
+    {
+        font-size: 30px;
+    }
+    .radio-field label
+    {
+        font-size: 20px;
+    }
+    .thankyou-text
+    {
+        font-size: 50px;
+    }
+    .contact
+    {
+        height: auto;
+    }
+    .thankyou-inner
+    {
+        height: auto;
+    }
+
+}
+
+
+/*tablets*/
+@media(max-width: 768px)
+{
+
+    .tab-50
+    {
+        width: 50%;
+    }
+    .tab-100
+    {
+        width: 100%;
+    }
+    .radio-field label
+    {
+        font-size: 13px;
+    }
+    .radio-field label span
+    {
+        font-size: 17px;
+    }
+    .main-heading
+    {
+        font-size: 25px;
+    }
+    .steps-col::before
+    {
+        display: none;
+    }
+
+    .thankyou-text
+    {
+        font-size: 40px;
+    }
+    .contact
+    {
+        height: auto;
+    }
+    .thankyou-inner
+    {
+        height: auto;
+    }
+    
+
+
+
+}
+
+
+/*Smart phone*/
+@media(max-width: 576px)
+{
+    .orders
+    {
+        order: 2;
+    }
+    .wrapper
+    {
+        width: 95%;
+    }
+    .step-inner
+    {
+        width: 100%;
+    }
+    .radio-field label
+    {
+        font-size: 10px;
+    }
+    .radio-field label span
+    {
+        margin-right: 15px;
+    }
+
+    .steps-col::before
+    {
+        display: none;
+    }
+    .main-heading
+    {
+        font-size: 20px;
+    }
+
+    .contact
+    {
+        height: auto;
+    }
+    .thankyou-inner
+    {
+        height: auto;
+    }
+    .msg
+    {
+        font-size: 16px;
+    }
+    .thankyou-text
+    {
+        font-size: 30px;
+    }
+
+    
+}
+
+

@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model IEnumerable<EquidCMS.Models.MstMenu>
+
+<ul class="sidebar-nav" id="sidebar-nav">
+    @foreach (var MenuHeader in Model.Where(s => s.MenuParentId == 0))
+    {
+        @if (Model.Count(p => p.MenuParentId == MenuHeader.MenuId) > 0)
+        {        
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#components-nav_@MenuHeader.MenuId" data-bs-toggle="collapse" asp-controller="@MenuHeader.Controller" asp-action="@MenuHeader.Action">
+                    <i class="@MenuHeader.StyleClass"></i><span>@MenuHeader.Menu</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="components-nav_@MenuHeader.MenuId" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    @foreach (var Menu in Model.Where(s => s.MenuParentId == MenuHeader.MenuId))
+                    {
+                        <li>
+                            <a asp-controller="@Menu.Controller" onclick="SetMenuId('@Menu.MenuId')" asp-action="@Menu.Action">
+                                <i class="@Menu.StyleClass"></i><span>@Menu.Menu</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="@MenuHeader.Controller" onclick="SetMenuId('@MenuHeader.MenuId')" asp-action="@MenuHeader.Action">
+                    <i class="@MenuHeader.StyleClass"></i>
+                    <span>@MenuHeader.Menu</span>
+                </a>
+            </li>
+        }
+    }
+</ul>
+
+
+<script type="text/javascript">
+    function SetMenuId(MenuID) {
+        var p = { "MenuId": MenuID };
+        $.ajax({
+            url: '@Url.Content("/")' + "Dashboard/SetMenuId", //Your path should be here
+            type: "POST",
+            data: p,
+            async: false,
+            success: function (result) {
+                //$('#MenuDV').html(result);
+            },
+            error: function (xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                alert(err.Message);
+            }
+        });
+    }
+</script>
+
+

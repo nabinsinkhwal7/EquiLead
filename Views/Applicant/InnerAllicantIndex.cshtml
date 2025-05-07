@@ -1,0 +1,875 @@
+﻿@model EquidCMS.Dto.ApplicantProfileDto
+
+@{
+    var employmentTypeJson = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.EmploymentType);
+    var skillTypeJson = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.SkillType);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@* <!DOCTYPE html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Applicant Profile</title>
+    <link href="~/assets/img/logo.svg" rel="icon">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/form_style.css">
+    <link href="~/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="~/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="~/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link href="~/assets/css/style.css" rel="stylesheet">
+    <link href="~/assets/css/main.css" rel="stylesheet" />
+
+    <style>
+        /* Career Interests & Preferences */
+        .career-interests {
+            background-color: #f9f9f9;
+        }
+
+        /* Work Experience */
+        .work-experience {
+            background-color: #f1f8ff;
+        }
+
+        /* Education History */
+        .education-history {
+            background-color: #fff8e1;
+        }
+
+        /* Certifications */
+        .certifications {
+            background-color: #e8f5e9;
+        }
+
+        /* Skills */
+        .skills {
+            background-color: #fce4ec;
+        }
+
+        /* Languages */
+        .languages {
+            background-color: #e3f2fd;
+        }
+
+        /* Additional Information */
+        .additional-info {
+            background-color: #ede7f6;
+        }
+
+        /* Apply padding and rounded corners for better UI */
+        .section-container {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body> *@
+<div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
+    <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <h2 class="PagemainHeading">Applicant Profile</h2>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+        <div class="pull-right">
+            <a asp-controller="Applicant" asp-action="Listing" class="btn btn-primary signup-gradient backtodetailbutton float-end">Back to list</a>
+        </div>
+    </div>
+</div>
+    <div class="card " style="border-radius: 7px;">
+        <div class="card-header header fixed-top d-flex align-items-center" style="background-color:black">
+
+            @*  <h4 style="float:right;margin-top: 21px;margin-left: 7px;color: white;" class="text-center" style="font-weight:900;color:white">
+            Empowering Women. Driving Climate Action
+            </h4> *@
+            <div class="d-flex align-items-center justify-content-between">
+                <a asp-action="Index" asp-controller="Applicant" class="logo-pic" style="float:left">
+                    <img src="~/assets/img/logo.png" alt="">
+                </a>
+            </div><!-- End Logo -->
+            <div style="margin-left: 7px;color: white;font-weight:900;color:white" class="text-center">
+                <span class="mainheading">Empowering Women. Driving Climate Action</span>
+            </div>
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
+                    <li class="nav-item dropdown pe-3">
+
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-circle-user" style="font-size:30px;"></i>
+                            <span class="d-none d-md-block dropdown-toggle ps-2">@Context.Session.GetString("Name")</span>
+                        </a><!-- End Profile Iamge Icon -->
+
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                            @if (Context.Session.GetString("ReferralLink") != null)
+                            {
+                                <li class="dropdown-item d-flex align-items-center">
+                                    <i class="bi bi-share"></i>
+                                    <span>Share this referral link:</span>
+                                </li>
+                                <li class="dropdown-item">
+                                    <input type="text" class="form-control" id="referralLink" value="@Context.Session.GetString("ReferralLink")" readonly>
+                                    <button class="btn btn-sm btn-primary mt-2" onclick="copyReferralLink()">Copy Link</button>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="@Url.Action("GenerateReferralCode","Applicant")">
+                                        <i class="bi bi-key"></i>
+                                        <span>Refer your friend for the first time</span>
+                                    </a>
+                                </li>
+                            }
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Login","Applicant")">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Sign Out</span>
+                                </a>
+                            </li>
+
+                        </ul><!-- End Profile Dropdown Items -->
+                    </li><!-- End Profile Nav -->
+                </ul>
+            </nav><!-- End Icons Navigation -->
+        </div>
+        <div class="card-body">
+
+            <!-- End Logo -->
+            @if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewBag.Message
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+
+            <input type="hidden" id="employmentTypesData" value='@Html.Raw(employmentTypeJson)' />
+            <input type="hidden" id="skillTypesData" value='@Html.Raw(skillTypeJson)' />
+        <form asp-action="Updateinner" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <section>
+                    <div class="container-fluid" style="padding-top:18px">
+
+                        <div class="row" style="background-color: #ede7f6; border-radius: 5px;">
+                            <div class="col-sm-12 py-4">
+                                <fieldset class="the-fieldset">
+                                    <h4 class="the-legend"> Basic Personal information</h4>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Pronouns Full Name </label>
+                                                <div class="input-group mb-2">
+                                                    <select asp-for="Pronouns" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.Pronouns">
+                                                    </select>
+                                                    <input asp-for="FullName" class="form-control" type="text" placeholder="Enter your full name" required />
+                                                </div>
+                                                <span asp-validation-for="Pronouns" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        @*    <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12">
+                                        <div class="mb-2">
+                                        <label class="control-label">Full Name <span class="text-danger">*</span></label>
+                                        <span asp-validation-for="FullName" class="text-danger"></span>
+                                        </div>
+                                        </div> *@
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Email Address <span class="text-danger">*</span></label>
+                                                <input asp-for="Email" class="form-control" type="email" placeholder="Enter your email" required />
+                                                <span asp-validation-for="Email" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl42 col-lg-2 col-md-2 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Gender</label>
+                                                <select asp-for="Gender" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.Gender">
+                                                </select>
+                                                <span asp-validation-for="Gender" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <label for="" class="form-label">Phone Number <sup>*</sup></label>
+                                            <div class="input-group mb-2">
+                                                <select asp-for="CountryCode" class="form-control" style="width: 70px;" asp-items="@ViewBag.CountryCode">
+                                                </select>
+                                                <input asp-for="PhoneNumber" class="form-control" maxlength="10" required onkeypress="return isNumeric(event)" placeholder="Enter phone number" style="width:calc(100% - 100px)" />
+                                            </div>
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Location (City, Country)</label>
+                                                <input asp-for="Location" class="form-control" type="text" placeholder="Enter your city, country" />
+                                                <span asp-validation-for="Location" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">LinkedIn Profile</label>
+                                                <input asp-for="LinkedInProfile" class="form-control" type="url" placeholder="Enter LinkedIn profile URL" />
+                                                <span asp-validation-for="LinkedInProfile" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Personal Website/Portfolio (Optional)</label>
+                                                <input asp-for="PersonalWebsite" class="form-control" type="url" placeholder="Enter portfolio URL" />
+                                                <span asp-validation-for="PersonalWebsite" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Headline</label>
+                                                <input asp-for="Headline" class="form-control" type="text" placeholder='e.g., "Sustainability Expert with 5+ Years Experience"' />
+                                                <span asp-validation-for="Headline" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Job Search Status</label>
+                                                <select asp-for="JobSearchStatus" class="form-select" asp-items="ViewBag.Availability">
+                                                </select>
+                                                <span asp-validation-for="JobSearchStatus" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Desired Salary Range</label>
+                                                <input asp-for="DesiredSalaryRange" class="form-control" type="text" placeholder="e.g., $60,000 - $80,000" />
+                                                <span asp-validation-for="DesiredSalaryRange" class="text-danger"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Short Bio</label>
+                                                <textarea asp-for="ShortBio" class="form-control" rows="3" placeholder="Briefly describe your leadership, impact, and goals"></textarea>
+                                                <span asp-validation-for="ShortBio" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- Career Interests & Preferences Section -->
+                        <div class="row mt-4 career-interests section-container">
+                            <div class="col-md-12">
+                                <h4>Career Interests & Preferences</h4><!-- Career Interests & Preferences -->
+                                <div class="row mt-3">
+                                    <!-- Preferred Job Roles & Titles -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Preferred Job Roles & Titles</label>
+                                            <input asp-for="CareerPreferences.PreferredJobRole" class="form-control" type="text" placeholder="Enter preferred job roles" />
+                                            <span asp-validation-for="CareerPreferences.PreferredJobRole" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Industries of Interest -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Industries of Interest</label>
+                                            <input asp-for="CareerPreferences.IndustriesOfInterest" class="form-control" type="text" placeholder="e.g., Sustainability, Tech, Nonprofits" />
+                                            <span asp-validation-for="CareerPreferences.IndustriesOfInterest" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Leadership Aspirations -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Leadership Aspirations</label>
+                                            <input asp-for="CareerPreferences.LeadershipAspirations" class="form-control" type="text" placeholder="e.g., Seeking Executive Roles, Board Positions" />
+                                            <span asp-validation-for="CareerPreferences.LeadershipAspirations" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <!-- Employment Type Preference -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Employment Type Preference</label>
+                                            <select asp-for="CareerPreferences.EmploymentTypePreference" class="form-control" asp-items="@ViewBag.EmploymentType">
+                                            </select>
+                                            <span asp-validation-for="CareerPreferences.EmploymentTypePreference" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Preferred Job Location -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Preferred Job Location</label>
+                                            <input asp-for="CareerPreferences.PreferredJobLocation" class="form-control" type="text" placeholder="City, Remote" />
+                                            <span asp-validation-for="CareerPreferences.PreferredJobLocation" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Willing to Relocate? -->
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Willing to Relocate?</label>
+                                            <select asp-for="CareerPreferences.WillingToRelocate" class="form-control">
+                                                <option value="">Select</option>
+                                                <option>Yes</option>
+                                                <option>No</option>
+                                                <option>Maybe</option>
+                                            </select>
+                                            <span asp-validation-for="CareerPreferences.WillingToRelocate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Work Experience Section -->
+                        <div class="row mt-4 work-experience section-container">
+                        <div class="col-md-12" style="overflow:auto;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                                    <!-- Heading for Work Experience -->
+                                    <h4>Work Experience</h4>
+
+                                    <!-- Button to add new row -->
+                                    <button type="button" class="btn btn-primary" onclick="addRow()">Add Work Experience</button>
+                                </div>
+                                <!-- Work Experience Table -->
+                                <table id="work-experience-table" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Job Title</th>
+                                            <th>Company Name</th>
+                                            <th>Industry</th>
+                                            <th>Employment Type</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Key Responsibilities</th>
+                                            <th>Leadership Impact</th>
+                                            @* <th>Action</th> *@
+                                        </tr>
+                                    </thead>
+                                    <tbody id="work-experience-list">
+                                        @for (int i = 0; i < Model.WorkExperiences.Count; i++)
+                                        {
+                                            <tr>
+                                                <td><input asp-for="WorkExperiences[@i].JobTitle" class="form-control" /></td>
+                                                <td><input asp-for="WorkExperiences[@i].CompanyName" class="form-control" /></td>
+                                                <td><input asp-for="WorkExperiences[@i].Industry" class="form-control" /></td>
+                                                <td><select asp-for="WorkExperiences[@i].EmploymentType" class="form-control" asp-items="ViewBag.EmploymentType">  <option value="">Select Employment Type</option></select></td>
+                                                <td><input asp-for="WorkExperiences[@i].StartDate" class="form-control" type="date" /></td>
+                                                <td><input asp-for="WorkExperiences[@i].EndDate" class="form-control" type="date" /></td>
+                                                <td><textarea asp-for="WorkExperiences[@i].KeyResponsibilities" class="form-control"></textarea></td>
+                                                <td><textarea asp-for="WorkExperiences[@i].LeadershipImpact" class="form-control"></textarea></td>
+                                                @* <td>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button> <!-- Delete button -->
+                                                </td> *@
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+
+
+                            </div>
+                        </div>
+
+                        <!-- Education Section -->
+                        <div class="row mt-4 education-history section-container">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <!-- Heading for Education -->
+                                    <h4>Education History</h4>
+                                <button type="button" class="btn btn-primary" onclick="addEducationRow()">Add Education</button>
+                                </div>
+                                <!-- Education Table -->
+                                <table id="education-list" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Degree</th>
+                                            <th>Field of Study</th>
+                                            <th>Institution Name</th>
+                                            <th>Year of Completion</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.EducationHistory != null && Model.EducationHistory.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.EducationHistory.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" asp-for="EducationHistory[@i].Degree" class="form-control" value="@Model.EducationHistory[i].Degree" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" asp-for="EducationHistory[@i].FieldOfStudy" class="form-control" value="@Model.EducationHistory[i].FieldOfStudy" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" asp-for="EducationHistory[@i].InstitutionName" class="form-control" value="@Model.EducationHistory[i].InstitutionName" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" asp-for="EducationHistory[@i].YearOfCompletion" class="form-control" value="@Model.EducationHistory[i].YearOfCompletion" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteEducationRow(this)">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <!-- Certification Section -->
+                        <div class="row mt-4 certifications section-container">
+                            <div class="col-md-12">
+                                <!-- Section Header -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="mb-0">Certifications</h4>
+                                <button type="button" class="btn btn-primary" onclick="addCertificationRow()">Add Certification</button>
+                                </div>
+
+                                <!-- Certification Table -->
+                                <table id="certification-list" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Certification Name</th>
+                                            <th>Issuing Organization</th>
+                                            <th>Year Earned</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Certifications != null && Model.Certifications.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Certifications.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" asp-for="Certifications[@i].CertificationName" class="form-control" value="@Model.Certifications[i].CertificationName" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" asp-for="Certifications[@i].IssuingOrganization" class="form-control" value="@Model.Certifications[i].IssuingOrganization" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" asp-for="Certifications[@i].YearEarned" class="form-control" value="@Model.Certifications[i].YearEarned" />
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteCertificationRow(this)">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Skills Section -->
+                        <div class="row mt-4 skills section-container">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4>Skills</h4>
+                                </div>
+                                <table id="skills-list" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Skill Type</th>
+                                            <th>Skill Names (Select Multiple)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Skills != null && Model.Skills.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Skills.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <select asp-for="Skills[@i].SkillType" class="form-control skill-type" asp-items="@ViewBag.SkillType" disabled>
+                                                        </select>
+                                                        <input asp-for="Skills[@i].SkillType" class="form-control skill-type" hidden>
+                                                    </td>
+                                                    <td>
+                                                        <select asp-for="Skills[@i].SkillNames" class="form-control skill-names" multiple asp-items="@(ViewData[$"SkillName{i}"] as IEnumerable<SelectListItem>)">
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <!-- Languages Section -->
+                        <div class="row mt-4 languages section-container">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4>Languages</h4>
+                                <button type="button" class="btn btn-primary" onclick="addLanguageRow()">Add Language</button>
+                                </div>
+                                <table id="languages-list" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Language</th>
+                                            <th>Proficiency</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Languages != null && Model.Languages.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Languages.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="text" asp-for="Languages[@i].Language" class="form-control" />
+                                                    </td>
+                                                    <td>
+                                                        <select asp-for="Languages[@i].Proficiency" class="form-control" asp-items="@ViewBag.LanguagesProficiency">
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteLanguageRow(this)">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Additional Information Section -->
+                        <div class="row mt-4 additional-info section-container">
+                            <div class="col-md-12">
+                                @* <h4>Additional Information</h4> *@
+                                <div class="row mt-3">
+                                    <!-- International Experience -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h4 class="control-label">International Experience</h4>
+                                            <textarea asp-for="InternationalExperience" class="form-control" rows="3" placeholder="Have you worked/studied/lived in multiple countries? (Optional)"></textarea>
+                                            <span asp-validation-for="InternationalExperience" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Community & Advocacy Experience -->
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h4 class="control-label">Community & Advocacy Experience</h4>
+                                            <textarea asp-for="CommunityAdvocacyExperience" class="form-control" rows="3" placeholder="Community & Advocacy Experience Highlighting Leadership in DEIB and Social Impact (Optional)"></textarea>
+                                            <span asp-validation-for="CommunityAdvocacyExperience" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                <input type="submit" value="Update Profile" class="btn btn-success float-end  d-none" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <!-- Submit Button -->
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="submit" value="Update Profile" class="btn btn-success float-end" />
+                        </div>
+                    </div>
+                </div>
+                </section>
+            </form>
+        </div>
+    </div>
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script>
+        function addRow() {
+            var table = document.getElementById("work-experience-list");
+            var rowCount = table.rows.length;
+
+            // Create a new row
+            var row = table.insertRow(rowCount);
+
+            // Create cells for the new row
+            for (var i = 0; i < 8; i++) {
+                var cell = row.insertCell(i);
+
+                if (i === 3) {
+                    // Create a dropdown for EmploymentType
+                    var select = document.createElement("select");
+                    select.classList.add("form-control");
+                    select.setAttribute('name', 'WorkExperiences[' + rowCount + '].EmploymentType');
+
+                    // Fetch employment types from a hidden field or global JS variable
+                    var employmentTypes = JSON.parse(document.getElementById("employmentTypesData").value);
+
+                    employmentTypes.forEach(function (item) {
+                        var option = document.createElement("option");
+                        console.log(item);
+                        option.value = item.Text;
+                        option.textContent = item.Text;
+                        select.appendChild(option);
+                    });
+
+                    cell.appendChild(select);
+                }
+                else if (i < 7) {
+                    var input = document.createElement("input");
+                    input.classList.add("form-control");
+                    if (i === 4 || i === 5) {
+                        input.setAttribute("type", "date");
+                    }
+                    input.setAttribute('name', 'WorkExperiences[' + rowCount + '].' + getInputFieldName(i));
+                    cell.appendChild(input);
+                }
+                else {
+                    var textarea = document.createElement("textarea");
+                    textarea.classList.add("form-control");
+                    textarea.setAttribute('name', 'WorkExperiences[' + rowCount + '].LeadershipImpact');
+                    cell.appendChild(textarea);
+                }
+            }
+            // Add delete button
+            var deleteButtonCell = row.insertCell(8);
+            var deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("type", "button");
+            deleteButton.onclick = function () {
+                deleteRow(deleteButton);
+            };
+            deleteButtonCell.appendChild(deleteButton);
+        }
+
+        function getInputFieldName(index) {
+            switch (index) {
+                case 0: return 'JobTitle';
+                case 1: return 'CompanyName';
+                case 2: return 'Industry';
+                case 3: return 'EmploymentType';
+                case 4: return 'StartDate';
+                case 5: return 'EndDate';
+                case 6: return 'KeyResponsibilities';
+                default: return 'LeadershipImpact';
+            }
+        }
+
+        // Function to delete a row from the table
+        function deleteRow(button) {
+            var row = button.closest("tr");
+            row.parentNode.removeChild(row);
+        }
+
+        function addEducationRow() {
+            var table = document.getElementById("education-list").getElementsByTagName('tbody')[0];
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            // Create cells and input fields
+            var fields = ["Degree", "FieldOfStudy", "InstitutionName", "YearOfCompletion"];
+
+            for (var i = 0; i < fields.length; i++) {
+                var cell = row.insertCell(i);
+                var input = document.createElement("input");
+                input.classList.add("form-control");
+                input.setAttribute("name", "EducationHistory[" + rowCount + "]." + fields[i]);
+
+                if (fields[i] === "YearOfCompletion") {
+                    input.setAttribute("type", "number");
+                }
+
+                cell.appendChild(input);
+            }
+
+            // Add Delete Button
+            var deleteCell = row.insertCell(fields.length);
+            var deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("type", "button");
+            deleteButton.onclick = function () {
+                deleteEducationRow(deleteButton);
+            };
+            deleteCell.appendChild(deleteButton);
+        }
+
+        // Function to delete row
+        function deleteEducationRow(button) {
+            var row = button.closest("tr");
+            row.remove();
+        }
+
+
+        // Function to delete a certification row
+        function deleteCertificationRow(button) {
+            var row = button.closest("tr");
+            row.remove();
+        }
+
+        // Function to add a new certification row dynamically
+        function addCertificationRow() {
+            var table = document.getElementById("certification-list").getElementsByTagName('tbody')[0];
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            // Define fields to be added
+            var fields = ["CertificationName", "IssuingOrganization", "YearEarned"];
+
+            for (var i = 0; i < fields.length; i++) {
+                var cell = row.insertCell(i);
+                var input = document.createElement("input");
+                input.classList.add("form-control");
+                input.setAttribute("name", "Certifications[" + rowCount + "]." + fields[i]);
+
+                // Set input type for YearEarned
+                if (fields[i] === "YearEarned") {
+                    input.setAttribute("type", "number");
+                }
+
+                cell.appendChild(input);
+            }
+
+            // Add Delete Button
+            var deleteCell = row.insertCell(fields.length);
+            var deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("type", "button");
+            deleteButton.onclick = function () {
+                deleteCertificationRow(deleteButton);
+            };
+            deleteCell.appendChild(deleteButton);
+        }
+        // Function to add a new language row
+        function addLanguageRow() {
+            var table = document.getElementById("languages-list").getElementsByTagName('tbody')[0];
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            // Language input field
+            var cell1 = row.insertCell(0);
+            var input = document.createElement("input");
+            input.classList.add("form-control");
+            input.setAttribute("name", "Languages[" + rowCount + "].Language");
+            cell1.appendChild(input);
+
+            // Proficiency dropdown
+            var cell2 = row.insertCell(1);
+            var select = document.createElement("select");
+            select.classList.add("form-control");
+            select.setAttribute("name", "Languages[" + rowCount + "].Proficiency");
+
+            ["Basic", "Intermediate", "Fluent", "Native"].forEach(level => {
+                var option = document.createElement("option");
+                option.value = level;
+                option.textContent = level;
+                select.appendChild(option);
+            });
+
+            cell2.appendChild(select);
+
+            // Delete button
+            var cell3 = row.insertCell(2);
+            var deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("type", "button");
+            deleteButton.onclick = function () {
+                deleteLanguageRow(deleteButton);
+            };
+            cell3.appendChild(deleteButton);
+        }
+
+        // Function to delete a language row
+        function deleteLanguageRow(button) {
+            var row = button.closest("tr");
+            row.remove();
+        }
+        // Function to delete a volunteer experience row
+        function deleteVolunteerRow(button) {
+            var row = button.closest("tr");
+            row.remove();
+        }
+
+        // Function to add a new volunteer experience row dynamically
+        function addVolunteerRow() {
+            var table = document.getElementById("volunteer-list").getElementsByTagName('tbody')[0];
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            // Define fields to be added
+            var fields = ["OrganizationName", "Role", "StartDate", "EndDate", "Description"];
+
+            for (var i = 0; i < fields.length; i++) {
+                var cell = row.insertCell(i);
+                var input = document.createElement("input");
+                input.classList.add("form-control");
+                input.setAttribute("name", "VolunteerExperiences[" + rowCount + "]." + fields[i]);
+
+                // Set input type for StartDate and EndDate
+                if (fields[i] === "StartDate" || fields[i] === "EndDate") {
+                    input.setAttribute("type", "date");
+                } else {
+                    input.setAttribute("type", "text");
+                }
+
+                cell.appendChild(input);
+            }
+
+            // Add Delete Button
+            var deleteCell = row.insertCell(fields.length);
+            var deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+            deleteButton.textContent = "Delete";
+            deleteButton.setAttribute("type", "button");
+            deleteButton.onclick = function () {
+                deleteVolunteerRow(deleteButton);
+            };
+            deleteCell.appendChild(deleteButton);
+        }
+
+    </script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <!-- Bootstrap JS (Make sure jQuery and Popper.js are included if needed) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript" src="./assets/js/jquery.js"></script>
+    <script type="text/javascript" src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function copyReferralLink() {
+        var copyText = document.getElementById("referralLink");
+        copyText.select();
+        document.execCommand("copy");
+        alert("Referral link copied: " + copyText.value);
+    }
+</script>
+
+@* </body>
+</html> *@
+
