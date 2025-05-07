@@ -373,7 +373,7 @@
                         </table>
                     </div>
                 </div>
-
+                @if(PastEvent[i].Tblevidences.Count>0){
                 <div class="col-lg-12">
                     <div class="event-evidence-box">
                         <div class="simple-gallery">
@@ -387,7 +387,8 @@
                             }
                         </div>
                     </div>
-                </div>
+                    </div>
+                }
 
                 @if (PastEvent[i].Startdateofevent >= DateOnly.FromDateTime(DateTime.Today))
                 {
