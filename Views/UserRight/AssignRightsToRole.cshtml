@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "User Right";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section id="AboutSection" style="text-transform: uppercase; font-size: 14px; letter-spacing: 0.1rem;">
+    <div class="card">
+        <div class="card-body">
+            <div class="container-fluid mt-4">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <h4 class="Headingcolorbg">Role Rights</h4>
+                        <button id="saveAllButton" class="btn btn-primary" onclick="SaveAllUserRightsAll()" style="display:none;">Save All</button>
+
+                    </div>
+                    <div class="col-xl-2 col-lg-2"></div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="input-group">
+                            <span class="input-group-text" id="inputGroupPrepend"><i class="fa-solid fa-user"></i></span>
+                            <select id="drpRole" class="form-control form-select" asp-items="ViewBag.RoleID">
+                                <option value="0">Select Roles</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div id="DVRenderMenuList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script src="~/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#drpRole').on('change', function () {
+            var drpVal = $('#drpRole').val();
+            if (drpVal == "0") 
+            {
+                $("#saveAllButton").css("display", "none");
+            }
+            else{
+                $("#saveAllButton").css("display", "block");
+            }
+             var p = { "RoleID": drpVal };
+            $.ajax({
+                url: '@Url.Content("~/")' + "UserRight/renderRightsMenuCMS", //Your path should be here
+                type: "POST",
+                data: p,
+                success: function (result) {
+                    $("#DVRenderMenuList").html('');
+                    $("#DVRenderMenuList").html(result);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+
+        });
+        $('#tblUserRight').DataTable({
+            paging: true,
+            searching: true,
+        });
+    });
+
+    function SaveAllUserRightsAll() {
+        var dataToSend = [];
+
+        $('#tblUserRight tbody tr').each(function () {
+            var menuId = $(this).find('[id^=DS_]').attr('id').split('_')[1];
+            var display = $(this).find('[id^=DS_]').prop('checked');
+            var add = $(this).find('[id^=AD_]').prop('checked');
+            var edit = $(this).find('[id^=ED_]').prop('checked');
+            var del = $(this).find('[id^=DL_]').prop('checked');
+            var roleMenuId = $(this).find(".roleMenuId").val();
+            var parentId = $(this).find(".parentId").val();
+            var roleId = $(this).find(".roleId").val();
+            var rowData = {
+                DSN: display,
+                ADN: add,
+                EDN: edit,
+                DLN: del ? 1 : 0,
+                RoleMenuIdN: parseInt(roleMenuId),
+                MenuParentid: parseInt(parentId),
+                roleid: parseInt(roleId),
+                Flag: "Admin"
+            };
+
+            dataToSend.push(rowData);
+        });
+
+        $.ajax({
+            url: '@Url.Action("SaveUserRightAll", "UserRight")',
+            type: 'POST',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(dataToSend),
+            success: function (response) {
+                if (response.success === true) {
+                    alert("Updated All Succesfully");
+
+                    var url = '@Url.Content("~/")' + "UserRight/AssignRightsToRole";
+                    window.location.href = url;
+                }
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+    }
+
+</script>
