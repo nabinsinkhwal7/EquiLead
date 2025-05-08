@@ -1,424 +1,262 @@
 ﻿@using Microsoft.AspNetCore.Http;
-@model SPMAilCommonModel
+@model List<EquidCMS.Dto.SPMailModel>
 @{
     ViewData["Title"] = "Groups";
 
-    Layout = "~/Views/Shared/_LayoutAdminLTEAdmin.cshtml";
-
-    var edit = TempData["EditRight"] == null ? false : (bool)TempData["EditRight"];
-    TempData.Keep("EditRight");
-    var delete = TempData["DeleteRight"] == null ? false : (bool)TempData["DeleteRight"];
-    TempData.Keep("DeleteRight");
-    var add = TempData["AddRight"] == null ? false : (bool)TempData["AddRight"];
-    TempData.Keep("AddRight");
-
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>  *@
+
+<!-- Bootstrap 4 CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Summernote CSS -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js (required by Bootstrap) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- Summernote JS -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+
+
+
+
+
+
+
 <style>
-    .card {
-        position: relative;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        min-width: 0;
-        word-wrap: break-word;
+    .custom-badge {
+        background-color: blueviolet;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .custom-dropdown {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0; /* Remove padding to reduce extra space */
+        max-height: 150px;
+        overflow-y: auto;
         background-color: #fff;
-        background-clip: border-box;
-        border: 0px solid #72def6;
-        border-radius: .25rem;
+        box-sizing: border-box;
     }
 
-    .bgButton {
-        background: #bfd600 !important;
-        border-color: #bfd600 !important;
-    }
-
-        .bgButton:hover {
-            background: #b2c607 !important;
-            border-color: #b2c607 !important;
+        .custom-dropdown label {
+            display: block; /* Keep label as block-level element */
+            padding: 2px 4px; /* Further reduced padding to bring items closer */
+            cursor: pointer;
+            margin: 0; /* Remove margin between checkboxes */
         }
 
-
-    .bgbagheader {
-        background: #b9f2ff; /* Old browsers */
-    }
-
-    .dataTables_length {
-        margin-left: 10px;
-    }
-
-    .btn-orang {
-        color: #fff;
-        background-color: #f39c12;
-        border-color: #f39c12;
-    }
-
-        .btn-orang:hover {
-            color: #fff;
-            background-color: #fe8936;
-            border-color: #fe8936;
+        .custom-dropdown input[type="checkbox"] {
+            margin-right: 5px; /* Slightly reduce space between checkbox and text */
         }
-
-    .buttons-html5 {
-        background-color: #4CAF50 !important; /* Green */
-        border: none !important;
-        color: white !important;
-        text-align: center !important;
-        text-decoration: none !important;
-        display: inline-block !important;
-        padding: 5px;
-        margin: 2px;
-    }
 </style>
 
-
 <form method="post" enctype="multipart/form-data">
-    <section id="AboutSection" class="mt-4 mb-4" style="padding:15px;text-transform: uppercase; font-size: 14px; letter-spacing: 0.1rem;">
-
-        <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                <h2 class="PagemainHeading text-center">
-                    Group's
-                </h2>
+    <section class="mt-4 mb-4" style="padding:15px;font-size: 14px; letter-spacing: 0.1rem;">
+        <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
+            <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h2 class="PagemainHeading">Send Email</h2>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
-
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                <div class="pull-right">
-                    @if (add)
-                    {
-                        <a href="#" class="btn btn-info mt-2" data-toggle="modal" data-target="#ModalSaveGroup" onclick="setGRPId('0','I');"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add Group</a>
-                    }
+        </div>
 
+
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <label><strong>Select Email Addresses</strong></label><span class="text-danger"> *</span>
+
+                    <!-- Search Box -->
+                    <input type="text" id="emailSearch" class="form-control mb-2" placeholder="Search name or email...">
+
+                    <!-- Dropdown List -->
+                    <div class="custom-dropdown border p-2" id="emailDropdown" style="max-height: 150px; overflow-y: auto;">
+                        <!-- Checkboxes will be populated here -->
+                    </div>
                 </div>
+
+                <!-- Selected Emails Display Box -->
+                <div class="col-md-6">
+                    <label><strong>Selected Emails</strong></label>
+                    <div id="selectedEmailsBox" class="border p-2" style="min-height:200px; max-height:200px; overflow-y:auto; background-color: #f9f9f9;">
+                        <span class="text-muted">No emails selected.</span>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" id="DVContactTable">
-                <table id="tblGroupList" class="table table-hover table-striped datatablerowfont">
-                    <thead>
-                        <tr style="font-size:14px">
-                            <th>SR.No</th>
-                            <th>Group Name</th>
-                            <th># Member/School</th>
-                            <th>Link School</th>
-                            <th>Link Contact</th>
-                            <th>Action</th>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var LRF in Model.LSTContactGroup)
-                        {
-                        <tr style="font-size:14px" title="" id="@LRF.ContactGroupId">
-                            <td><b> @( ((Int32)1) + Model.LSTContactGroup.IndexOf(LRF) )</b> </td>
-
-
-                            <td class="mailbox-name"> @LRF.GroupName</td>
-                            @if (Model.LSTContacgGrpMapping.Where(p => p.ContactGroupId == @LRF.ContactGroupId).Select(p => p.IsSchoolList).FirstOrDefault() == true)
-                            {
-                        <td class="mailbox-name"> @Model.LSTContacgGrpMapping.Where(p => p.ContactGroupId == @LRF.ContactGroupId).Count()&nbsp; &nbsp;<i class="fa fa-university  text-info"></i></td>
-                            }
-                            else
-                            {
-                        <td class="mailbox-name"> @Model.LSTContacgGrpMapping.Where(p => p.ContactGroupId == @LRF.ContactGroupId).Count()&nbsp; &nbsp;<i class="fa fa-users  text-info"></i></td>
-                            }
-
-                            <td>
-
-                                <a href="#" style="margin: 0px 0px 0px 10px;" onclick="getselectedlist(@LRF.ContactGroupId,'SCH')" title="Link"><i class="fa fa-plus text-info"></i></a>
-                            </td>
-                            <td>
-                                <a href="#" style="margin: 0px 0px 0px 10px;" onclick="getselectedlist(@LRF.ContactGroupId,'MEM')" title="Link"><i class="fa fa-plus text-info"></i></a>
-                            </td>
-                            <td>
-                                @if (edit)
-                                {
-                                    <a href="#" style="margin: 0px 0px 0px 10px;" data-toggle="modal" data-target="#ModalSaveGroup" onclick="setGRPId(@LRF.ContactGroupId,'U')" title="Compose Mail"><i class="fa fa-pencil text-dark"></i></a>
-                                }
-                                @if (delete)
-                                {
-                                    <a href="#" style="margin: 0px 0px 0px 10px;" onclick="RemoveGroupId(@LRF.ContactGroupId)" title="Remove"><i class="fa fa-trash text-danger"></i></a>
-                                }
-                            </td>
-
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
+        <!-- Title -->
+        <div class="col-md-12 mb-3">
+            <label for="emailTitle"><strong>Email Title</strong></label><span class="text-danger"> *</span>
+            <input type="text" id="emailTitle" class="form-control" maxlength="150" required />
         </div>
+
+        <!-- Body -->
+        <div class="col-md-12 mb-3">
+            <label for="emailBody"><strong>Email Body</strong></label><span class="text-danger"> *</span>
+           @*  <textarea id="emailBody" class="form-control" rows="6" required></textarea> *@
+            <textarea id="emailBody"></textarea>
+        </div>
+
+        <!-- Send Button -->
+        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border" onclick="sendEmail(event); return false;">Send Email</button>
+
 
     </section>
-    @*modal for SaveGroup*@
-    <div id="ModalSaveGroup" class="modal fade" tabindex="-1" role="dialog"
-         aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 style="font-weight:600">Add Group</h5>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label">Name </label><span class="mandatory text-danger"> *</span>
-                                <input id="txtGroupname" required maxlength="150" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="pull-right">
-                        <input onclick="SaveGRP();" class="btn btn-orang mt-3" value="Save " />
-                    </div>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-
-    <div id="ModalshowSchoolMmberList" class="modal fade" tabindex="-1" role="dialog"
-         aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" id="DVLINKLIST">
-                
-            </div>
-
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-
-    <input type="hidden" id="hdaddgroupflag" />
-    <input type="hidden" id="hdgroupId" />
 </form>
 
+<script>
+    $(document).ready(function () {
+        $('#emailBody').summernote({
+            placeholder: 'Write your email body here...',
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
 
-     
 
 <script>
 
-    $(function () {
-        $('#tblGroupList').DataTable({
-            dom: 'lBfrtip',
-            buttons: [
-                'excelHtml5',
-                'pdf'
-            ],
-            'paging': true,
-            'lengthChange': false,
-            "scrollX": true,
-            'searching': true,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-
-        })
-
-        $('#tblContactList').DataTable({
-
-            'paging': false,
-            'lengthChange': false,
-            "scrollX": true,
-            'searching': true,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-
-        })
-
-        //$('#selectAll').click(function (e) {
-        //    $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
-        //});
-    })
-
-    function checkAll(ele) {
-        var checkboxes = document.getElementsByTagName('input');
-        if (ele.checked) {
-            for (var i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].type == 'checkbox') {
-                    checkboxes[i].checked = true;
-                }
-            }
-        } else {
-            for (var i = 0; i < checkboxes.length; i++) {
-                console.log(i)
-                if (checkboxes[i].type == 'checkbox') {
-                    checkboxes[i].checked = false;
-                }
-            }
-        }
-    }
-
-    function getselectedlist(Contactgroupid,Flag) {
-        debugger;
-        //DVLINKLIST
-        $('#hdgroupId').val(Contactgroupid);
-        var p = { "GroupId": Contactgroupid, "flag": Flag };
-
-                $.ajax({
-                    url: "@Url.Action("FillGroupContent", "SPMail")", //Your path should be here
-                    type: "POST",
-                    data: p,
-                    success: function (result) {
-
-                        $('#DVLINKLIST').html(result);
-                        $('#ModalshowSchoolMmberList').modal('toggle');
-                       
-
-                    },
-                    error: function (xhr, status, error) {
-                        var err = eval("(" + xhr.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
 
 
-    }
-
-    function SaveGRP() {
-
-        var p = { "Groupname": $('#txtGroupname').val(), "flag": $('#hdaddgroupflag').val(), "groupId": $('#hdgroupId').val() };
-                $.ajax({
-                    url: "@Url.Action("SaveGroup", "SPMail")",
-                    type: "POST",
-                    data: p,
-                    success: function (result) {
-                        debugger;
-                        $('#ModalSaveGroup').modal('toggle');
-                        $('#DVContactTable').html(result);
-
-                        if ($('#hdaddContactflag').val() == 'I') {
-                            $.bootstrapGrowl("<i class='fa fa-check-circle' aria-hidden='true'></i> Group save successfully.", {
-                                type: 'info',
-                                align: 'center',
-                                width: 'auto',
-                                allow_dismiss: true,
-                                delay: 5000
-                            });
-                        }
-                        else {
-                            $.bootstrapGrowl("<i class='fa fa-check-circle' aria-hidden='true'></i> Group update successfully.", {
-                                type: 'info',
-                                align: 'center',
-                                width: 'auto',
-                                allow_dismiss: true,
-                                delay: 5000
-                            });
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        var err = eval("(" + xhr.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
-
-    }
-
-    function setGRPId(GroupId,flag)
-    {
-        $('#hdgroupId').val(GroupId);
-        $('#hdaddgroupflag').val(flag);
-
-            if (flag == 'I') {
-
-                $('#txtGroupname').val('');
-
-            }
-            else
-            {
-                var p = { "GroupId": GroupId, };
-
-                $.ajax({
-                    url: "@Url.Action("FillGroup", "SPMail")", //Your path should be here
-                    type: "POST",
-                    data: p,
-                    success: function (result) {
-
-                        $('#txtGroupname').val(result[0].GroupName);
-
-                    },
-                    error: function (xhr, status, error) {
-                        var err = eval("(" + xhr.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
-            }
-        }
-
-    function RemoveGroupId(GroupId)
-    {
-
-        var p = { "GroupId": GroupId, };
-
-                $.ajax({
-                    url: "@Url.Action("RemoveGroup", "SPMail")", //Your path should be here
-                    type: "POST",
-                    data: p,
-                    success: function (result) {
-
-                        $('#DVContactTable').html(result);
-
-                        $.bootstrapGrowl("<i class='fa fa-check-circle' aria-hidden='true'></i> Contact remove successfully.", {
-                                type: 'info',
-                                align: 'center',
-                                width: 'auto',
-                                allow_dismiss: true,
-                                delay: 5000
-                            });
-
-
-
-
-                    },
-                    error: function (xhr, status, error) {
-                        var err = eval("(" + xhr.responseText + ")");
-                        alert(err.Message);
-                    }
-                });
-
-    }
-
-    function LinkGroup(flag) {
-         var formdata = [];
-
-         debugger;
-         $('input:checkbox').each(function () {
-             if ($(this).is(':checked')) {
-                 if ($(this).val() != 'yes') {
-
-                     formdata.push({
-                         Suid: $(this).val()
-                     });
-                 }
-                 
-             }
-
-         });
-
-        formdata = JSON.stringify(formdata);
-         
-        var p = { "MemselectedItems": formdata, "ContactGroupId": $('#hdgroupId').val(), "flag": flag};
-
-          $.ajax({
-              url: "@Url.Action("LinkMember", "SPMail")", //Your path should be here
-            type: "POST",
-            data: p,
-            success: function (result) {
-
-                $('#DVContactTable').html(result);
-                $('#ModalshowSchoolMmberList').modal('toggle');
-            },
-            error: function (xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                alert(err.Message);
-            }
+    $(document).ready(function () {
+        // Update the selected emails box when checkboxes change
+        $('#emailDropdown').on('change', '.emailCheckbox', function () {
+            var selectedEmails = [];
+            $('.emailCheckbox:checked').each(function () {
+                selectedEmails.push($(this).val());
             });
 
+            var displayBox = $('#selectedEmailsBox');
+            displayBox.empty();
+
+            if (selectedEmails.length > 0) {
+                selectedEmails.forEach(function (email) {
+                   displayBox.append('<div class="custom-badge m-1">' + email + '</div>');
+
+                });
+            } else {
+                displayBox.html('<span class="text-muted">No emails selected.</span>');
+            }
+        });
+
+        // Fetch email list from server and populate the dropdown
+        $.ajax({
+            url: '/SPMail/GetEmails',  // Ensure the URL is correct
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log('Received data:', data); // Log the received data for debugging
+                if (data && data.$values && Array.isArray(data.$values)) {
+                    data.$values.forEach(function (person) {
+                        var checkboxHtml = '<label><input type="checkbox" class="emailCheckbox" value="' + person.email + '" data-id="' + person.id + '"> ' + person.name + ' - ' + person.email + '</label><br>';
+                        $('#emailDropdown').append(checkboxHtml);
+                    });
+                } else {
+                    console.error('Error: Data format issue', data);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching emails:', error);
+            }
+        });
+
+        // Search functionality
+        $('#emailSearch').on('keyup', function () {
+            const filter = this.value.toLowerCase();
+            const labels = document.querySelectorAll('#emailDropdown label');
+
+            labels.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    label.style.display = '';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Send email function
+    function sendEmail(event) {
+         event.preventDefault();  // Prevent default form behavior
+
+        var selectedEmails = [];
+        $('.emailCheckbox:checked').each(function () {
+            var emailData = {
+                Id: $(this).data('id'), // Match PascalCase if your SPMailModel uses Id
+                Name: $(this).parent().text().split(' - ')[0].trim(),
+                Email: $(this).val()
+            };
+            selectedEmails.push(emailData);
+        });
+
+        var title = $('#emailTitle').val();
+        var body = $('#emailBody').summernote('code');  // Get CKEditor content
+       
+        if (selectedEmails.length > 0) {
+             console.log(body);
+             console.log(title);
+            $.ajax({
+                url: '/SPMail/SendEmail',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    Recipients: selectedEmails,
+                    Title: title,
+                    Body: body
+                }),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Emails sent successfully!');
+                    } else {
+                        alert('Error sending emails: ' + response.errorMessage);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error sending emails:', xhr.responseText);
+                    alert('There was an error sending the emails.');
+                }
+            });
+        } else {
+            alert('Please select at least one email.');
+        }
     }
+
+    
+
+  
 </script>
+
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
