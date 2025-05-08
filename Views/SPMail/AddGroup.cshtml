@@ -1,0 +1,262 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model List<EquidCMS.Dto.SPMailModel>
+@{
+    ViewData["Title"] = "Groups";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote.min.js"></script>  *@
+
+<!-- Bootstrap 4 CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Summernote CSS -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js (required by Bootstrap) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- Summernote JS -->
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+
+
+
+
+
+
+
+<style>
+    .custom-badge {
+        background-color: blueviolet;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .custom-dropdown {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0; /* Remove padding to reduce extra space */
+        max-height: 150px;
+        overflow-y: auto;
+        background-color: #fff;
+        box-sizing: border-box;
+    }
+
+        .custom-dropdown label {
+            display: block; /* Keep label as block-level element */
+            padding: 2px 4px; /* Further reduced padding to bring items closer */
+            cursor: pointer;
+            margin: 0; /* Remove margin between checkboxes */
+        }
+
+        .custom-dropdown input[type="checkbox"] {
+            margin-right: 5px; /* Slightly reduce space between checkbox and text */
+        }
+</style>
+
+<form method="post" enctype="multipart/form-data">
+    <section class="mt-4 mb-4" style="padding:15px;font-size: 14px; letter-spacing: 0.1rem;">
+        <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
+            <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h2 class="PagemainHeading">Send Email</h2>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            </div>
+        </div>
+
+
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <label><strong>Select Email Addresses</strong></label><span class="text-danger"> *</span>
+
+                    <!-- Search Box -->
+                    <input type="text" id="emailSearch" class="form-control mb-2" placeholder="Search name or email...">
+
+                    <!-- Dropdown List -->
+                    <div class="custom-dropdown border p-2" id="emailDropdown" style="max-height: 150px; overflow-y: auto;">
+                        <!-- Checkboxes will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Selected Emails Display Box -->
+                <div class="col-md-6">
+                    <label><strong>Selected Emails</strong></label>
+                    <div id="selectedEmailsBox" class="border p-2" style="min-height:200px; max-height:200px; overflow-y:auto; background-color: #f9f9f9;">
+                        <span class="text-muted">No emails selected.</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="col-md-12 mb-3">
+            <label for="emailTitle"><strong>Email Title</strong></label><span class="text-danger"> *</span>
+            <input type="text" id="emailTitle" class="form-control" maxlength="150" required />
+        </div>
+
+        <!-- Body -->
+        <div class="col-md-12 mb-3">
+            <label for="emailBody"><strong>Email Body</strong></label><span class="text-danger"> *</span>
+           @*  <textarea id="emailBody" class="form-control" rows="6" required></textarea> *@
+            <textarea id="emailBody"></textarea>
+        </div>
+
+        <!-- Send Button -->
+        <button type="submit" style="background-color: blueviolet;" class="rr-secondary-btn btn-border" onclick="sendEmail(event); return false;">Send Email</button>
+
+
+    </section>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('#emailBody').summernote({
+            placeholder: 'Write your email body here...',
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+
+
+<script>
+
+
+
+    $(document).ready(function () {
+        // Update the selected emails box when checkboxes change
+        $('#emailDropdown').on('change', '.emailCheckbox', function () {
+            var selectedEmails = [];
+            $('.emailCheckbox:checked').each(function () {
+                selectedEmails.push($(this).val());
+            });
+
+            var displayBox = $('#selectedEmailsBox');
+            displayBox.empty();
+
+            if (selectedEmails.length > 0) {
+                selectedEmails.forEach(function (email) {
+                   displayBox.append('<div class="custom-badge m-1">' + email + '</div>');
+
+                });
+            } else {
+                displayBox.html('<span class="text-muted">No emails selected.</span>');
+            }
+        });
+
+        // Fetch email list from server and populate the dropdown
+        $.ajax({
+            url: '/SPMail/GetEmails',  // Ensure the URL is correct
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log('Received data:', data); // Log the received data for debugging
+                if (data && data.$values && Array.isArray(data.$values)) {
+                    data.$values.forEach(function (person) {
+                        var checkboxHtml = '<label><input type="checkbox" class="emailCheckbox" value="' + person.email + '" data-id="' + person.id + '"> ' + person.name + ' - ' + person.email + '</label><br>';
+                        $('#emailDropdown').append(checkboxHtml);
+                    });
+                } else {
+                    console.error('Error: Data format issue', data);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching emails:', error);
+            }
+        });
+
+        // Search functionality
+        $('#emailSearch').on('keyup', function () {
+            const filter = this.value.toLowerCase();
+            const labels = document.querySelectorAll('#emailDropdown label');
+
+            labels.forEach(label => {
+                const text = label.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    label.style.display = '';
+                } else {
+                    label.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Send email function
+    function sendEmail(event) {
+         event.preventDefault();  // Prevent default form behavior
+
+        var selectedEmails = [];
+        $('.emailCheckbox:checked').each(function () {
+            var emailData = {
+                Id: $(this).data('id'), // Match PascalCase if your SPMailModel uses Id
+                Name: $(this).parent().text().split(' - ')[0].trim(),
+                Email: $(this).val()
+            };
+            selectedEmails.push(emailData);
+        });
+
+        var title = $('#emailTitle').val();
+        var body = $('#emailBody').summernote('code');  // Get CKEditor content
+       
+        if (selectedEmails.length > 0) {
+             console.log(body);
+             console.log(title);
+            $.ajax({
+                url: '/SPMail/SendEmail',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    Recipients: selectedEmails,
+                    Title: title,
+                    Body: body
+                }),
+                success: function (response) {
+                    if (response.success) {
+                        alert('Emails sent successfully!');
+                    } else {
+                        alert('Error sending emails: ' + response.errorMessage);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error sending emails:', xhr.responseText);
+                    alert('There was an error sending the emails.');
+                }
+            });
+        } else {
+            alert('Please select at least one email.');
+        }
+    }
+
+    
+
+  
+</script>
+
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
