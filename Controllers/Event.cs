@@ -320,44 +320,46 @@ namespace EquidCMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEvidence(int EventID, List<IFormFile> EvidenceFiles)
+        public async Task<IActionResult> AddEvidence(int EventID, List<IFormFile>? EvidenceFiles, string? VideoLink)
         {
             if (ModelState.IsValid)
             {
+                if (!string.IsNullOrWhiteSpace(VideoLink))
+                {
+                    // Save the video link as evidence
+                    var evidence = new Tblevidence
+                    {
+                        Eventid = EventID,
+                        Evidencelink = VideoLink.Trim()
+                    };
+                    _context.Tblevidences.Add(evidence);
+                }
+
                 foreach (var file in EvidenceFiles)
                 {
                     if (file.Length > 0)
                     {
-                        // Generate a unique file name for each file to avoid name collisions
                         var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        var relativePath = Path.Combine("assets", "Evidence", fileName);
+                        var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
 
-                        // Save the file to the "wwwroot/assets/Evidence" folder
-                        var filePath = Path.Combine("wwwroot", "assets", "Evidence", fileName);
-
-                        // Save the file using a stream
-                        var fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
                         using (var stream = new FileStream(fullFilePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
                         }
 
-                        // Create the TblEvidence record
                         var evidence = new Tblevidence
                         {
                             Eventid = EventID,
-                            Evidencepath = Path.Combine("assets", "Evidence", fileName) // Save the relative path
+                            Evidencepath = relativePath
                         };
 
-                        // Add evidence to the context
-                        _context.Add(evidence);
+                        _context.Tblevidences.Add(evidence);
                     }
                 }
 
-                // Save changes to the database
                 await _context.SaveChangesAsync();
-
-                // Optionally, redirect or return success
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(EvidenceGallery), new { id = EventID });
             }
 
             return View();
@@ -393,6 +395,30 @@ namespace EquidCMS.Controllers
             }
             return Json(new { success = false, message = "Record not found." });
         }
+        [HttpPost]
+        public IActionResult DeleteEvidence(int id)
+        {
+            var evidence = _context.Tblevidences.FirstOrDefault(e => e.Evidenceid == id);
+            if (evidence != null)
+            {
+                _context.Tblevidences.Remove(evidence);
+                _context.SaveChanges();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+        public IActionResult EvidenceGallery(int id)
+        {
+            var eventDetails = _context.Tblevents
+                .Include(e => e.Tblevidences)
+                .FirstOrDefault(e => e.Eventid == id);
 
+            if (eventDetails == null)
+            {
+                return NotFound();
+            }
+
+            return View(eventDetails);
+        }
     }
 }

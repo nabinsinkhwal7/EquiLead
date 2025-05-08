@@ -1,0 +1,135 @@
+﻿@model EquidCMS.Models.Tblevent
+@{
+    ViewData["Title"] = "Evidence Gallery";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@functions {
+    public string ConvertToEmbedUrl(string url)
+    {
+        if (url.Contains("youtube.com/watch?v="))
+        {
+            return url.Replace("watch?v=", "embed/");
+        }
+        else if (url.Contains("youtu.be/"))
+        {
+            var videoId = url.Substring(url.LastIndexOf("/") + 1);
+            return $"https://www.youtube.com/embed/{videoId}";
+        }
+        else if (url.Contains("vimeo.com/"))
+        {
+            var videoId = url.Split('/').Last();
+            return $"https://player.vimeo.com/video/{videoId}";
+        }
+        return url; // fallback for generic iframe support
+    }
+}
+
+<h2 class="text-center mt-4">Evidence Gallery for @Model.EventName</h2>
+<form asp-action="AddEvidence" asp-controller="Event" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="EventID" value="@Model.Eventid" />
+
+    <div class="row mb-4">
+        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <h6 class="PagemainHeading">Add New Evidence</h6>
+        </div>
+    </div>
+
+    <div class="row mb-3" style="border-bottom: 2px solid black; padding-bottom: 10px;">
+        <!-- Evidence Type Selection -->
+        <div class="col-md-4">
+            <label for="evidenceType" class="form-label">Evidence Type</label>
+            <select class="form-control" id="evidenceType" onchange="toggleEvidenceInputs()" required>
+                <option value="">Select Type</option>
+                <option value="file">Upload File</option>
+                <option value="link">Video Link</option>
+            </select>
+        </div>
+
+        <!-- File Upload -->
+        <div class="col-md-4" id="fileInputGroup" style="display:none">
+            <label for="EvidenceFiles" class="form-label">Select Image</label>
+            <input type="file" name="EvidenceFiles" class="form-control" />
+        </div>
+
+        <!-- Video Link Input -->
+        <div class="col-md-4" id="linkInputGroup" style="display:none">
+            <label for="VideoLink" class="form-label">Paste Video Link</label>
+            <input type="text" name="VideoLink" class="form-control" placeholder="https://..." />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-success">Submit Evidence</button>
+        </div>
+    </div>
+</form>
+
+
+<div class="container mt-4" style="min-height:500px">
+    <div class="row">
+        @if (Model.Tblevidences != null && Model.Tblevidences.Any())
+        {
+            foreach (var evidence in Model.Tblevidences)
+            {
+                <div class="col-md-4 mb-4 position-relative">
+                    @if (!string.IsNullOrWhiteSpace(evidence.Evidencelink))
+                    {
+                        <!-- Embed YouTube / Video Link -->
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="@ConvertToEmbedUrl(evidence.Evidencelink)" allowfullscreen style="width:100%; height:250px; border:0;"></iframe>
+                        </div>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(evidence.Evidencepath))
+                    {
+                        <!-- Show image -->
+                        <img src="~/@evidence.Evidencepath.Replace("\\", "/")" class="img-fluid rounded shadow" style="height:250px; width:100%; object-fit:cover;" />
+                    }
+
+                    <!-- Optional delete button -->
+                    <button onclick="deleteEvidence(@evidence.Evidenceid)" class="btn btn-sm btn-danger position-absolute top-0 end-0" style="margin:15px" title="Delete Evidence">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center">No evidence uploaded yet.</p>
+        }
+    </div>
+</div>
+<script>
+    function toggleEvidenceInputs() {
+        var selected = document.getElementById('evidenceType').value;
+        // Get input elements
+        var fileInput = document.querySelector('input[name="EvidenceFiles"]');
+        var linkInput = document.querySelector('input[name="VideoLink"]');
+
+        // Clear values
+        if (fileInput) fileInput.value = '';
+        if (linkInput) linkInput.value = '';
+        document.getElementById('fileInputGroup').style.display = selected === 'file' ? 'block' : 'none';
+        document.getElementById('linkInputGroup').style.display = selected === 'link' ? 'block' : 'none';
+    }
+    function deleteEvidence(evidenceId) {
+        if (confirm("Are you sure you want to delete this evidence?")) {
+            $.ajax({
+                url: '/Event/DeleteEvidence',
+                type: 'POST',
+                data: { id: evidenceId },
+                success: function (response) {
+                    if (response.success) {
+                        alert("Evidence deleted successfully.");
+                        location.reload();
+                    } else {
+                        alert("Failed to delete evidence: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error while deleting evidence.");
+                }
+            });
+        }
+    }
+</script>

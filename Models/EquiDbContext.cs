@@ -830,6 +830,7 @@ public partial class EquiDbContext : DbContext
 
             entity.Property(e => e.Evidenceid).HasColumnName("evidenceid");
             entity.Property(e => e.Eventid).HasColumnName("eventid");
+            entity.Property(e => e.Evidencelink).HasColumnName("evidencelink");
             entity.Property(e => e.Evidencepath).HasColumnName("evidencepath");
 
             entity.HasOne(d => d.Event).WithMany(p => p.Tblevidences)

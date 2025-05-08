@@ -11,5 +11,7 @@ public partial class Tblevidence
 
     public string? Evidencepath { get; set; }
 
+    public string? Evidencelink { get; set; }
+
     public virtual Tblevent Event { get; set; } = null!;
 }

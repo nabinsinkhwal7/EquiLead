@@ -224,9 +224,9 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <!-- Add Evidence Button -->
-                                    <a href="javascript:void(0);" class="btn btn-warning fafasize" onclick="openEvidenceModal(@item.Eventid)">
-                                        <i class="fas fa-plus"></i>
+                                    <!--  Evidence Button -->        
+                                        <a href="@Url.Action("EvidenceGallery", "Event", new { id = item.Eventid })" class="btn btn-outline-primary">
+                                            <i class="fas fa-images"></i>
                                     </a>
                                 </td>
                                 <td>
