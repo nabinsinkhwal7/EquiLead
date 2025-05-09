@@ -173,7 +173,7 @@ namespace EquidCMS.Controllers
                 page = 1;
 
             var query = _context.Tblresources
-                .Where(x => !x.Isdeleted && x.Isverified)
+                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchKeyword))

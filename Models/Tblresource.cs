@@ -17,7 +17,7 @@ public partial class Tblresource
 
     public int? ThemeId { get; set; }
 
-    public bool Isverified { get; set; }
+    public bool? Isverified { get; set; }
 
     public bool? Isrelatedrs { get; set; }
 
@@ -39,9 +39,9 @@ public partial class Tblresource
 
     public DateTime? Updatedon { get; set; }
 
-    public List<int>? Topic { get; set; }
-
     public string? RsvideoLink { get; set; }
+
+    public List<int>? Topic { get; set; }
 
     public int? CategoryId { get; set; }
 

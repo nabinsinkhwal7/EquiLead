@@ -445,10 +445,15 @@ public partial class EquiDbContext : DbContext
 
         modelBuilder.Entity<MstLookup>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("mst_lookup");
+            entity.HasKey(e => new { e.Lookupflag, e.Lookupcode, e.Languageid }).HasName("mst_lookup_pk");
 
+            entity.ToTable("mst_lookup");
+
+            entity.Property(e => e.Lookupflag).HasColumnName("lookupflag");
+            entity.Property(e => e.Lookupcode).HasColumnName("lookupcode");
+            entity.Property(e => e.Languageid)
+                .HasDefaultValue(1)
+                .HasColumnName("languageid");
             entity.Property(e => e.Active)
                 .HasDefaultValue(true)
                 .HasColumnName("active");
@@ -458,11 +463,6 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.Hintdetails)
                 .HasMaxLength(50)
                 .HasColumnName("hintdetails");
-            entity.Property(e => e.Languageid)
-                .HasDefaultValue(1)
-                .HasColumnName("languageid");
-            entity.Property(e => e.Lookupcode).HasColumnName("lookupcode");
-            entity.Property(e => e.Lookupflag).HasColumnName("lookupflag");
             entity.Property(e => e.Seqno).HasColumnName("seqno");
         });
 
@@ -894,7 +894,9 @@ public partial class EquiDbContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updatedat");
             entity.Property(e => e.Workmode).HasColumnName("workmode");
-            entity.Property(e => e.Yearexperience).HasColumnName("yearexperience");
+            entity.Property(e => e.Yearexperience)
+                .HasDefaultValue(0)
+                .HasColumnName("yearexperience");
 
             entity.HasOne(d => d.Company).WithMany(p => p.Tbljobs)
                 .HasForeignKey(d => d.Companyid)
@@ -994,7 +996,9 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.Rsshortdescription).HasColumnName("rsshortdescription");
             entity.Property(e => e.Rsversion).HasColumnName("rsversion");
             entity.Property(e => e.RsvideoLink).HasColumnName("RSVideoLink");
-            entity.Property(e => e.ThemeId).HasColumnName("theme_id");
+            entity.Property(e => e.ThemeId)
+                .HasDefaultValue(1)
+                .HasColumnName("theme_id");
             entity.Property(e => e.Topic).HasColumnName("topic");
             entity.Property(e => e.Updatedby).HasColumnName("updatedby");
             entity.Property(e => e.Updatedon)

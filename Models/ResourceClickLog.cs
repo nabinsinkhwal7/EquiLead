@@ -9,7 +9,7 @@ public partial class ResourceClickLog
 
     public int ResourceId { get; set; }
 
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     public string? IpAddress { get; set; }
 

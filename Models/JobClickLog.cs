@@ -9,7 +9,7 @@ public partial class JobClickLog
 
     public int JobId { get; set; }
 
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
 
     public string? IpAddress { get; set; }
 
