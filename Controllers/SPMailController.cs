@@ -44,12 +44,12 @@ namespace FairtradePR.Controllers
         [HttpGet]
         public JsonResult GetEmails()
         {
-            var people = _context.Tbleventparticipants
+            var people = _context.Applicants
                 .Select(x => new SPMailModel
                 {
-                    Id = x.Participantid,
-                    Name = x.Name,
-                    Email = x.Emailid
+                    Id = x.ApplicantId,
+                    Name = x.FullName,
+                    Email = x.Email
                 })
                 .GroupBy(x => x.Email) 
                 .Select(g => g.First()) 
