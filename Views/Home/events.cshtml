@@ -63,11 +63,7 @@
                                     <li><span>Time</span> :- @Events.EventTimeStart - @Events.EventTimeEnd</li>
                                 }
                                 <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events.Eventid"><i class="fa-solid fa-wifi"></i> @Events?.EventType?.Eventtype</a>
-                                @if (@Events?.EventPricing == null)
-                                {
-                                    <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events.Eventid"><i class="fa-solid fa-indian-rupee-sign"></i> Free</a>
-                                }
-                                else
+                                @if (@Events?.EventPricing != null)
                                 {
                                     <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events.Eventid"><i class="fa-solid fa-indian-rupee-sign"></i> @Events?.EventPricing</a>
                                 }
@@ -153,11 +149,7 @@
                                     <li><span>Time</span> :- @PastEvent[i].EventTimeStart - @PastEvent[i].EventTimeEnd</li>
                                 }
                                 <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@PastEvent[i].Eventid"><i class="fa-solid fa-wifi"></i> @PastEvent[i]?.EventType?.Eventtype</a>
-                                @if (@PastEvent[i]?.EventPricing == null)
-                                {
-                                    <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@PastEvent[i].Eventid"><i class="fa-solid fa-indian-rupee-sign"></i> Free</a>
-                                }
-                                else
+                                @if (@PastEvent[i]?.EventPricing != null)
                                 {
                                     <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@PastEvent[i].Eventid"><i class="fa-solid fa-indian-rupee-sign"></i> @PastEvent[i]?.EventPricing</a>
                                 }

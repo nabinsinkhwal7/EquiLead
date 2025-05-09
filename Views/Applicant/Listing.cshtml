@@ -64,11 +64,12 @@
 <section id="AboutSection" class="mt-4 mb-4">
     <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <h2 class="PagemainHeading">Applicant List</h2>
+            <h2 class="PagemainHeading">Applicant List </h2>
+            <p>Total Count : @Model.Count()</p>
         </div>
         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
             <div class="pull-right">
-                <a asp-action="Signup" asp-controller="Applicant" class="btn btn-primary signup-gradient backtodetailbutton float-end" data-wow-delay="600ms">Add Applicant</a>
+                <a asp-action="Signup" asp-controller="Applicant" class="btn btn-primary signup-gradient mb-1 float-end" data-wow-delay="600ms">Add Applicant</a>
             </div>
         </div>
     </div>

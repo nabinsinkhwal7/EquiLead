@@ -29,9 +29,13 @@
     @Html.AntiForgeryToken()
     <input type="hidden" name="EventID" value="@Model.Eventid" />
 
-    <div class="row mb-4">
-        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="row">
+        <div class="col-xl-9 col-lg-9 col-md-4 col-sm-3 col-xs-3">
             <h6 class="PagemainHeading">Add New Evidence</h6>
+        </div>
+
+        <div class="col-xl-3 col-lg-3 d-flex align-items-end mt-1">
+            <a asp-action="Index" class="btn btn-primary backtodetailbutton float-end">Back to List</a>
         </div>
     </div>
 
@@ -62,6 +66,7 @@
         <div class="col-md-4 d-flex align-items-end">
             <button type="submit" class="btn btn-success">Submit Evidence</button>
         </div>
+
     </div>
 </form>
 

@@ -72,8 +72,15 @@
 
 </style>
 <style>
-    .event-evidence-box{border-radius: 10px;border: 1px solid #000;background: #fff;padding: 15px;column-gap: 20px;align-items: center; margin-bottom: 25px;}
-
+    .event-evidence-box {
+        border-radius: 10px;
+        border: 1px solid #000;
+        background: #fff;
+        padding: 15px;
+        column-gap: 20px;
+        align-items: center;
+        margin-bottom: 25px;
+    }
 
 </style>
 
@@ -93,26 +100,27 @@
 </section>
 @for (int i = 0; i < PastEvent.Count; i++)
 {
-<section class="event-detail-page cream_bg pt-80 pb-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 mb-80">
-                <div class="event-head-wrap">
-                    <div class="event-date">
+    <section class="event-detail-page cream_bg pt-80 pb-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mb-80">
+                    <div class="event-head-wrap">
+                        <div class="event-date">
                             <div>Event <p class="date">@PastEvent[i].Startdateofevent.ToString("MMMM") @PastEvent[i].Startdateofevent.ToString("dd")</p> @PastEvent[i].Startdateofevent.ToString("yyyy")</div>
 
-                    </div>
-                    <div class="event-head">
-                        <div>
-                            <h1>@PastEvent[i].EventName</h1>
+                        </div>
+                        <div class="event-head">
+                            <div>
+                                <h1>@PastEvent[i].EventName</h1>
                                 <p>Hosted By :- @PastEvent[i].EventHostOrg</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-                @if (@PastEvent[i].EventType.Eventtype == null){}else
+            <div class="row">
+                @if (@PastEvent[i].EventType.Eventtype == null) { }
+                else
                 {
                     <div class="col-lg-4">
                         <div class="event-detail-box">
@@ -282,45 +290,41 @@
                         </div>
                     </div>
                 }
-                <div class="col-lg-12">
-                    <div class="event-detail-box">
 
-                        @if (PastEvent[i].Tbleventbenefits != null && PastEvent[i].Tbleventbenefits.Any())
-                        {
-                        <table id="myDataTable" class="table table-bordered table-striped dt-responsive nowrap w-100">
-                            <thead>
-                                <tr>
-                                    <th>S.No.</th>
-                                    <th>Speaker Name and Organization</th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (PastEvent[i].Tbleventbenefits != null && PastEvent[i].Tbleventbenefits.Any())
-                                {
-                                    int a = 1;
-                                    @foreach (var item in PastEvent[i].Tbleventbenefits)
+                @if (PastEvent[i].Tbleventbenefits != null && PastEvent[i].Tbleventbenefits.Any())
+                {
+                    <div class="col-lg-12">
+                        <div class="event-detail-box">
+                            <table id="myDataTable" class="table table-bordered table-striped dt-responsive nowrap w-100">
+                                <thead>
+                                    <tr>
+                                        <th>S.No.</th>
+                                        <th>Speaker Name and Organization</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (PastEvent[i].Tbleventbenefits != null && PastEvent[i].Tbleventbenefits.Any())
                                     {
-                                        // Skip null or empty Eventbenefit
-                                        if (!string.IsNullOrEmpty(item.Eventbenefit))
+                                        int a = 1;
+                                        @foreach (var item in PastEvent[i].Tbleventbenefits)
                                         {
-                                        <tr>
-                                                <td>@a</td>
-                                                <td>@Html.DisplayFor(modelItem => item.Eventbenefit)</td>
-                                        </tr>
-                                        a += 1;
+                                            // Skip null or empty Eventbenefit
+                                            if (!string.IsNullOrEmpty(item.Eventbenefit))
+                                            {
+                                                <tr>
+                                                    <td>@a</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Eventbenefit)</td>
+                                                </tr>
+                                                a += 1;
+                                            }
+                                        }
                                     }
-                                }
-                                }
-                            </tbody>
-                        </table>
-                        }
-                        else
-                        {
-                            <p>No speakers for this event</p>
-                        }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                }
                 <div class="col-lg-12" style="display:none">
                     <div class="event-detail-box">
                         <table id="myDataTable2" class="table table-bordered table-striped dt-responsive nowrap w-100">
@@ -364,9 +368,10 @@
                         </table>
                     </div>
                 </div>
-                @if(PastEvent[i].Tblevidences.Count>0){
-                <div class="col-lg-12">
-                    <div class="event-evidence-box">
+                @if (PastEvent[i].Tblevidences.Count > 0)
+                {
+                    <div class="col-lg-12">
+                        <div class="event-evidence-box">
                             <div class="row">
                                 @foreach (var item in PastEvent[i].Tblevidences)
                                 {
@@ -391,19 +396,19 @@
                                     </div>
                                 }
                             </div>
-                    </div>
+                        </div>
                     </div>
                 }
 
                 @if (PastEvent[i].Startdateofevent >= DateOnly.FromDateTime(DateTime.Today))
                 {
-            <div class="col-lg-12 text-center">
-                    <a onclick="openEvidenceModal(@PastEvent[i].Eventid)" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient big-btn mt-30" data-wow-delay="600ms">Register Now</a>
-            </div>
+                    <div class="col-lg-12 text-center">
+                        <a onclick="openEvidenceModal(@PastEvent[i].Eventid)" class="rr-secondary-btn btn-border wow fade-in-bottom signup-gradient big-btn mt-30" data-wow-delay="600ms">Register Now</a>
+                    </div>
                 }
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 }
 @if (TempData["SuccessMessage"] != null)
 {
