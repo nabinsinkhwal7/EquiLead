@@ -109,7 +109,8 @@ namespace RCH_Dynamic_Counselling.Controllers
                                 }
                                 else
                                 {
-                                    return RedirectToAction("AdminIndex", "Home");
+                                    // return RedirectToAction("AdminIndex", "Home
+                                     return RedirectToAction("Index", "Home");
                                 }
 
                                 //return RedirectToAction("Index", "DashboardMap");
