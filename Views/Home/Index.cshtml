@@ -1,96 +1,254 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
 <div class="container mt-4">
     <h2>Dashboard</h2>
 
-    <!-- Total Clicks -->
     <p><strong>Total Clicks:</strong> @ViewBag.TotalClicks</p>
+    <!-- Drilldown Chart Section -->
+    <div class="mb-5" id="drilldownSection" style="display:none;">
+        <div class="row">
 
-    <!-- Clicks by Resource Table -->
-    <h4>Clicks by Resource</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Resource</th>
-                <th>Category</th>
-                <th>Topic</th>
-                <th>Click Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.ClicksByResource)
-            {
-                <tr>
-                    <td>@item.ResourceName</td>
-                    <td>@item.CategoryName</td> <!-- Category Name -->
-                    <td>@item.TopicName</td> <!-- Topic Name -->
-                    <td>@item.ClickCount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <!-- Drilldown Chart -->
+        <div class="col-md-6">
+            <h4 id="drilldownTitle"></h4>
+            <canvas id="drilldownChart" style="max-height:auto width: 100%;"></canvas>
+        </div>
 
-    <!-- Clicks by Topic Table -->
-    <h4>Clicks by Topic</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Topic</th>
-                <th>Total Clicks</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.ClicksByTopic)
-            {
-                <tr>
-                    <td>@item.TopicName</td> <!-- Topic Name -->
-                    <td>@item.ClickCount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <!-- Drilldown Data Table -->
+        <div class="col-md-6 ">
+            <h4>Drilldown Data</h4>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drilldownTableBody">
+                        <!-- Dynamic table rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
 
-    <!-- Clicks by Category Table -->
-    <h4>Clicks by Category</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Total Clicks</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.ClicksByCategory)
-            {
-                <tr>
-                    <td>@item.CategoryName</td> <!-- Category Name -->
-                    <td>@item.ClickCount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
 
-    <!-- Clicks Over Time Table -->
-    <h4>Clicks Over Time</h4>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Resource</th>
-                <th>Clicks</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.ClicksOverTime)
-            {
-                <tr>
-                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
-                    <td>@item.ResourceName</td>
-                    <td>@item.Clicks</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Topic Section -->
+    <div class="row mb-5">
+        <!-- Chart on the left (half width) -->
+        <div class="col-md-6">
+            <h4>Clicks by Topic</h4>
+            <canvas id="topicChart" style="height: auto; width: 100%;"></canvas>
+        </div>
+
+        <!-- Table on the right (half width) -->
+        <div class="col-md-6">
+            <h4>Topic Data</h4>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.ClicksByTopic)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Section -->
+    <div class="row mb-5">
+        <!-- Chart on the left (half width) -->
+        <div class="col-md-6">
+            <h4>Clicks by Category</h4>
+            <canvas id="categoryChart" style="height: auto; width: 100%;"></canvas>
+        </div>
+
+        <!-- Table on the right (half width) -->
+        <div class="col-md-6">
+            <h4>Category Data</h4>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.ClicksByCategory)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const topicLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByTopic).Select(t => t.Name)
+        ));
+        const topicCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByTopic).Select(t => t.ClickCount)
+        ));
+        const topicIds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByTopic).Select(t => t.Id)
+        ));
+
+        const categoryLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByCategory).Select(c => c.Name)
+        ));
+        const categoryCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByCategory).Select(c => c.ClickCount)
+        ));
+        const categoryIds = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        ((IEnumerable<dynamic>)ViewBag.ClicksByCategory).Select(c => c.Id)
+        ));
+
+        // Function to load drilldown data and populate the table and chart
+        function loadDrilldown(type, id, label) {
+            fetch(`/Home/GetDrilldown?type=${type}&id=${encodeURIComponent(id)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const drilldownData = data.$values || []; // Default to an empty array if $values is not found
+                    const drilldownLabels = drilldownData.map(x => x.name); 
+                    const drilldownCounts = drilldownData.map(x => parseInt(x.clickCount));
+
+
+                    // Populate the table with drilldown data
+                    const tableBody = document.getElementById('drilldownTableBody');
+                    tableBody.innerHTML = '';  // Clear existing rows
+                    drilldownLabels.forEach((label, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${label}</td><td>${drilldownCounts[index]}</td>`;
+                        tableBody.appendChild(row);
+                    });
+
+                    // Set chart
+                    const ctx = document.getElementById('drilldownChart').getContext('2d');
+
+                    // Check if drilldownChart exists and destroy the existing chart if it does
+                    if (window.drilldownChart && window.drilldownChart.destroy) {
+                        window.drilldownChart.destroy();
+                    }
+
+
+                    window.drilldownChart = new Chart(ctx, {
+                        type: 'bar', // Bar chart for drilldown
+                        data: {
+                            labels: drilldownLabels, // Resource names
+                            datasets: [{
+                                label: `Resources for ${label} click`, // Label for the chart
+                                data: drilldownCounts, // Click counts
+                                backgroundColor: '#ffd6a5' // Color for the bars
+                                
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y', // Horizontal bars
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: true }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
+                                    ticks: {
+                                        callback: function (value) {
+                                            return Number.isInteger(value) ? value : '';
+                                        }
+                                    
+                                }
+                                }
+                            }
+                        }
+                    });
+                    // Update the drilldown title
+                    document.getElementById('drilldownTitle').innerText = `Clicks by resources under ${type} : "${label}"`;
+                    document.getElementById('drilldownSection').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error loading drilldown data:', error);
+                });
+        }
+        const ctxTopic = document.getElementById('topicChart').getContext('2d');
+        new Chart(ctxTopic, {
+            type: 'bar',
+            data: {
+                labels: topicLabels,
+                datasets: [{
+                    label: 'Clicks by Topic',
+                    data: topicCounts,
+                    backgroundColor: '#a0e9e0'
+                }]
+            },
+            options: {
+                indexAxis: 'y', // <<< Horizontal bars
+                responsive: true,
+                onClick: function (e, elements) {
+                    if (elements.length > 0) {
+                        const id = topicIds[elements[0].index];
+                        const label = topicLabels[elements[0].index];  // Use the label (Name)
+                        loadDrilldown('topic', id, label);  // Pass both id and label
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+        const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctxCategory, {
+            type: 'bar',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Clicks by Category',
+                    data: categoryCounts,
+                    backgroundColor: '#d8b4f8'
+                }]
+            },
+            options: {
+                indexAxis: 'y', // <<< Horizontal bars
+                responsive: true,
+                onClick: function (e, elements) {
+                    if (elements.length > 0) {
+                        const id = categoryIds[elements[0].index];
+                        const label = categoryLabels[elements[0].index];  // Use the label (Name)
+                        loadDrilldown('category', id, label);  // Pass both id and label
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+    </script>
+}

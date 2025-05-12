@@ -28,124 +28,78 @@ namespace EquidCMS.Controllers
             // Get total clicks count
             var totalClicks = _context.ResourceClickLogs.Count();
 
-            // Get Clicks by Resource
-            var clicksByResource = _context.ResourceClickLogs
-                .Join(
-                    _context.Tblresources,
-                    click => click.ResourceId,
-                    res => res.Resourceid,
-                    (click, res) => new
-                    {
-                        res.Resourceid,
-                        res.Rshead,  // Resource Name
-                        res.CategoryId,
-                        res.Topic,
-                        ClickCount = 1
-                    })
-                .GroupBy(x => new { x.Resourceid, x.Rshead, x.CategoryId, x.Topic })
-                .Select(g => new
-                {
-                    ResourceName = g.Key.Rshead,
-                    CategoryId = g.Key.CategoryId,
-                    Topic = g.Key.Topic,
-                    ClickCount = g.Count()
-                })
-                .OrderByDescending(x => x.ClickCount)
-                .ToList();
-
-            // Get Category and Topic descriptions
-            var categoryLookup = _context.MstLookups
-                .Where(p => p.Lookupflag == 15)
-                .ToDictionary(p => p.Lookupcode, p => p.Description);
-
             var topicLookup = _context.MstLookups
                 .Where(p => p.Lookupflag == 16)
                 .ToDictionary(p => p.Lookupcode, p => p.Description);
 
-            // Join with MstLookups to get Category and Topic Names for Clicks by Resource
-            var clicksByResourceWithNames = clicksByResource.Select(item => new
+            var categoryLookup = _context.MstLookups
+                .Where(p => p.Lookupflag == 15)
+                .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+            var clicksByTopic = topicLookup.Select(t => new
             {
-                ResourceName = item.ResourceName,
-                CategoryName = categoryLookup.ContainsKey(item.CategoryId ?? 0) ? categoryLookup[item.CategoryId ?? 0] : "Unknown",
-                TopicName = item.Topic != null && item.Topic.Any()
-                            ? string.Join(", ", item.Topic.Select(t => topicLookup.ContainsKey(t) ? topicLookup[t] : "Unknown"))
-                            : "Unknown",
-                item.ClickCount
-            }).ToList();
+                Id = t.Key,
+                Name = t.Value,
+                ClickCount = _context.ResourceClickLogs
+                    .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r })
+                    .Where(x => x.r.Topic.Contains(t.Key))
+                    .Count()
+            }).Where(x => x.ClickCount > 0).ToList();
 
-            // Get Clicks by Topic (find all resources for each topic and count clicks)
-            var clicksByTopic = _context.MstLookups
-                .Where(lookup => lookup.Lookupflag == 16)  // Filter only topics (lookupflag == 16)
-                .Select(topic => new
-                {
-                    TopicName = topic.Description,
-                    ClickCount = _context.ResourceClickLogs
-                        .Join(
-                            _context.Tblresources,
-                            click => click.ResourceId,
-                            res => res.Resourceid,
-                            (click, res) => new { click, res })
-                        .Where(x => x.res.Topic.Contains(topic.Lookupcode))  // Check if the resource's topic includes the current topic
-                        .Count() // Get the total clicks for that topic
-                })
-                .OrderByDescending(x => x.ClickCount)
-                .ToList();
+            var clicksByCategory = categoryLookup.Select(c => new
+            {
+                Id = c.Key,
+                Name = c.Value,
+                ClickCount = _context.ResourceClickLogs
+                    .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r })
+                    .Where(x => x.r.CategoryId == c.Key)
+                    .Count()
+            }).Where(x => x.ClickCount > 0).ToList();
 
-            // Get Clicks by Category (find all resources for each category and count clicks)
-            var clicksByCategory = _context.MstLookups
-                .Where(lookup => lookup.Lookupflag == 15)  // Filter only categories (lookupflag == 15)
-                .Select(category => new
-                {
-                    CategoryName = category.Description,
-                    ClickCount = _context.ResourceClickLogs
-                        .Join(
-                            _context.Tblresources,
-                            click => click.ResourceId,
-                            res => res.Resourceid,
-                            (click, res) => new { click, res })
-                        .Where(x => x.res.CategoryId == category.Lookupcode)  // Check if the resource's category matches the current category
-                        .Count() // Get the total clicks for that category
-                })
-                .OrderByDescending(x => x.ClickCount)
-                .ToList();
-
-            // Get Clicks Over Time for resources
-            var clicksOverTime = _context.ResourceClickLogs
-                .Join(
-                    _context.Tblresources,
-                    click => click.ResourceId,
-                    res => res.Resourceid,
-                    (click, res) => new
-                    {
-                        Date = click.ClickedAt.Date,
-                        ResourceName = res.Rshead
-                    })
-                .GroupBy(x => new { x.Date, x.ResourceName })
-                .Select(g => new
-                {
-                    Date = g.Key.Date,
-                    ResourceName = g.Key.ResourceName,
-                    Clicks = g.Count()
-                })
-                .OrderBy(x => x.Date)
-                .ThenByDescending(x => x.Clicks)
-                .ToList();
-
-            // Pass data to ViewBag for the view to display
             ViewBag.TotalClicks = totalClicks;
-            ViewBag.ClicksByResource = clicksByResourceWithNames;
             ViewBag.ClicksByTopic = clicksByTopic;
             ViewBag.ClicksByCategory = clicksByCategory;
-            ViewBag.ClicksOverTime = clicksOverTime;
 
             return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetDrilldown(string type, int id)
+        {
+            var query = _context.ResourceClickLogs
+                .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r });
+
+            if (type == "topic")
+            {
+                var result = query
+                    .Where(x => x.r.Topic.Contains(id))
+                    .GroupBy(x => x.r.Rshead)
+                    .Select(g => new { name = g.Key, clickCount = g.Count() })
+                    .OrderByDescending(x => x.clickCount)
+                    .ToList();
+
+                return Json(result);
+            }
+            else if (type == "category")
+            {
+                var result = query
+                    .Where(x => x.r.CategoryId == id)
+                    .GroupBy(x => x.r.Rshead)
+                    .Select(g => new { name = g.Key, clickCount = g.Count() })
+                    .OrderByDescending(x => x.clickCount)
+                    .ToList();
+
+                return Json(result);
+            }
+
+            return Json(new List<object>());
         }
 
         public IActionResult landingpagenw()
         {
             // Get the existing landing page data
             Tbllandingpage landingPage = _context.Tbllandingpages.FirstOrDefault() ?? new Tbllandingpage();
-            ViewData["Jobs"] = _context.Tbljobs.Include(p=>p.Company).Where(x=>x.Isdeleted==null || x.Isdeleted==false).Take(3).ToList();
+            ViewData["Jobs"] = _context.Tbljobs.Include(p=>p.Company).Where(x=>x.Isdeleted==null || x.Isdeleted==false).OrderByDescending(x=>x.Createdat).Take(3).ToList();
             ViewData["Events"] = _context.Tblevents.OrderByDescending(p => p.Enddateofevent).Where(x => x.Isdeleted == null || x.Isdeleted == false).Where(p => p.Startdateofevent > DateOnly.FromDateTime(DateTime.Now)).Take(4).ToList();
             ViewData["Linkedinuser"] = _context.TblSocialLinkdins.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
             ViewData["Successsyory"] = _context.Tblsuccesstests.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
