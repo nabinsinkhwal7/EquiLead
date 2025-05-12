@@ -45,18 +45,20 @@ namespace FairtradePR.Controllers
         public JsonResult GetEmails()
         {
             var people = _context.Applicants
+                .Where(x => !string.IsNullOrEmpty(x.Email)) 
                 .Select(x => new SPMailModel
                 {
                     Id = x.ApplicantId,
                     Name = x.FullName,
                     Email = x.Email
                 })
-                .GroupBy(x => x.Email) 
-                .Select(g => g.First()) 
+                .GroupBy(x => x.Email)
+                .Select(g => g.First())
                 .ToList();
 
             return Json(people);
         }
+
 
 
 

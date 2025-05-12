@@ -72,7 +72,7 @@
 
     function SaveAllUserRightsAll() {
         var dataToSend = [];
-
+        var drpVal = $('#drpRole').val();
         $('#tblUserRight tbody tr').each(function () {
             var menuId = $(this).find('[id^=DS_]').attr('id').split('_')[1];
             var display = $(this).find('[id^=DS_]').prop('checked');
@@ -81,8 +81,10 @@
             var del = $(this).find('[id^=DL_]').prop('checked');
             var roleMenuId = $(this).find(".roleMenuId").val();
             var parentId = $(this).find(".parentId").val();
-            var roleId = $(this).find(".roleId").val();
+            //var roleId = $(this).find(".roleId").val(); 
+            var roleId = drpVal;
             var rowData = {
+                Menuid: parseInt(menuId),//this is add by sandhya
                 DSN: display,
                 ADN: add,
                 EDN: edit,
