@@ -30,8 +30,8 @@ namespace EquidCMS.Controllers
         // GET: Tblresources/Create
         public IActionResult Create()
         {
-            ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 15), "Lookupcode", "Description");
-            ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16), "Lookupcode", "Description");
+            ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 15 && p.Active == true), "Lookupcode", "Description");
+            ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16 && p.Active == true), "Lookupcode", "Description");
             ViewData["Rsdocumenttypeid"] = new SelectList(_context.MstRsdocumenttypes, "Rsdocumenttypeid", "Rsdocumenttype");
             return View();
         }
@@ -143,8 +143,8 @@ namespace EquidCMS.Controllers
             {
                 return NotFound();
             }
-            ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 15), "Lookupcode", "Description");
-            ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16), "Lookupcode", "Description");
+            ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 15 && p.Active == true), "Lookupcode", "Description");
+            ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16 && p.Active == true), "Lookupcode", "Description");
             ViewData["Rsdocumenttypeid"] = new SelectList(_context.MstRsdocumenttypes, "Rsdocumenttypeid", "Rsdocumenttype");
             return View(tblresource);
         }

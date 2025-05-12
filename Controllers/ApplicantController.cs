@@ -189,17 +189,17 @@ namespace EquidCMS.Controllers
         {
             ViewBag.Email = HttpContext.Session.GetString("Email");
 
-            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6), "Description", "Description");
-            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11), "Description", "Description");
-            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7), "Description", "Description");
+            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6 && x.Active==true), "Description", "Description");
+            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11 && x.Active==true), "Description", "Description");
+            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7 && x.Active==true), "Description", "Description");
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> Register(ApplicantRegistrationModel model)
         {
-            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6), "Description", "Description");
-            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11), "Description", "Description");
-            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7), "Description", "Description");
+            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6 && x.Active == true), "Description", "Description");
+            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11 && x.Active==true), "Description", "Description");
+            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7 && x.Active==true), "Description", "Description");
             if (!ModelState.IsValid)
             {
                 ViewBag.Email = HttpContext.Session.GetString("Email");
@@ -384,24 +384,24 @@ namespace EquidCMS.Controllers
                 IEnumerable<SelectListItem> skillNames = new List<SelectListItem>();
 
                 if (skillType == 1)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9 && x.Active == true), "Description", "Description");
                 else if (skillType == 2)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12 && x.Active == true), "Description", "Description");
                 else if (skillType == 3)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13 && x.Active == true), "Description", "Description");
 
                 ViewData[$"SkillName{i}"] = skillNames;
             }
-            ViewData["EmploymentType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 3), "Description", "Description");
-            ViewData["Availability"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 5), "Lookupcode", "Description");
-            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6), "Description", "Description");
-            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7), "Description", "Description");
-            ViewData["SkillType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 8), "Lookupcode", "Description");
-            ViewData["SkillName0"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9), "Description", "Description");
-            ViewData["SkillName1"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12), "Description", "Description");
-            ViewData["SkillName2"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13), "Description", "Description");
-            ViewData["LanguagesProficiency"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 10), "Lookupcode", "Description");
-            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11), "Description", "Description");
+            ViewData["EmploymentType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 3 && x.Active == true), "Description", "Description");
+            ViewData["Availability"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 5 && x.Active==true), "Lookupcode", "Description");
+            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6 && x.Active==true), "Description", "Description");
+            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7 && x.Active==true), "Description", "Description");
+            ViewData["SkillType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 8 && x.Active==true), "Lookupcode", "Description");
+            ViewData["SkillName0"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9 && x.Active==true), "Description", "Description");
+            ViewData["SkillName1"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12 && x.Active==true), "Description", "Description");
+            ViewData["SkillName2"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13 && x.Active==true), "Description", "Description");
+            ViewData["LanguagesProficiency"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 10 && x.Active==true), "Lookupcode", "Description");
+            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11 && x.Active==true), "Description", "Description");
             // Fetch applicant data from database
             var applicant = _context.Applicants
                 .Include(x => x.ApplicantProfile)
@@ -1109,24 +1109,24 @@ namespace EquidCMS.Controllers
                 IEnumerable<SelectListItem> skillNames = new List<SelectListItem>();
 
                 if (skillType == 1)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9 && x.Active == true), "Description", "Description");
                 else if (skillType == 2)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12 && x.Active == true), "Description", "Description");
                 else if (skillType == 3)
-                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13), "Description", "Description");
+                    skillNames = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13 && x.Active == true), "Description", "Description");
 
                 ViewData[$"SkillName{i}"] = skillNames;
             }
-            ViewData["EmploymentType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 3), "Description", "Description");
-            ViewData["Availability"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 5), "Lookupcode", "Description");
-            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6), "Description", "Description");
-            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7), "Description", "Description");
-            ViewData["SkillType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 8), "Lookupcode", "Description");
-            ViewData["SkillName0"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9), "Description", "Description");
-            ViewData["SkillName1"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12), "Description", "Description");
-            ViewData["SkillName2"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13), "Description", "Description");
-            ViewData["LanguagesProficiency"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 10), "Lookupcode", "Description");
-            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11), "Description", "Description");
+            ViewData["EmploymentType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 3 && x.Active == true), "Description", "Description");
+            ViewData["Availability"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 5 && x.Active == true), "Lookupcode", "Description");
+            ViewData["Pronouns"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 6 && x.Active == true), "Description", "Description");
+            ViewData["CountryCode"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 7 && x.Active == true), "Description", "Description");
+            ViewData["SkillType"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 8 && x.Active == true), "Lookupcode", "Description");
+            ViewData["SkillName0"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 9 && x.Active == true), "Description", "Description");
+            ViewData["SkillName1"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 12 && x.Active == true), "Description", "Description");
+            ViewData["SkillName2"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13 && x.Active == true), "Description", "Description");
+            ViewData["LanguagesProficiency"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 10 && x.Active == true), "Lookupcode", "Description");
+            ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11 && x.Active == true), "Description", "Description");
             // Fetch applicant data from database
             var applicant = _context.Applicants
                 .Include(x => x.ApplicantProfile)

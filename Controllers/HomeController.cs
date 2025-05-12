@@ -23,30 +23,93 @@ namespace EquidCMS.Controllers
             _context = context;
             _service = service;
         }
-
         public IActionResult Index()
         {
+            // Get total clicks count
             var totalClicks = _context.ResourceClickLogs.Count();
 
+            // Get Clicks by Resource
             var clicksByResource = _context.ResourceClickLogs
-                    .Where(x => !x.ResourceId.Equals(null))
-                    .GroupBy(r => r.ResourceId)
-                    .Select(g => new
+                .Join(
+                    _context.Tblresources,
+                    click => click.ResourceId,
+                    res => res.Resourceid,
+                    (click, res) => new
                     {
-                        ResourceId = g.Key,
-                        ClickCount = g.Count()
+                        res.Resourceid,
+                        res.Rshead,  // Resource Name
+                        res.CategoryId,
+                        res.Topic,
+                        ClickCount = 1
                     })
-                    .Join(
-                        _context.Tblresources,
-                        click => click.ResourceId,
-                        res => res.Resourceid,
-                        (click, res) => new
-                        {
-                            ResourceName = res.Rshead,
-                            ClickCount = click.ClickCount
-                        })
-                    .OrderByDescending(x => x.ClickCount)
-                    .ToList();
+                .GroupBy(x => new { x.Resourceid, x.Rshead, x.CategoryId, x.Topic })
+                .Select(g => new
+                {
+                    ResourceName = g.Key.Rshead,
+                    CategoryId = g.Key.CategoryId,
+                    Topic = g.Key.Topic,
+                    ClickCount = g.Count()
+                })
+                .OrderByDescending(x => x.ClickCount)
+                .ToList();
+
+            // Get Category and Topic descriptions
+            var categoryLookup = _context.MstLookups
+                .Where(p => p.Lookupflag == 15)
+                .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+            var topicLookup = _context.MstLookups
+                .Where(p => p.Lookupflag == 16)
+                .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+            // Join with MstLookups to get Category and Topic Names for Clicks by Resource
+            var clicksByResourceWithNames = clicksByResource.Select(item => new
+            {
+                ResourceName = item.ResourceName,
+                CategoryName = categoryLookup.ContainsKey(item.CategoryId ?? 0) ? categoryLookup[item.CategoryId ?? 0] : "Unknown",
+                TopicName = item.Topic != null && item.Topic.Any()
+                            ? string.Join(", ", item.Topic.Select(t => topicLookup.ContainsKey(t) ? topicLookup[t] : "Unknown"))
+                            : "Unknown",
+                item.ClickCount
+            }).ToList();
+
+            // Get Clicks by Topic (find all resources for each topic and count clicks)
+            var clicksByTopic = _context.MstLookups
+                .Where(lookup => lookup.Lookupflag == 16)  // Filter only topics (lookupflag == 16)
+                .Select(topic => new
+                {
+                    TopicName = topic.Description,
+                    ClickCount = _context.ResourceClickLogs
+                        .Join(
+                            _context.Tblresources,
+                            click => click.ResourceId,
+                            res => res.Resourceid,
+                            (click, res) => new { click, res })
+                        .Where(x => x.res.Topic.Contains(topic.Lookupcode))  // Check if the resource's topic includes the current topic
+                        .Count() // Get the total clicks for that topic
+                })
+                .OrderByDescending(x => x.ClickCount)
+                .ToList();
+
+            // Get Clicks by Category (find all resources for each category and count clicks)
+            var clicksByCategory = _context.MstLookups
+                .Where(lookup => lookup.Lookupflag == 15)  // Filter only categories (lookupflag == 15)
+                .Select(category => new
+                {
+                    CategoryName = category.Description,
+                    ClickCount = _context.ResourceClickLogs
+                        .Join(
+                            _context.Tblresources,
+                            click => click.ResourceId,
+                            res => res.Resourceid,
+                            (click, res) => new { click, res })
+                        .Where(x => x.res.CategoryId == category.Lookupcode)  // Check if the resource's category matches the current category
+                        .Count() // Get the total clicks for that category
+                })
+                .OrderByDescending(x => x.ClickCount)
+                .ToList();
+
+            // Get Clicks Over Time for resources
             var clicksOverTime = _context.ResourceClickLogs
                 .Join(
                     _context.Tblresources,
@@ -54,10 +117,9 @@ namespace EquidCMS.Controllers
                     res => res.Resourceid,
                     (click, res) => new
                     {
-                        Date = click.ClickedAt.Date,  // This works only in memory
+                        Date = click.ClickedAt.Date,
                         ResourceName = res.Rshead
                     })
-                .AsEnumerable() // Do grouping in-memory
                 .GroupBy(x => new { x.Date, x.ResourceName })
                 .Select(g => new
                 {
@@ -69,9 +131,11 @@ namespace EquidCMS.Controllers
                 .ThenByDescending(x => x.Clicks)
                 .ToList();
 
-
+            // Pass data to ViewBag for the view to display
             ViewBag.TotalClicks = totalClicks;
-            ViewBag.ClicksByResource = clicksByResource;
+            ViewBag.ClicksByResource = clicksByResourceWithNames;
+            ViewBag.ClicksByTopic = clicksByTopic;
+            ViewBag.ClicksByCategory = clicksByCategory;
             ViewBag.ClicksOverTime = clicksOverTime;
 
             return View();
@@ -88,9 +152,9 @@ namespace EquidCMS.Controllers
 
             ViewData["infographic"] = _context.Tblinfographics.Where(x => x.Isdeleted == null || x.Isdeleted == false).ToList();
 
-            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55).ToList();
-            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56).ToList();
-            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57).ToList();
+            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
+            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
 
             var totalRows = _context.TblSocialLinkdins.Where(p=>p.IsDeleted==false).Count();
             var rowsPerSet = totalRows / 3;
@@ -234,19 +298,19 @@ namespace EquidCMS.Controllers
         public IActionResult Talent()
         {
             ViewData["Comp"] = _context.Tblcompanies.Where(x => x.Isdeleted == null || x.Isdeleted == false).OrderBy(x => x.Name).ToList();
-            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55).ToList();
-            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56).ToList();
-            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57).ToList();
-            ViewData["FCid"] = _context.MstLookups.Where(p => p.Lookupflag == 14).ToList();
+            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
+            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
+            ViewData["FCid"] = _context.MstLookups.Where(p => p.Lookupflag == 14 && p.Active == true).ToList();
 
-            var totalJobs = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).ToList().Count;
+            var totalJobs = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).OrderByDescending(x => x.Createdat).ToList().Count;
 
             var totalPages = (int)Math.Ceiling(totalJobs / (double)24);
             ViewData["TotalPages"] = totalPages;
             ViewData["TotalJobs"] = totalJobs;
             ViewData["PageNumber"] = 1;
             ViewData["PageSize"] = 24;
-            ViewData["Jobs"] = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).Skip(0).Take(24).ToList();
+            ViewData["Jobs"] = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).OrderByDescending(x => x.Createdat).Skip(0).Take(24).ToList();
 
             return View();
         }
@@ -255,15 +319,15 @@ namespace EquidCMS.Controllers
         {
 
             Tbljob job = _context.Tbljobs.Where(p=>p.Jobid == id).Include(p=>p.Company).FirstOrDefault() ?? new Tbljob();
-            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56).ToList();
-            ViewData["ETid"] =_context.MstLookups.Where(p => p.Lookupflag == 57).ToList();
+            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+            ViewData["ETid"] =_context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
             ViewData["Companyid"] =_context.Tblcompanies.ToList();
-            ViewData["FunctionalCategory"] =_context.MstLookups.Where(p => p.Lookupflag == 14).ToList();
-            ViewData["LeavePolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 17).ToList();
-            ViewData["FlexibleWorkOption"] =_context.MstLookups.Where(p => p.Lookupflag == 18).ToList();
-            ViewData["LearningAndDevelopment"] =_context.MstLookups.Where(p => p.Lookupflag == 19).ToList();
-            ViewData["HealthcareAndWellness"] =_context.MstLookups.Where(p => p.Lookupflag == 20).ToList();
-            ViewData["DEIAndWomenFriendlyPolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 21).ToList();
+            ViewData["FunctionalCategory"] =_context.MstLookups.Where(p => p.Lookupflag == 14 && p.Active == true).ToList();
+            ViewData["LeavePolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true).ToList();
+            ViewData["FlexibleWorkOption"] =_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true).ToList();
+            ViewData["LearningAndDevelopment"] =_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true).ToList();
+            ViewData["HealthcareAndWellness"] =_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true).ToList();
+            ViewData["DEIAndWomenFriendlyPolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true).ToList();
             return View(job);
         }
 
@@ -281,9 +345,9 @@ namespace EquidCMS.Controllers
            
             ViewData["Jobs"] = _context.Tbljobs.Where(x => x.Isdeleted == null || x.Isdeleted == false).Include(p => p.Company).ToList();
             ViewData["Comp"] = _context.Tblcompanies.Where(x => x.Isdeleted == null || x.Isdeleted == false).ToList();
-            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55).ToList();
-            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56).ToList();
-            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57).ToList();
+            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
+            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
 
             return PartialView("_JobPartial");
         }
@@ -365,16 +429,16 @@ namespace EquidCMS.Controllers
             }
 
             // Pagination logic
-            var totalJobs = query.Count();
+            var totalJobs = query.OrderByDescending(x => x.Createdat).Count();
             var totalPages = (int)Math.Ceiling(totalJobs / (double)pageSize);
 
-            var jobs = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var jobs = query.OrderByDescending(x => x.Createdat).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             ViewData["Jobs"] = jobs;
             ViewData["Comp"] = _context.Tblcompanies.ToList();
-            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55).ToList();
-            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56).ToList();
-            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57).ToList();
+            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
+            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
             ViewData["TotalPages"] = totalPages;
             ViewData["TotalJobs"] = totalJobs;
             ViewData["PageNumber"] = pageNumber;

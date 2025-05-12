@@ -48,14 +48,14 @@ namespace EquidCMS.Controllers
         public IActionResult Create()
         {
             ViewData["Companyid"] = new SelectList(_context.Tblcompanies, "Companyid", "Name");
-            ViewData["FunctionalCategory"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 14), "Lookupcode", "Description");
-            ViewData["WDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 56), "Lookupcode", "Description");
-            ViewData["ETid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 57), "Lookupcode", "Description");
-            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17), "Lookupcode", "Description");
-            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18), "Lookupcode", "Description");
-            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19), "Lookupcode", "Description");
-            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20), "Lookupcode", "Description");
-            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21), "Lookupcode", "Description");
+            ViewData["FunctionalCategory"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 14 && p.Active==true), "Lookupcode", "Description");
+            ViewData["WDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active==true), "Lookupcode", "Description");
+            ViewData["ETid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true), "Lookupcode", "Description");
+            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true), "Lookupcode", "Description");
+            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true), "Lookupcode", "Description");
+            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active==true), "Lookupcode", "Description");
             return View();
         }
 
@@ -68,15 +68,16 @@ namespace EquidCMS.Controllers
         {
             if (ModelState.IsValid)
             {
+                tbljob.Createdat = DateTime.Now;
                 _context.Add(tbljob);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17), "Lookupcode", "Description");
-            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18), "Lookupcode", "Description");
-            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19), "Lookupcode", "Description");
-            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20), "Lookupcode", "Description");
-            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21), "Lookupcode", "Description");
+            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true), "Lookupcode", "Description");
+            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true), "Lookupcode", "Description");
+            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true), "Lookupcode", "Description");
+            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true), "Lookupcode", "Description");
             ViewData["Companyid"] = new SelectList(_context.Tblcompanies, "Companyid", "Companyid", tbljob.Companyid);
             return View(tbljob);
         }
@@ -95,15 +96,15 @@ namespace EquidCMS.Controllers
                 return NotFound();
             }
             ViewData["Companyid"] = new SelectList(_context.Tblcompanies, "Companyid", "Name");
-            ViewData["FunctionalCategory"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 14), "Lookupcode", "Description");
-            ViewData["Cityid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 55), "Lookupcode", "Description");
-            ViewData["WDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 56), "Lookupcode", "Description");
-            ViewData["ETid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 57), "Lookupcode", "Description");
-            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17), "Lookupcode", "Description");
-            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18), "Lookupcode", "Description");
-            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19), "Lookupcode", "Description");
-            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20), "Lookupcode", "Description");
-            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21), "Lookupcode", "Description");
+            ViewData["FunctionalCategory"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 14 && p.Active == true), "Lookupcode", "Description");
+            ViewData["Cityid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true), "Lookupcode", "Description");
+            ViewData["WDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 56  && p.Active == true), "Lookupcode", "Description");
+            ViewData["ETid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true), "Lookupcode", "Description");
+            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true), "Lookupcode", "Description");
+            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true), "Lookupcode", "Description");
+            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true), "Lookupcode", "Description");
             return View(tbljob);
         }
 
@@ -123,6 +124,7 @@ namespace EquidCMS.Controllers
             {
                 try
                 {
+                    tbljob.Updatedat = DateTime.Now;
                     _context.Update(tbljob);
                     await _context.SaveChangesAsync();
                 }
@@ -140,11 +142,11 @@ namespace EquidCMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["Companyid"] = new SelectList(_context.Tblcompanies, "Companyid", "Companyid", tbljob.Companyid);
-            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17), "Lookupcode", "Description");
-            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18), "Lookupcode", "Description");
-            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19), "Lookupcode", "Description");
-            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20), "Lookupcode", "Description");
-            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21), "Lookupcode", "Description");
+            ViewData["LeavePolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true), "Lookupcode", "Description");
+            ViewData["FlexibleWorkOption"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LearningAndDevelopment"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true), "Lookupcode", "Description");
+            ViewData["HealthcareAndWellness"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true), "Lookupcode", "Description");
+            ViewData["DEIAndWomenFriendlyPolicies"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true), "Lookupcode", "Description");
             return View(tbljob);
         }
 

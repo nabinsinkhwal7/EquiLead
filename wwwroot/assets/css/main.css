@@ -8364,7 +8364,7 @@ START: Service CSS
   display: flex;
 }
 .company-logo{margin-right: 15px;}
-    .company-logo img { border-radius: 20px; border: 1px solid var(--rr-color-theme-purple);
+    .company-logo img { border-radius: 7px; border: 1px solid var(--rr-color-theme-purple);
     }
 .job-detail h3{font-size: 18px; font-weight: 600;}
 .job-detail p{font-size: 14px; font-weight: 500; color: #45359E; line-height: 24px;}

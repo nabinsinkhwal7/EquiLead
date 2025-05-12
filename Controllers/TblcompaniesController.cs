@@ -45,10 +45,10 @@ namespace EquidCMS.Controllers
         // GET: Tblcompanies/Create
         public IActionResult Create()
         {
-            ViewData["LPid"] =  new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17), "Lookupcode", "Description");
-            ViewData["LDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19), "Lookupcode", "Description");
-            ViewData["HWid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 60), "Lookupcode", "Description");
-            ViewData["DWPid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 61), "Lookupcode", "Description");
+            ViewData["LPid"] =  new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true), "Lookupcode", "Description");
+            ViewData["LDid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true), "Lookupcode", "Description");
+            ViewData["HWid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 60 && p.Active == true), "Lookupcode", "Description");
+            ViewData["DWPid"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 61 && p.Active == true), "Lookupcode", "Description");
             return View();
         }
 

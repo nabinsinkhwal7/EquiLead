@@ -4,13 +4,18 @@
 
 <div class="container mt-4">
     <h2>Dashboard</h2>
+
+    <!-- Total Clicks -->
     <p><strong>Total Clicks:</strong> @ViewBag.TotalClicks</p>
 
+    <!-- Clicks by Resource Table -->
     <h4>Clicks by Resource</h4>
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Resource</th>
+                <th>Category</th>
+                <th>Topic</th>
                 <th>Click Count</th>
             </tr>
         </thead>
@@ -19,11 +24,55 @@
             {
                 <tr>
                     <td>@item.ResourceName</td>
+                    <td>@item.CategoryName</td> <!-- Category Name -->
+                    <td>@item.TopicName</td> <!-- Topic Name -->
                     <td>@item.ClickCount</td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <!-- Clicks by Topic Table -->
+    <h4>Clicks by Topic</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Topic</th>
+                <th>Total Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ClicksByTopic)
+            {
+                <tr>
+                    <td>@item.TopicName</td> <!-- Topic Name -->
+                    <td>@item.ClickCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Clicks by Category Table -->
+    <h4>Clicks by Category</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Total Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ClicksByCategory)
+            {
+                <tr>
+                    <td>@item.CategoryName</td> <!-- Category Name -->
+                    <td>@item.ClickCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Clicks Over Time Table -->
     <h4>Clicks Over Time</h4>
     <table class="table table-bordered">
         <thead>
@@ -44,6 +93,4 @@
             }
         </tbody>
     </table>
-
 </div>
-
