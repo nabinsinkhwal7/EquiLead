@@ -4,6 +4,21 @@
 
 <div class="container mt-4">
     <h2>Dashboard</h2>
+    <form method="get" class="row mb-4">
+        <div class="col-md-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="text" class="form-control" id="startDate" name="startDate"
+                   value="@ViewBag.SelectedStartDate" />
+        </div>
+        <div class="col-md-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="text" class="form-control" id="endDate" name="endDate"
+                   value="@ViewBag.SelectedEndDate"/>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
 
     <p><strong>Total Clicks:</strong> @ViewBag.TotalClicks</p>
     <!-- Drilldown Chart Section -->
@@ -106,6 +121,9 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Flatpickr CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
         const topicLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
@@ -130,7 +148,9 @@
 
         // Function to load drilldown data and populate the table and chart
         function loadDrilldown(type, id, label) {
-            fetch(`/Home/GetDrilldown?type=${type}&id=${encodeURIComponent(id)}`)
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            fetch(`/Home/GetDrilldown?type=${type}&id=${encodeURIComponent(id)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`)
                 .then(res => res.json())
                 .then(data => {
                     const drilldownData = data.$values || []; // Default to an empty array if $values is not found
@@ -219,6 +239,17 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: { enabled: true }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
+                        ticks: {
+                            callback: function (value) {
+                                return Number.isInteger(value) ? value : '';
+                }
+
+            }
+                    }
                 }
             }
         });
@@ -247,8 +278,50 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: { enabled: true }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
+                        ticks: {
+                            callback: function (value) {
+                                return Number.isInteger(value) ? value : '';
+                }
+
+            }
+                    }
                 }
             }
+        });
+    </script>
+    <script>
+        const minDate = "@ViewBag.MinDate";
+        const maxDate = "@ViewBag.MaxDate";
+        const selectedStart = "@ViewBag.SelectedStartDate";
+        const selectedEnd = "@ViewBag.SelectedEndDate";
+        let startPicker, endPicker;
+
+        // Initialize both without dependency logic first
+        startPicker = flatpickr("#startDate", {
+            dateFormat: "d/m/Y",
+            defaultDate: selectedStart,
+            minDate: minDate,
+            maxDate: maxDate
+        });
+
+        endPicker = flatpickr("#endDate", {
+            dateFormat: "d/m/Y",
+            defaultDate: selectedEnd,
+            minDate: minDate,
+            maxDate: maxDate
+        });
+
+        // Now set the cross-constraints AFTER both are initialized
+        startPicker.config.onChange.push(function (selectedDates, dateStr) {
+            endPicker.set('minDate', dateStr);
+        });
+
+        endPicker.config.onChange.push(function (selectedDates, dateStr) {
+            startPicker.set('maxDate', dateStr);
         });
     </script>
 }

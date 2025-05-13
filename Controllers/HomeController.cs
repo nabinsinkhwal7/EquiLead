@@ -23,10 +23,27 @@ namespace EquidCMS.Controllers
             _context = context;
             _service = service;
         }
-        public IActionResult Index()
+        public IActionResult Index(string? startDate, string? endDate)
         {
+            // Try parse dd/MM/yyyy format from querystring
+            DateTime? parsedStart = null;
+            DateTime? parsedEnd = null;
+
+            if (!string.IsNullOrEmpty(startDate))
+                parsedStart = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrEmpty(endDate))
+                parsedEnd = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            var clickLogs = _context.ResourceClickLogs.AsQueryable();
+
+            if (parsedStart.HasValue && parsedEnd.HasValue)
+                clickLogs = clickLogs.Where(c => c.ClickedAt >= parsedStart.Value && c.ClickedAt <= parsedEnd.Value);
+
+
             // Get total clicks count
-            var totalClicks = _context.ResourceClickLogs.Count();
+            var totalClicks = clickLogs.Count();
+            //var totalClicks = _context.ResourceClickLogs.Count();
 
             var topicLookup = _context.MstLookups
                 .Where(p => p.Lookupflag == 16)
@@ -40,7 +57,7 @@ namespace EquidCMS.Controllers
             {
                 Id = t.Key,
                 Name = t.Value,
-                ClickCount = _context.ResourceClickLogs
+                ClickCount = clickLogs
                     .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r })
                     .Where(x => x.r.Topic.Contains(t.Key))
                     .Count()
@@ -50,12 +67,21 @@ namespace EquidCMS.Controllers
             {
                 Id = c.Key,
                 Name = c.Value,
-                ClickCount = _context.ResourceClickLogs
+                ClickCount = clickLogs
                     .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r })
                     .Where(x => x.r.CategoryId == c.Key)
                     .Count()
             }).Where(x => x.ClickCount > 0).ToList();
 
+            var minDate = _context.ResourceClickLogs.Min(c => c.ClickedAt);
+            var maxDate = _context.ResourceClickLogs.Max(c => c.ClickedAt);
+
+            // ViewBags for display
+            ViewBag.MinDate = minDate.ToString("dd/MM/yyyy");
+            ViewBag.MaxDate = maxDate.ToString("dd/MM/yyyy");
+
+            ViewBag.SelectedStartDate = parsedStart?.ToString("dd/MM/yyyy") ?? ViewBag.MinDate;
+            ViewBag.SelectedEndDate = parsedEnd?.ToString("dd/MM/yyyy") ?? ViewBag.MaxDate;
             ViewBag.TotalClicks = totalClicks;
             ViewBag.ClicksByTopic = clicksByTopic;
             ViewBag.ClicksByCategory = clicksByCategory;
@@ -64,11 +90,28 @@ namespace EquidCMS.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetDrilldown(string type, int id)
+        public JsonResult GetDrilldown(string type, int id, string? startDate, string? endDate)
         {
             var query = _context.ResourceClickLogs
                 .Join(_context.Tblresources, c => c.ResourceId, r => r.Resourceid, (c, r) => new { c, r });
 
+            // Parse dates (dd/MM/yyyy)
+            DateTime? parsedStart = null;
+            DateTime? parsedEnd = null;
+            var format = "dd/MM/yyyy";
+            var culture = CultureInfo.InvariantCulture;
+
+            if (!string.IsNullOrWhiteSpace(startDate))
+                parsedStart = DateTime.ParseExact(startDate, format, culture);
+
+            if (!string.IsNullOrWhiteSpace(endDate))
+                parsedEnd = DateTime.ParseExact(endDate, format, culture);
+
+            // Apply date filtering if valid dates exist
+            if (parsedStart.HasValue && parsedEnd.HasValue)
+            {
+                query = query.Where(x => x.c.ClickedAt >= parsedStart.Value && x.c.ClickedAt <= parsedEnd.Value);
+            }
             if (type == "topic")
             {
                 var result = query

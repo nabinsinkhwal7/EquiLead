@@ -1069,10 +1069,15 @@ namespace EquidCMS.Controllers
 
             // Get the ApplicantId from session
             var applicantIdString = HttpContext.Session.GetString("ApplicantId");
+            var email = HttpContext.Session.GetString("Email");
             if (string.IsNullOrEmpty(applicantIdString))
             {
+                if (string.IsNullOrEmpty(email))
+                {
                 // Redirect to login if session is missing
                 return RedirectToAction("Login", "Applicant");
+            }
+                applicantIdString = _context.Applicants.Where(x => x.Email == email).FirstOrDefault()?.ApplicantId.ToString();
             }
             var applicant = _context.Applicants.Where(x => x.ApplicantId == int.Parse(applicantIdString)).FirstOrDefault();
             if (applicant==null)
