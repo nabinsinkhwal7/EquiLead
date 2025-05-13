@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject IWebHostEnvironment env
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -17,6 +18,25 @@
     <link rel="stylesheet" href="~/assets/css/odometer.min.css">
     <link rel="stylesheet" href="~/assets/css/swiper.min.css">
     <link rel="stylesheet" href="~/assets/css/main.css">
+
+    <!-- Google Analytics -->
+    @if (!env.IsDevelopment() || Context.Request.Host.Value.Contains("localhost"))
+    {
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-R6E4YGPXSP"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-R6E4YGPXSP');
+        </script>
+    }
+    else
+    {
+        <script>
+            console.log("Google Analytics is disabled in development mode.");
+        </script>
+    }
 </head>
 <body>
     <!-- header-area-start -->
