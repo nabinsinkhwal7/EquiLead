@@ -1,4 +1,4 @@
-﻿
+﻿@inject IWebHostEnvironment env
 
 @{
     Layout = null;
@@ -71,6 +71,25 @@ ul, ol {
             text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
         }
     </style>
+
+    <!-- Google Analytics -->
+    @if (!env.IsDevelopment() || Context.Request.Host.Value.Contains("localhost"))
+    {
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-R6E4YGPXSP"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'G-R6E4YGPXSP');
+        </script>
+    }
+    else
+    {
+        <script>
+            console.log("Google Analytics is disabled in development mode.");
+        </script>
+    }
 </head>
 
 <body class="body-9">
