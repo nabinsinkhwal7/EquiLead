@@ -104,7 +104,7 @@
                             <div class="row mt-2">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="control-label">Category <span style="color:red">*</span></label>
+                                        <label class="control-label">Category</label>
                                         <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
                                     </div>
                                 </div>
@@ -268,6 +268,24 @@
 
         // Add event listener to toggle input state when the checkbox changes
         isLinkCheckbox.addEventListener('change', toggleInputState);
+    });
+            // Function to toggle 'IsLink' checkbox if Resource Type is 6 (BLog)
+    function checkResourceTypeAndSetIsLink() {
+        const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
+        const isLinkCheckbox = document.getElementById('IsLink');
+         const videoLinkInput = document.getElementById('RsvideoLink');
+       
+        if (resourceTypeSelect.value === "6") {
+            isLinkCheckbox.checked = true;
+            videoLinkInput.disabled = false; // Enable the video link input
+                
+        }
+    }
+
+    // Listen for change event on the Resource Type dropdown
+    document.addEventListener("DOMContentLoaded", function () {
+        const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
+        resourceTypeSelect.addEventListener('change', checkResourceTypeAndSetIsLink);
     });
 </script>
 }
