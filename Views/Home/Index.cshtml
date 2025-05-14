@@ -28,7 +28,7 @@
         <!-- Drilldown Chart -->
         <div class="col-md-6">
             <h4 id="drilldownTitle"></h4>
-            <canvas id="drilldownChart" style="max-height:auto width: 100%;"></canvas>
+                <canvas id="drilldownChart" width="400" ></canvas>
         </div>
 
         <!-- Drilldown Data Table -->
@@ -57,7 +57,7 @@
         <!-- Chart on the left (half width) -->
         <div class="col-md-6">
             <h4>Clicks by Topic</h4>
-            <canvas id="topicChart" style="height: auto; width: 100%;"></canvas>
+            <canvas id="topicChart" width="400"  ></canvas>
         </div>
 
         <!-- Table on the right (half width) -->
@@ -90,7 +90,7 @@
         <!-- Chart on the left (half width) -->
         <div class="col-md-6">
             <h4>Clicks by Category</h4>
-            <canvas id="categoryChart" style="height: auto; width: 100%;"></canvas>
+            <canvas id="categoryChart" width="400"></canvas>
         </div>
 
         <!-- Table on the right (half width) -->
@@ -183,27 +183,17 @@
                             datasets: [{
                                 label: `Resources for ${label} click`, // Label for the chart
                                 data: drilldownCounts, // Click counts
-                                backgroundColor: '#ffd6a5' // Color for the bars
+                                backgroundColor: '#ffd6a5',// Color for the bars
+                                barThickness: 30,        // Fixed thickness
+                                maxBarThickness: 30      // Cap the max thickness to maintain consistency
                                 
                             }]
                         },
                         options: {
-                            indexAxis: 'y', // Horizontal bars
                             responsive: true,
                             plugins: {
                                 legend: { display: false },
                                 tooltip: { enabled: true }
-                            },
-                            scales: {
-                                x: {
-                                    beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
-                                    ticks: {
-                                        callback: function (value) {
-                                            return Number.isInteger(value) ? value : '';
-                                        }
-                                    
-                                }
-                                }
                             }
                         }
                     });
@@ -223,11 +213,12 @@
                 datasets: [{
                     label: 'Clicks by Topic',
                     data: topicCounts,
-                    backgroundColor: '#a0e9e0'
+                    backgroundColor: '#a0e9e0',// Color for the bars
+                    barThickness: 30,        // Fixed thickness
+                    maxBarThickness: 30      // Cap the max thickness to maintain consistency
                 }]
             },
             options: {
-                indexAxis: 'y', // <<< Horizontal bars
                 responsive: true,
                 onClick: function (e, elements) {
                     if (elements.length > 0) {
@@ -239,17 +230,6 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: { enabled: true }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
-                        ticks: {
-                            callback: function (value) {
-                                return Number.isInteger(value) ? value : '';
-                }
-
-            }
-                    }
                 }
             }
         });
@@ -262,11 +242,12 @@
                 datasets: [{
                     label: 'Clicks by Category',
                     data: categoryCounts,
-                    backgroundColor: '#d8b4f8'
+                    backgroundColor: '#d8b4f8',// Color for the bars
+                                barThickness: 30,        // Fixed thickness
+                                maxBarThickness: 30      // Cap the max thickness to maintain consistency
                 }]
             },
             options: {
-                indexAxis: 'y', // <<< Horizontal bars
                 responsive: true,
                 onClick: function (e, elements) {
                     if (elements.length > 0) {
@@ -278,17 +259,6 @@
                 plugins: {
                     legend: { display: false },
                     tooltip: { enabled: true }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true, // Ensure the x-axis starts at 0 for better clarity
-                        ticks: {
-                            callback: function (value) {
-                                return Number.isInteger(value) ? value : '';
-                }
-
-            }
-                    }
                 }
             }
         });

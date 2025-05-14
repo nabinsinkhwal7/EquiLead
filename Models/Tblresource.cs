@@ -17,7 +17,7 @@ public partial class Tblresource
 
     public int? ThemeId { get; set; }
 
-    public bool? Isverified { get; set; }
+    public bool Isverified { get; set; }
 
     public bool? Isrelatedrs { get; set; }
 

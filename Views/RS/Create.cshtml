@@ -258,5 +258,23 @@
 
         // Add event listener to checkbox to toggle input state when it's clicked
         isLinkCheckbox.addEventListener('change', toggleInputState);
+
+            // Function to toggle 'IsLink' checkbox if Resource Type is 6 (BLog)
+    function checkResourceTypeAndSetIsLink() {
+        const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
+        const isLinkCheckbox = document.getElementById('IsLink');
+
+        if (resourceTypeSelect.value === "6") {
+            isLinkCheckbox.checked = true;
+        // Call the function on page load to set initial state
+        toggleInputState();
+        }
+    }
+
+    // Listen for change event on the Resource Type dropdown
+    document.addEventListener("DOMContentLoaded", function () {
+        const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
+        resourceTypeSelect.addEventListener('change', checkResourceTypeAndSetIsLink);
+    });
     </script>
 }
