@@ -53,7 +53,11 @@
     $(function () {
         $('#myDataTable').DataTable({
             dom: 'lBfrtip',
-            buttons: ['excelHtml5'],
+            buttons: [
+            {
+                extend: 'excelHtml5',
+                filename: 'OurTeam'
+            }],
             'info': false,
             'lengthChange': false,
             'autoWidth': false
