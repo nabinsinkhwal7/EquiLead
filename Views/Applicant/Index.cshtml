@@ -100,7 +100,14 @@
                                                 <span asp-validation-for="Email" class="text-danger"></span>
                                             </div>
                                         </div>
-                                        <div class="col-xl42 col-lg-2 col-md-2 col-sm-12">
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
+                                            <div class="mb-2">
+                                                <label class="control-label">Years Of Experence</label>
+                                                <input asp-for="YearsOfExperence" class="form-control" type="number" placeholder="Enter years of experience" />
+                                                <span asp-validation-for="YearsOfExperence" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                                             <div class="mb-2">
                                                 <label class="control-label">Gender</label>
                                                 <select asp-for="Gender" class="form-control" style="max-width: 100px;" asp-items="@ViewBag.Gender">
@@ -222,7 +229,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">Preferred Job Location</label>
-                                            <input asp-for="CareerPreferences.PreferredJobLocation" class="form-control" type="text" placeholder="City, Remote" />
+                                            <input asp-for="CareerPreferences.PreferredJobLocation" class="form-control" type="text" placeholder="City" />
                                             <span asp-validation-for="CareerPreferences.PreferredJobLocation" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -241,7 +248,32 @@
                                         </div>
                                     </div>
 
+                                </div>
                                     <div class="row mt-2">
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Preferred Work Mode</label>
+                                            <select asp-for="CareerPreferences.WorkMode" class="form-control" asp-items="@ViewBag.WorkMode">
+                                            </select>
+                                            <span asp-validation-for="CareerPreferences.WorkMode" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Preferred Functional Area</label>
+                                            <select asp-for="CareerPreferences.FunctionalArea" class="form-control" multiple asp-items="@ViewBag.FunctionalArea">
+                                            </select>
+                                            <span asp-validation-for="CareerPreferences.FunctionalArea" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">Preferred Sector</label>
+                                            <select asp-for="CareerPreferences.PreferredSector" class="form-control" multiple asp-items="@ViewBag.PreferredSector">
+                                            </select>
+                                            <span asp-validation-for="CareerPreferences.PreferredSector" class="text-danger"></span>
+                                        </div>
                                     </div>
                                 </div>
 

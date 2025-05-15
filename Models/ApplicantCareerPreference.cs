@@ -21,5 +21,11 @@ public partial class ApplicantCareerPreference
 
     public string? WillingToRelocate { get; set; }
 
+    public short? WorkMode { get; set; }
+
+    public List<int>? PreferredSector { get; set; }
+
+    public List<int>? FunctionalArea { get; set; }
+
     public virtual Applicant Applicant { get; set; } = null!;
 }

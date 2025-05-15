@@ -27,6 +27,7 @@ namespace EquidCMS.Dto
 
         public string PersonalWebsite { get; set; }
 
+        public short? YearsOfExperence { get; set; }
         public string Headline { get; set; } // Short descriptive title
 
         public string ShortBio { get; set; } // 2-3 sentence intro
@@ -118,6 +119,12 @@ namespace EquidCMS.Dto
         public string LeadershipAspirations { get; set; }
         public string? PreferredJobLocation { get; set; }
         public string? WillingToRelocate { get; set; } // New Field
+
+        public short? WorkMode { get; set; }
+
+        public List<int>? PreferredSector { get; set; }
+
+        public List<int>? FunctionalArea { get; set; }
     }
 
     // ========== Volunteer & Advocacy Experience ==========

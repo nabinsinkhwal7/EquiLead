@@ -31,6 +31,7 @@ public partial class Applicant
 
     public bool? IsMigrated { get; set; }
 
+    public short? YearsOfExperence { get; set; }
     public virtual ApplicantCareerPreference? ApplicantCareerPreference { get; set; }
 
     public virtual ICollection<ApplicantCertificationTraning> ApplicantCertificationTranings { get; set; } = new List<ApplicantCertificationTraning>();

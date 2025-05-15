@@ -152,6 +152,7 @@ public partial class EquiDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
+            entity.Property(e => e.YearsOfExperence).HasColumnName("years_of_experence");
         });
 
         modelBuilder.Entity<ApplicantCareerPreference>(entity =>
@@ -169,6 +170,7 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.EmploymentTypePreference)
                 .HasMaxLength(100)
                 .HasColumnName("employment_type_preference");
+            entity.Property(e => e.FunctionalArea).HasColumnName("functional_area");
             entity.Property(e => e.IndustriesOfInterest)
                 .HasMaxLength(255)
                 .HasColumnName("industries_of_interest");
@@ -181,9 +183,11 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.PreferredJobRole)
                 .HasMaxLength(255)
                 .HasColumnName("preferred_job_role");
+            entity.Property(e => e.PreferredSector).HasColumnName("preferred_sector");
             entity.Property(e => e.WillingToRelocate)
                 .HasColumnType("character varying")
                 .HasColumnName("willing_to_relocate");
+            entity.Property(e => e.WorkMode).HasColumnName("work_mode");
 
             entity.HasOne(d => d.Applicant).WithOne(p => p.ApplicantCareerPreference)
                 .HasForeignKey<ApplicantCareerPreference>(d => d.ApplicantId)

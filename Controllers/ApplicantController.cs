@@ -402,6 +402,9 @@ namespace EquidCMS.Controllers
             ViewData["SkillName2"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 13 && x.Active==true), "Description", "Description");
             ViewData["LanguagesProficiency"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 10 && x.Active==true), "Lookupcode", "Description");
             ViewData["Gender"] = new SelectList(_context.MstLookups.Where(x => x.Lookupflag == 11 && x.Active==true), "Description", "Description");
+            ViewData["FunctionalArea"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 14 && p.Active == true), "Lookupcode", "Description");
+            ViewData["WorkMode"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true), "Lookupcode", "Description");
+            ViewData["PreferredSector"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 58 && p.Active == true), "Lookupcode", "Description");
             // Fetch applicant data from database
             var applicant = _context.Applicants
                 .Include(x => x.ApplicantProfile)
@@ -435,6 +438,7 @@ namespace EquidCMS.Controllers
                 ShortBio = applicant.ApplicantProfile != null ? applicant.ApplicantProfile.ShortBio : "", // Add column if needed
                 DesiredSalaryRange = applicant.ApplicantProfile != null ? applicant.ApplicantProfile.DesiredSalaryRange : "", // Add column if needed
                 LinkedInProfile = applicant.LinkedinProfile,
+                YearsOfExperence=applicant.YearsOfExperence,
                 // New Fields
                 InternationalExperience = applicant.ApplicantProfile != null ? applicant.ApplicantProfile.InternationalExperience : "",
                 CommunityAdvocacyExperience = applicant.ApplicantProfile != null ? applicant.ApplicantProfile.CommunityAdvocacyExperience : "",
@@ -487,7 +491,10 @@ namespace EquidCMS.Controllers
                     EmploymentTypePreference = applicant.ApplicantCareerPreference?.EmploymentTypePreference,
                     LeadershipAspirations = applicant.ApplicantCareerPreference?.LeadershipAspirations,
                     PreferredJobLocation = applicant.ApplicantCareerPreference?.PreferredJobLocation,
-                    WillingToRelocate = applicant.ApplicantCareerPreference?.WillingToRelocate
+                    WillingToRelocate = applicant.ApplicantCareerPreference?.WillingToRelocate,
+                    WorkMode=applicant.ApplicantCareerPreference.WorkMode,
+                    PreferredSector=applicant.ApplicantCareerPreference.PreferredSector,
+                    FunctionalArea=applicant.ApplicantCareerPreference.FunctionalArea
                 },
 
                 VolunteerExperiences = applicant.ApplicantVolunteerExperiences.Select(v => new VolunteerExperienceDto
@@ -562,6 +569,7 @@ namespace EquidCMS.Controllers
                 applicant.PhoneNumber = model.PhoneNumber;
                 applicant.CountryCode = model.CountryCode;
                 applicant.Gender = model.Gender;
+                applicant.YearsOfExperence = model.YearsOfExperence;
                 applicant.LinkedinProfile = model.LinkedInProfile;
                 applicant.Location = model.Location;
                 applicant.UpdatedAt = DateTime.UtcNow.ToLocalTime();// Set UpdatedAt timestamp
@@ -770,6 +778,9 @@ namespace EquidCMS.Controllers
                 careerPreferences.LeadershipAspirations = model.CareerPreferences.LeadershipAspirations;
                 careerPreferences.PreferredJobLocation = model.CareerPreferences.PreferredJobLocation;
                 careerPreferences.WillingToRelocate = model.CareerPreferences.WillingToRelocate;
+                careerPreferences.WorkMode = model.CareerPreferences.WorkMode;
+                careerPreferences.FunctionalArea = model.CareerPreferences.FunctionalArea;
+                careerPreferences.PreferredSector = model.CareerPreferences.PreferredSector;
 
                 _context.Applicants.Update(applicant);
                 await _context.SaveChangesAsync();
