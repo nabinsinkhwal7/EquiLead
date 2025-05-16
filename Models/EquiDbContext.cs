@@ -62,6 +62,8 @@ public partial class EquiDbContext : DbContext
 
     public virtual DbSet<RoleMenu> RoleMenus { get; set; }
 
+    public virtual DbSet<TblEventNotification> TblEventNotifications { get; set; }
+
     public virtual DbSet<TblSocialLinkdin> TblSocialLinkdins { get; set; }
 
     public virtual DbSet<Tblaboutu> Tblaboutus { get; set; }
@@ -703,6 +705,16 @@ public partial class EquiDbContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.RoleMenus)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("fk_role");
+        });
+
+        modelBuilder.Entity<TblEventNotification>(entity =>
+        {
+            entity.HasKey(e => e.ReminderId).HasName("tblEventNotification_pkey");
+
+            entity.ToTable("tblEventNotification");
+
+            entity.Property(e => e.ReminderId).ValueGeneratedNever();
+            entity.Property(e => e.HourDayUnit).HasMaxLength(10);
         });
 
         modelBuilder.Entity<TblSocialLinkdin>(entity =>
