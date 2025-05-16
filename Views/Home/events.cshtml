@@ -14,7 +14,17 @@
     int totalPast = ViewBag.TotalPast;
     int totalPagesPast = (int)Math.Ceiling((double)totalPast / pageSize);
 }
-
+<style>
+    .title a{
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Only show 2 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4em; /* Adjust based on your font */
+        max-height: 2.8em;
+    }
+</style>
 <section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url('@Url.Content("~/assets/img/Events.png")');">
     <div class="container">
         <div class="row align-items-center">

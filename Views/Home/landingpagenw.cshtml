@@ -162,7 +162,7 @@
                         <div class="wow fade-in-bottom " data-wow-delay="200ms">
                         <div class="job-card jocardminheight ellipsis ">
                             <div class="company-logo"><a href="@jobs[i].Company.Website" target="_blank"><img src="~/@jobs[i].Company.Logo" ></a></div>
-                                <div class="job-detail">
+                            <div class="job-detail ellipsis">
                                 <h5 title="@jobs[i].Jobtitle" class="title white ellipsis"><a href="">@jobs[i].Jobtitle</a></h5>
                                 <p style="font-weight: 700;"><span>Company - </span>@jobs[i].Company.Name </p>
                                 <p style="font-weight: 700;"><span>Employment Type - </span>@ETid?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault()</p>

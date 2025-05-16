@@ -8365,8 +8365,8 @@ START: Service CSS
   box-shadow: -1px 15px 10px -8px #3b074a30;
   display: flex;
 }
-.company-logo{margin-right: 15px;}
-.company-logo img{max-width: inherit;}
+.company-logo a{margin-right: 15px;width: 80px;    height: 80px;    display: flex;    align-items: center; border-radius: 10px; border: 1px solid var(--rr-color-theme-purple); padding: 5px;}
+.company-logo img{width: 100%;}
 .job-detail h3{font-size: 18px; font-weight: 600;}
 .job-detail p{font-size: 14px; font-weight: 500; color: #45359E; line-height: 24px;}
 .job-card .commom-btn{line-height: 21px;padding: 8px 30px;}
@@ -22363,7 +22363,7 @@ START: Footer CSS
 .event-date{background: #000;border-radius: 25px;font-size: 24px;font-weight: 900;color: var(--rr-color-common-white);text-align: center;justify-content: center;align-items: center;display: flex;padding:0px 35px;white-space: nowrap;}
 .event-date p.date{color: var(--rr-color-theme-green);font-size: 42px; display: block;font-weight: 900;margin: 15px 0;padding: 0;}
 .event-head h1{font-size: 60px;color: var(--rr-color-theme-purple);}
-.event-head p{font-size: 16px;color: var(--rr-color-common-black);font-weight: 600;}
+.event-head p{font-size: 16px;color: var(--rr-color-common-black);}
 .event-detail-box{display: flex;border-radius: 10px;border: 1px solid #000;background: #fff;padding: 15px;column-gap: 20px;align-items: start; margin-bottom: 25px;}
 .eve-icon{width: 65px;height: 65px;background: var(--rr-color-theme-purple);border-radius: 10px;text-align: center;line-height: 65px; display: flex; justify-content: center; align-items: center;}
 .eve-icon i{color: var(--rr-color-common-white);font-size: 30px;display: flex; justify-content: center; align-items: center;}
@@ -22985,4 +22985,3 @@ html {
 
 
 /*# sourceMappingURL=main.css.map */
-
