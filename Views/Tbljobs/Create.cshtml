@@ -101,32 +101,41 @@
                     <div class="row">
                         <div class="col-xl-4 col-lg-4">
                                 <div class="row mt-2">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label asp-for="Yearexperience" class="control-label">Year of Experience</label>
-                                        <select asp-for="Yearexperience" class="form-control" id="yearOfExperience">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Yearexperiencefrom" class="control-label">Experience From</label>
+                                        <select asp-for="Yearexperiencefrom" class="form-control" id="Yearexperiencefrom">
                                             <!-- Dropdown options will be populated by JavaScript -->
-                                        </select><span asp-validation-for="Yearexperience" class="text-danger"></span>
-                                        </div>
+                                        </select><span asp-validation-for="Yearexperiencefrom" class="text-danger"></span>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Yearexperienceto" class="control-label">To</label>
+                                        <select asp-for="Yearexperienceto" class="form-control" id="Yearexperienceto">
+                                            <!-- Dropdown options will be populated by JavaScript -->
+                                        </select><span asp-validation-for="Yearexperienceto" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                </div>
                                 <div class="row mt-2">
-                                    </div> <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label asp-for="Minsalary" class="control-label">Salary ( Range )</label>
-                                        <input asp-for="Minsalary" class="form-control" type="number" />
-                                        <span asp-validation-for="Minsalary" class="text-danger"></span>
+                                            <label asp-for="Minsalary" class="control-label">Min Salary </label>
+                                            <input asp-for="Minsalary" class="form-control" type="number" />
+                                            <span asp-validation-for="Minsalary" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label asp-for="Maxsalary" class="control-label">Salary ( Range )</label>
-                                        <input asp-for="Maxsalary" class="form-control" type="number"/>
-                                        <span asp-validation-for="Maxsalary" class="text-danger"></span>
+                                            <label asp-for="Maxsalary" class="control-label">Max Salary</label>
+                                            <input asp-for="Maxsalary" class="form-control" type="number" />
+                                            <span asp-validation-for="Maxsalary" class="text-danger"></span>
                                         </div>
+                                    </div>
                                 </div>
+                         </div>
 
-                            </div>
                         <div class="col-xl-4 col-lg-4">
                                 <div class="row mt-2">
                                     <div class="col-md-12">
@@ -316,11 +325,33 @@
     </div>
 </div>
 <script>
-    // Function to generate the year range and populate the dropdown
-    function populateYearDropdown() {
+            // Function to generate the year range and populate the dropdown
+        function populateFromYearDropdown() {
+            const startYear = 1; // Starting year (1 years experience)
+            const endYear = 50;  // Ending year (50 years experience)
+        const selectElement = document.getElementById("Yearexperiencefrom");
+
+            // Clear any existing options in the dropdown
+            selectElement.innerHTML = "";
+
+            // Add a default "Select" option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = 0;
+            defaultOption.text = "Select Year";
+            selectElement.appendChild(defaultOption);
+
+            // Loop through the range and add options for each year
+            for (let year = startYear; year <= endYear; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                selectElement.appendChild(option);
+            }
+        }
+    function populateToYearDropdown() {
         const startYear = 1; // Starting year (1 years experience)
         const endYear = 50;  // Ending year (50 years experience)
-        const selectElement = document.getElementById("yearOfExperience");
+        const selectElement = document.getElementById("Yearexperienceto");
 
         // Clear any existing options in the dropdown
         selectElement.innerHTML = "";
@@ -328,7 +359,7 @@
         // Add a default "Select" option
         const defaultOption = document.createElement("option");
         defaultOption.value = 0;
-        defaultOption.text = "Select Experience";
+        defaultOption.text = "Select Year";
         selectElement.appendChild(defaultOption);
 
         // Loop through the range and add options for each year
@@ -340,10 +371,11 @@
         }
     }
 
-    // Call the function when the page loads
-    document.addEventListener("DOMContentLoaded", function () {
-        populateYearDropdown();
-    });
+        // Call the function when the page loads and pass the selected year from the controller
+        document.addEventListener("DOMContentLoaded", function () {
+        populateFromYearDropdown();
+        populateToYearDropdown();
+        });
 </script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

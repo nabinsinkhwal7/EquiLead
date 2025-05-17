@@ -910,9 +910,12 @@ public partial class EquiDbContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updatedat");
             entity.Property(e => e.Workmode).HasColumnName("workmode");
-            entity.Property(e => e.Yearexperience)
+            entity.Property(e => e.Yearexperiencefrom)
                 .HasDefaultValue(0)
-                .HasColumnName("yearexperience");
+                .HasColumnName("yearexperiencefrom");
+            entity.Property(e => e.Yearexperienceto)
+                .HasDefaultValue(0)
+                .HasColumnName("yearexperienceto");
 
             entity.HasOne(d => d.Company).WithMany(p => p.Tbljobs)
                 .HasForeignKey(d => d.Companyid)

@@ -173,25 +173,35 @@ namespace EquidCMS.Controllers
 
             foreach (var job in todaysJobs)
             {
-                int? jobExperience = job.Yearexperience;
+                int? jobExperienceFrom = job.Yearexperiencefrom;
+                int? jobExperienceTo = job.Yearexperienceto;
                 int? jobWorkMode = job.Workmode;
                 var jobFunctionalCategories = job.Functionalcategory;
 
-                if (jobExperience == null || jobWorkMode == null || jobFunctionalCategories == null || !jobFunctionalCategories.Any())
+                if (jobExperienceFrom == null || jobExperienceTo == null || jobWorkMode == null || jobFunctionalCategories == null || !jobFunctionalCategories.Any())
                     continue; // skip if incomplete
 
                 // Find applicants who match this job's experience and work mode
                 var matchedApplicants = _context.Applicants
-                                          .Where(a =>
-                                              a.ApplicantCareerPreference != null &&
-                                              (
-                                                  (a.YearsOfExperence.HasValue && a.YearsOfExperence.Value >= jobExperience) ||
-                                                  (a.ApplicantCareerPreference.WorkMode == jobWorkMode) ||
-                                                  (a.ApplicantCareerPreference.FunctionalArea != null &&
-                                                   a.ApplicantCareerPreference.FunctionalArea.Any(f => jobFunctionalCategories.Contains(f)))
-                                              )
-                                          )
-                                          .ToList();
+                                           .Where(a =>
+                                                a.ApplicantCareerPreference != null &&
+                                                (
+                                                    // Experience must fall within the job's required range
+                                                    (a.YearsOfExperence.HasValue &&
+                                                     a.YearsOfExperence.Value >= jobExperienceFrom.Value &&
+                                                     a.YearsOfExperence.Value <= jobExperienceTo.Value)
+                                                ) ||
+                                                (
+                                                    // Work mode must match
+                                                    a.ApplicantCareerPreference.WorkMode == jobWorkMode
+                                                ) ||
+                                                (
+                                                    // At least one matching functional area
+                                                    a.ApplicantCareerPreference.FunctionalArea != null &&
+                                                    a.ApplicantCareerPreference.FunctionalArea.Any(f => jobFunctionalCategories.Contains(f))
+                                                )
+                                            )
+                                            .ToList();
 
                 if (matchedApplicants.Count == 0)
                     continue;
@@ -209,7 +219,7 @@ namespace EquidCMS.Controllers
                     <div style='margin-bottom: 15px;'>
                         <strong>{job.Jobtitle}</strong><br/>
                         Company: {job.Company.Name}<br/>
-                        Location: {job.City}<br/>
+                        Location: {job.City??"N/A"}<br/>
                         Deadline: {(job.Applicationdeadline?.ToString("dd-mmm-yyyy") ?? "N/A")}<br/>
                     </div>
 

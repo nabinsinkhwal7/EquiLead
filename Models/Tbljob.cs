@@ -15,7 +15,7 @@ public partial class Tbljob
 
     public int? Workmode { get; set; }
 
-    public int? Yearexperience { get; set; }
+    public int? Yearexperiencefrom { get; set; }
 
     public DateOnly? Dateposted { get; set; }
 
@@ -56,6 +56,8 @@ public partial class Tbljob
     public List<int>? Deiandwomenfriendlypolicies { get; set; }
 
     public bool? Isdeleted { get; set; }
+
+    public int? Yearexperienceto { get; set; }
 
     public virtual Tblcompany? Company { get; set; }
 }

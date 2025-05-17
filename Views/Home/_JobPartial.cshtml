@@ -86,8 +86,8 @@
                 <div class="job-list-card-mid row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                     <ul>
-                        
-                        <li><i class="fa-solid fa-briefcase"></i> @jobs[i].Yearexperience Years</li>
+
+                                <li><i class="fa-solid fa-briefcase"></i> @jobs[i].Yearexperiencefrom - @jobs[i].Yearexperienceto Years</li>
                         <li><i class="fa-solid fa-indian-rupee-sign"></i> @jobs[i].Minsalary -- @jobs[i].Maxsalary</li>
                         <li>
                                 @if (@employeeTypes?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault() == "" || @employeeTypes?.Where(p => p.Lookupcode == @jobs[i].Employeetype).Select(p => p.Description).FirstOrDefault() == null)

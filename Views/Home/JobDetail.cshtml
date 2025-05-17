@@ -131,12 +131,30 @@
                                         <p class="badge">@Html.Raw(descriptions.ToString())</p>
                                     </li>
                                 }
-                              
-                                
-                                @if (@Model.Yearexperience == null || @Model.Yearexperience == 0){}else
+
+
+                                @if (Model.Yearexperiencefrom.HasValue && Model.Yearexperienceto.HasValue)
                                 {
-                                    <li class="liinner">Years <p class="badge">@Model.Yearexperience</p></li>
+                                    <li class="liinner">
+                                        Experience
+                                        <p class="badge">@Model.Yearexperiencefrom - @Model.Yearexperienceto years</p>
+                                    </li>
                                 }
+                                else if (Model.Yearexperiencefrom.HasValue)
+                                {
+                                    <li class="liinner">
+                                        Experience
+                                        <p class="badge">@Model.Yearexperiencefrom+ years</p>
+                                    </li>
+                                }
+                                else if (Model.Yearexperienceto.HasValue)
+                                {
+                                    <li class="liinner">
+                                        Experience
+                                        <p class="badge">Up to @Model.Yearexperienceto years</p>
+                                    </li>
+                                }
+
                                 @if (@Model.Maxsalary == null) { }
                                 else
                                 {

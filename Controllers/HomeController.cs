@@ -394,24 +394,33 @@ namespace EquidCMS.Controllers
             }
 
             // Filter by Experience (Years of Experience)
-            if (!string.IsNullOrEmpty(experience) && int.TryParse(experience, out int experienceint))
+            if (!string.IsNullOrEmpty(experience) && int.TryParse(experience, out int experienceInt))
             {
-                if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToint))
+                if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToInt))
                 {
-                    query = query.Where(j => j.Yearexperience == experienceint || j.Yearexperience == experienceToint);
+                    // Overlap with user experience range; treat 0 as "no upper limit"
+                    query = query.Where(j =>
+                         j.Yearexperiencefrom >= experienceInt &&
+                         (j.Yearexperienceto == 0 || j.Yearexperienceto <= experienceToInt)
+                     );
+
                 }
                 else
                 {
-                    query = query.Where(j => j.Yearexperience == experienceint);
+                    // User wants jobs that accept their experience level
+                    query = query.Where(j =>
+                        j.Yearexperiencefrom <= experienceInt &&
+                        (j.Yearexperienceto == 0 || j.Yearexperienceto >= experienceInt)
+                    );
                 }
-                    
             }
-            else
+            else if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToInt))
             {
-                if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToint))
-                {
-                    query = query.Where(j=> j.Yearexperience == experienceToint);
-                }
+                // Only upper bound specified
+                query = query.Where(j =>
+                    j.Yearexperiencefrom <= experienceToInt &&
+                    (j.Yearexperienceto == 0 || j.Yearexperienceto >= experienceToInt)
+                );
             }
 
             // Filter by Work Mode (Remote/Hybrid)
