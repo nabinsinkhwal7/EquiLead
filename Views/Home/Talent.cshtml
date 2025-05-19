@@ -77,9 +77,19 @@
                                                                                     placeholder="Search By Locations">
                         </div>
 
-                        <div>
+                        <div style="margin:1px">
                             <button id="submit" class=" rr-secondary-btn login-gradient" style="width:auto!important" onclick="getjob()">Explore Opportunities </button>
                         </div>
+                           <div>
+                           @if (Context.Session.GetString("ApplicantId") != null)
+                                {
+                                    <button class="rr-secondary-btn btn-border login-gradient"
+                                            onclick="loadRecommendedJobs()"
+                                            style="width:auto!important">
+                                        Recommended Jobs
+                                    </button>
+                                }
+                           </div> 
 
                     </div>
                     <div class="contact-form-5">
@@ -296,7 +306,8 @@
             remote: remote,
             FSID: FSID,
             pageNumber: pageNumber,
-            pageSize: pageSize
+            pageSize: pageSize,
+            recommend:false
         };
 
         // Send the filter data via Ajax
@@ -386,4 +397,56 @@
 
     // Init for Company dropdown
     setupSearchableSelect('CompanySelect', 'selectedCompany');
+
+      function loadRecommendedJobs(pageNumber = 1, pageSize = 24) {
+        // Collect the filter values
+        var desig = $('#desig').val(); // For designation input
+        var location = $('#locations').val(); // For location input
+        var role = $('#roles').val();
+        var skills = $('#skills').val();
+        var remote = $('#Workmode .option.selected').data('value');
+        var FSID = $('#FCategory .option.selected').data('value');
+        var company = $('#Compert .option.selected').data('value');
+        var experience = $('#JYear .option.selected').data('value');
+        var experienceTo = $('#JYearTo .option.selected').data('value');
+
+        // Create the filter object to send to the server
+        var filters = {
+            designation: desig,
+            jobLocation: location,
+            role: role,
+            skills: skills,
+            company: company,
+            experience: experience,
+            experienceTo: experienceTo,
+            remote: remote,
+            FSID: FSID,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            recommend:true
+        };
+
+        // Send the filter data via Ajax
+        $.ajax({
+            url: '/Home/FilterJobs', // Replace with your action URL
+            type: 'GET', // Or POST, depending on your server setup
+            data: filters, // Send filter data
+            success: function (response) {
+                // On success, update the DOM with the new partial view (or job listings)
+                if (response === null || response === '') {
+                    // Handle the case where response is null or empty
+                    console.warn("Received an empty or null response");
+                    $('#partialContainer').html('<p>No jobs found</p>'); // Display a default message
+                } else {
+                    // Update the DOM with the new partial view (or job listings)
+                    $('#partialContainer').html(response);
+
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("There was an error loading the filtered jobs:", error);
+            }
+        });
+    }
+
 </script>

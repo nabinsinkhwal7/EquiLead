@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.InkML;
 using EquidCMS.Models;
 using EquidCMS.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -292,6 +293,11 @@ namespace EquidCMS.Controllers
             ViewData["Successsyory"] = _context.Tblsuccesstests.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
             return View(data);
         }
+        public IActionResult Network()
+        {
+            var data=_context.TblSocialLinkdins.ToList();
+            return View(data);
+        }
 
         public IActionResult Talent()
         {
@@ -350,8 +356,47 @@ namespace EquidCMS.Controllers
             return PartialView("_JobPartial");
         }
 
-        public IActionResult FilterJobs(string designation, string jobLocation, string role, string skills, string company, string experience, string experienceTo, string remote, string FSID, int pageNumber = 1, int pageSize = 24)
+        public IActionResult FilterJobs(string designation, string jobLocation, string role, string skills, string company, string experience, string experienceTo, string remote, string FSID, int pageNumber = 1, int pageSize = 24, bool recommend = false)
         {
+            if (recommend)
+            {
+                var isLoggedIn = HttpContext.Session.GetString("ApplicantId");
+                if (isLoggedIn == null || isLoggedIn == "") { 
+                }
+                else
+                {
+                    var applicantData = _context.Applicants.Include(x=>x.ApplicantCareerPreference)
+                                    .Where(e => e.ApplicantId == Convert.ToInt32(isLoggedIn)).FirstOrDefault();
+
+                    if (applicantData != null)
+                    {
+                        var careerPref = applicantData.ApplicantCareerPreference;
+                        // Use experience
+                        experienceTo = applicantData.YearsOfExperence?.ToString();
+
+                        // Use preferred job role
+                        if (string.IsNullOrEmpty(designation) && !string.IsNullOrEmpty(careerPref?.PreferredJobRole))
+                            designation = careerPref.PreferredJobRole;
+
+                        // Use preferred job location
+                        if (string.IsNullOrEmpty(jobLocation) && !string.IsNullOrEmpty(careerPref?.PreferredJobLocation))
+                            jobLocation = careerPref.PreferredJobLocation;
+
+                        // Use work mode
+                        if (string.IsNullOrEmpty(remote) && careerPref?.WorkMode != null)
+                            remote = careerPref.WorkMode.ToString();
+
+                        // Use functional area (FSID)
+                        if (string.IsNullOrEmpty(FSID) && careerPref?.FunctionalArea != null && careerPref.FunctionalArea.Any())
+                            FSID = string.Join(",", careerPref.FunctionalArea);
+
+                        // You could also fetch from applicant’s skills
+                        var skillSet = applicantData.ApplicantSkills.Select(s => s.SkillName).ToList();
+                        if (string.IsNullOrEmpty(skills) && skillSet.Any())
+                            skills = string.Join(",", skillSet);
+                    }
+                }
+            }
             // Start with the base query
             var query = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).AsQueryable();
 
@@ -394,34 +439,34 @@ namespace EquidCMS.Controllers
             }
 
             // Filter by Experience (Years of Experience)
-            if (!string.IsNullOrEmpty(experience) && int.TryParse(experience, out int experienceInt))
+            if (!string.IsNullOrEmpty(experience) || !string.IsNullOrEmpty(experienceTo))
             {
-                if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToInt))
-                {
-                    // Overlap with user experience range; treat 0 as "no upper limit"
-                    query = query.Where(j =>
-                         j.Yearexperiencefrom >= experienceInt &&
-                         (j.Yearexperienceto == 0 || j.Yearexperienceto <= experienceToInt)
-                     );
+                bool hasMin = int.TryParse(experience, out int userMin);
+                bool hasMax = int.TryParse(experienceTo, out int userMax);
 
-                }
-                else
+                if (hasMin && hasMax)
                 {
-                    // User wants jobs that accept their experience level
                     query = query.Where(j =>
-                        j.Yearexperiencefrom <= experienceInt &&
-                        (j.Yearexperienceto == 0 || j.Yearexperienceto >= experienceInt)
+                        (j.Yearexperiencefrom ?? 0) <= userMax &&
+                        (j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto >= userMin)
+                    );
+                }
+                else if (hasMin)
+                {
+                    query = query.Where(j =>
+                        j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto >= userMin
+                    );
+                }
+                else if (hasMax)
+                {
+                    query = query.Where(j =>
+                        (j.Yearexperiencefrom ?? 0) <= userMax &&
+                        (j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto <= userMax)
                     );
                 }
             }
-            else if (!string.IsNullOrEmpty(experienceTo) && int.TryParse(experienceTo, out int experienceToInt))
-            {
-                // Only upper bound specified
-                query = query.Where(j =>
-                    j.Yearexperiencefrom <= experienceToInt &&
-                    (j.Yearexperienceto == 0 || j.Yearexperienceto >= experienceToInt)
-                );
-            }
+
+
 
             // Filter by Work Mode (Remote/Hybrid)
             if (!string.IsNullOrEmpty(remote) && int.TryParse(remote, out int remoteint))
