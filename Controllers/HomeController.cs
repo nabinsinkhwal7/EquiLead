@@ -446,26 +446,29 @@ namespace EquidCMS.Controllers
 
                 if (hasMin && hasMax)
                 {
+                    // Either job's From or To lies within user's range
                     query = query.Where(j =>
-                        (j.Yearexperiencefrom ?? 0) <= userMax &&
-                        (j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto >= userMin)
+                        ((j.Yearexperiencefrom ?? 0) >= userMin && (j.Yearexperiencefrom ?? 0) <= userMax) &&
+                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin && (j.Yearexperienceto ?? int.MaxValue) <= userMax)
                     );
                 }
                 else if (hasMin)
                 {
+                    // Check if either job's from or to falls on or after userMin
                     query = query.Where(j =>
-                        j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto >= userMin
+                        ((j.Yearexperiencefrom ?? 0) >= userMin) &&
+                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin)
                     );
                 }
                 else if (hasMax)
                 {
+                    // Check if either job's from or to falls on or before userMax
                     query = query.Where(j =>
-                        (j.Yearexperiencefrom ?? 0) <= userMax &&
-                        (j.Yearexperienceto == null || j.Yearexperienceto == 0 || j.Yearexperienceto <= userMax)
+                        ((j.Yearexperiencefrom ?? 0) <= userMax) &&
+                        ((j.Yearexperienceto ?? int.MaxValue) <= userMax)
                     );
                 }
             }
-
 
 
             // Filter by Work Mode (Remote/Hybrid)
