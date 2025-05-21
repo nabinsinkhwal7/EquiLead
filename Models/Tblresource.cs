@@ -45,6 +45,12 @@ public partial class Tblresource
 
     public int? CategoryId { get; set; }
 
+    public string? Author { get; set; }
+
+    public string? Designation { get; set; }
+
+    public string? Shortbio { get; set; }
+
     public virtual MstRsdocumenttype? Rsdocumenttype { get; set; }
 
     public virtual MstTheme? Theme { get; set; }

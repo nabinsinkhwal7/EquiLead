@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Drawing;
 
 namespace EquidCMS.Controllers
 {
@@ -45,6 +46,25 @@ namespace EquidCMS.Controllers
                 // Handle the first file upload (Image)
                 if (FileToUpload1 != null && FileToUpload1.Length > 0)
                 {
+                    // Dimension check
+                    using (var imageStream = FileToUpload1.OpenReadStream())
+                    {
+                        using (var image = Image.FromStream(imageStream))
+                        {
+                            int requiredWidth = 850;
+                            int requiredHeight = 850;
+
+                            if (image.Width != requiredWidth || image.Height != requiredHeight)
+                            {
+                                ModelState.AddModelError("Rsimage", $"Image dimensions should not exceed {requiredWidth}x{requiredHeight}px.");
+
+                                ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 15 && p.Active == true), "Lookupcode", "Description");
+                                ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16 && p.Active == true), "Lookupcode", "Description");
+                                ViewData["Rsdocumenttypeid"] = new SelectList(_context.MstRsdocumenttypes, "Rsdocumenttypeid", "Rsdocumenttype");
+                                return View(tblresource);
+                            }
+                        }
+                    }
                     // Generate a unique file name to avoid conflicts
                     var imageFileName = Path.GetFileNameWithoutExtension(FileToUpload1.FileName) + "_" + Guid.NewGuid().ToString() + Path.GetExtension(FileToUpload1.FileName);
 
@@ -124,6 +144,7 @@ namespace EquidCMS.Controllers
             }
 
             // Populate the ViewBag for the Theme dropdown
+            ViewData["Categories"] = new SelectList(_context.MstLookups.Where(p=>p.Lookupflag == 15 && p.Active == true), "Lookupcode", "Description");
             ViewData["Rsdocumenttypeid"] = new SelectList(_context.MstRsdocumenttypes, "Rsdocumenttypeid", "Rsdocumenttype");
             ViewData["ThemeId"] = new SelectList(_context.MstLookups.Where(p => p.Lookupflag == 16), "Lookupcode", "Description");
             return View(tblresource);

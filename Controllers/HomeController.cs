@@ -236,9 +236,13 @@ namespace EquidCMS.Controllers
                 page = 1;
 
             var query = _context.Tblresources
-                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true)
+                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true && x.Rsdocumenttypeid!=6)
                 .AsQueryable();
-
+            
+            var blogsData = _context.Tblresources
+                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true && x.Rsdocumenttypeid==6)
+                .ToList();
+            ViewBag.BlogResources = blogsData;
             if (!string.IsNullOrEmpty(searchKeyword))
             {
                 var keywordLower = searchKeyword.ToLower();
@@ -295,7 +299,7 @@ namespace EquidCMS.Controllers
         }
         public IActionResult Network()
         {
-            var data=_context.TblSocialLinkdins.ToList();
+            var data=_context.TblSocialLinkdins.Where(x=>x.IsDeleted!=true).ToList();
             return View(data);
         }
 
@@ -446,26 +450,24 @@ namespace EquidCMS.Controllers
 
                 if (hasMin && hasMax)
                 {
-                    // Either job's From or To lies within user's range
+                    // Any overlap between user and job experience ranges
                     query = query.Where(j =>
-                        ((j.Yearexperiencefrom ?? 0) >= userMin && (j.Yearexperiencefrom ?? 0) <= userMax) &&
-                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin && (j.Yearexperienceto ?? int.MaxValue) <= userMax)
+                        (j.Yearexperiencefrom ?? int.MaxValue) >= userMin &&
+                        (j.Yearexperienceto ?? 0) <= userMax
                     );
                 }
                 else if (hasMin)
                 {
                     // Check if either job's from or to falls on or after userMin
                     query = query.Where(j =>
-                        ((j.Yearexperiencefrom ?? 0) >= userMin) &&
-                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin)
+                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin)&&((j.Yearexperiencefrom ?? 0)<=userMin)
                     );
                 }
                 else if (hasMax)
                 {
                     // Check if either job's from or to falls on or before userMax
                     query = query.Where(j =>
-                        ((j.Yearexperiencefrom ?? 0) <= userMax) &&
-                        ((j.Yearexperienceto ?? int.MaxValue) <= userMax)
+                        ((j.Yearexperiencefrom ?? 0) <= userMax)
                     );
                 }
             }

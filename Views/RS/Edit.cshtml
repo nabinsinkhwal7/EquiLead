@@ -63,16 +63,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="control-label">Description</label>
-                                        <textarea asp-for="Rsshortdescription" class="form-control" ></textarea>
-                                        <span asp-validation-for="Rsshortdescription" class="text-danger"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
+                            <div class="row mt-2 document">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Document</label>
@@ -83,6 +74,33 @@
                                         <span asp-validation-for="Rsdocument" class="text-danger"></span>
                                     </div>
 
+                                </div>
+                            </div>
+                            <div class="row mt-2 blog-fields" style="display:none;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Author Name </label>
+                                        <input asp-for="Author" class="form-control" />
+                                        <span asp-validation-for="Author" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 blog-fields" style="display:none;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Author Designation</label>
+                                        <input asp-for="Designation" class="form-control" />
+                                        <span asp-validation-for="Designation" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2 blog-fields" style="display:none;">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Short Bio</label>
+                                        <textarea asp-for="Shortbio" class="form-control"></textarea>
+                                        <span asp-validation-for="Shortbio" class="text-danger"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -109,14 +127,23 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-2">
+                            <div class="row mt-2 ">
                                 <div class="col-md-12">
                                     <div class="form-group" style="margin-top: 12px;">
                                         <label class="control-label">Resource Type <span style="color:red">*</span></label>
                                         <select asp-for="Rsdocumenttypeid" class="form-select" asp-items="ViewBag.Rsdocumenttypeid"></select>
                                     </div>
                                 </div>
-                               </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+                                        <textarea asp-for="Rsshortdescription" class="form-control"></textarea>
+                                        <span asp-validation-for="Rsshortdescription" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row mt-2">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -194,7 +221,6 @@
         document.getElementById("FileToUpload1").addEventListener("change", function (event) {
             const file = event.target.files[0];
             const reader = new FileReader();
-
             reader.onload = function (e) {
                 const imagePreview = document.getElementById("imagePreview");
                 imagePreview.src = e.target.result; // Set the src of the image
@@ -204,39 +230,7 @@
             if (file) {
                 reader.readAsDataURL(file); // Read the file and trigger the onload event
             }
-        });     // Function to generate the year range and populate the dropdown
-        function populateYearDropdown(selectedYear) {
-            const startYear = 1991; // Starting year (0 years experience)
-            const endYear = 2050;  // Ending year (50 years experience)
-            const selectElement = document.getElementById("Rsage");
-
-            // Clear any existing options in the dropdown
-            selectElement.innerHTML = "";
-
-            // Add a default "Select" option
-            const defaultOption = document.createElement("option");
-            defaultOption.value = "";
-            defaultOption.text = "Select Age";
-            selectElement.appendChild(defaultOption);
-
-            // Loop through the range and add options for each year
-            for (let year = startYear; year <= endYear; year++) {
-                const option = document.createElement("option");
-                option.value = year;
-                option.text = year;
-                if (year === selectedYear) {
-                    option.selected = true; // Pre-select the current year of experience
-                }
-                selectElement.appendChild(option);
-            }
-        }
-
-        // Call the function when the page loads and pass the selected year from the controller
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const age = @Model.Rsage;  // Use 0 as fallback if no value exists
-            populateYearDropdown(age);
-        });
+        });   
     </script>
  <script>
     // Wait for the document to be fully loaded
@@ -270,20 +264,27 @@
         isLinkCheckbox.addEventListener('change', toggleInputState);
     });
             // Function to toggle 'IsLink' checkbox if Resource Type is 6 (BLog)
-    function checkResourceTypeAndSetIsLink() {
-        const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
-        const isLinkCheckbox = document.getElementById('IsLink');
-         const videoLinkInput = document.getElementById('RsvideoLink');
-       
-        if (resourceTypeSelect.value === "6") {
-            isLinkCheckbox.checked = true;
-            videoLinkInput.disabled = false; // Enable the video link input
-                
+        function checkResourceTypeAndSetIsLink() {
+            const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
+            const isLinkCheckbox = document.getElementById('IsLink');
+            const blogFields = document.querySelectorAll('.blog-fields');
+            const docs = document.querySelectorAll('.document');
+
+            if (resourceTypeSelect.value === "6") { // Assuming 6 = Blog
+                blogFields.forEach(field => field.style.display = 'block');
+                docs.forEach(field => field.style.display = 'none');
+                isLinkCheckbox.checked = true;
+                toggleInputState();
+            } else {
+                docs.forEach(field => field.style.display = 'block');
+                isLinkCheckbox.checked = false;
+                blogFields.forEach(field => field.style.display = 'none');
+            }
         }
-    }
 
     // Listen for change event on the Resource Type dropdown
     document.addEventListener("DOMContentLoaded", function () {
+        checkResourceTypeAndSetIsLink();
         const resourceTypeSelect = document.querySelector('[name="Rsdocumenttypeid"]');
         resourceTypeSelect.addEventListener('change', checkResourceTypeAndSetIsLink);
     });

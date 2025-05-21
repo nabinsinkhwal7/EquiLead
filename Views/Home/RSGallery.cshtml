@@ -105,6 +105,7 @@
          height: 150px;
          overflow-y: scroll;
      }
+
 </style>
 
 <section class="hreo_inner purple_bg pt-80 pb-80" style="background-image: url(/assets/img/ResourceBanner.png);">
@@ -329,6 +330,74 @@
 
     </div>
 </section>
+@if (ViewBag.BlogResources != null && ((List<EquidCMS.Models.Tblresource>)ViewBag.BlogResources).Any())
+{
+    <hr />
+    <section class="blog-section rsgallery cream_bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h2>Blogs</h2>
+                </div>
+            </div>
+            <div class="row filter-items">
+                @foreach (var blog in (List<EquidCMS.Models.Tblresource>)ViewBag.BlogResources)
+                {
+                    <div class="col-lg-4 col-md-6 single-item blogPosts" data-title="@blog.Rshead">
+                        <div class="project-item-4 wow fade-in-up" data-wow-delay="100ms">
+                            <div class="project-thumb">
+                                <img src="@Url.Content("~/assets/RSImage/ResourcesDefaultIcon.png")" alt="@blog.Rshead">
+                            </div>
+                            <div class="project-content">
+                                <div class="tag-list-new">
+                                    @if (blog.Topic != null)
+                                    {
+                                        foreach (var Topic in blog.Topic)
+                                        {
+                                            foreach (var LookTopic in TopicRS.Where(p => p.Lookupcode == Topic))
+                                            {
+                                                <a>@LookTopic.Description</a>
+                                            }
+                                        }
+                                    }
+
+                                    @if (blog.CategoryId != null)
+                                    {
+                                        for (int i = 0; i < CategoryRS.Count; i++)
+                                        {
+                                            if (CategoryRS[i].Lookupcode == blog.CategoryId)
+                                            {
+                                                <a>@CategoryRS[i].Description</a>
+                                            }
+                                        }
+                                    }
+
+                                </div>
+
+                                <h3 class="title ellipsis" title="@blog.Rshead">
+                                    <a onclick="trackResourceClick(@blog.Resourceid)" href="@blog.RsvideoLink" target="_blank">@blog.Rshead</a>
+                                </h3>
+
+                                <p class="description">@blog.Rsshortdescription</p>
+
+                                @* Optional Author Info *@
+                                @if (!string.IsNullOrEmpty(blog.Author))
+                                {
+                                    <p class="mt-2">
+                                        <strong>@blog.Author</strong><br />
+                                        <small>@blog.Designation</small>
+                                    </p>
+                                }
+
+                                <a href="@blog.RsvideoLink" class="rr-secondary-btn login-gradient mt-2" onclick="trackResourceClick(@blog.Resourceid)" target="_blank">Read Blog</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

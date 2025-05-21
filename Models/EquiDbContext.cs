@@ -998,11 +998,13 @@ public partial class EquiDbContext : DbContext
             entity.ToTable("tblresource");
 
             entity.Property(e => e.Resourceid).HasColumnName("resourceid");
+            entity.Property(e => e.Author).HasColumnName("author");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Createdby).HasColumnName("createdby");
             entity.Property(e => e.Createdon)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("createdon");
+            entity.Property(e => e.Designation).HasColumnName("designation");
             entity.Property(e => e.Isdeleted).HasColumnName("isdeleted");
             entity.Property(e => e.Ispublic).HasColumnName("ispublic");
             entity.Property(e => e.Isrelatedrs).HasColumnName("isrelatedrs");
@@ -1015,6 +1017,7 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.Rsshortdescription).HasColumnName("rsshortdescription");
             entity.Property(e => e.Rsversion).HasColumnName("rsversion");
             entity.Property(e => e.RsvideoLink).HasColumnName("RSVideoLink");
+            entity.Property(e => e.Shortbio).HasColumnName("shortbio");
             entity.Property(e => e.ThemeId)
                 .HasDefaultValue(1)
                 .HasColumnName("theme_id");
