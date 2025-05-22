@@ -40,12 +40,85 @@ namespace FairtradePR.Controllers
         {
             return View();
         }
+        // Updated server-side controller
+        [HttpGet]
+        public JsonResult GetEmails(int page = 1, int pageSize = 50, string searchTerm = "")
+        {
+            var query = _context.Applicants
+                .Where(x => !string.IsNullOrEmpty(x.Email));
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(x =>
+                    x.Email.Contains(searchTerm) ||
+                    x.FullName.Contains(searchTerm));
+            }
+
+            var mapped = query
+                .Select(x => new SPMailModel
+                {
+                    Id = x.ApplicantId,
+                    Name = x.FullName,
+                    Email = x.Email
+                })
+                .ToList(); 
+
+            var grouped = mapped
+                .GroupBy(x => x.Email)
+                .Select(g => g.First())
+                .ToList();
+
+            var totalCount = grouped.Count();
+
+            var people = grouped
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Json(new
+            {
+                Data = people,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            });
+        }
+
+
+        //[HttpGet]
+        //public JsonResult GetEmails()
+        //{
+        //    var people = _context.Applicants
+        //        .Where(x => !string.IsNullOrEmpty(x.Email)) 
+        //        .Select(x => new SPMailModel
+        //        {
+        //            Id = x.ApplicantId,
+        //            Name = x.FullName,
+        //            Email = x.Email
+        //        })
+        //        .GroupBy(x => x.Email)
+        //        .Select(g => g.First())
+        //        .ToList();
+
+        //    return Json(people);
+        //}
 
         [HttpGet]
-        public JsonResult GetEmails()
+        public JsonResult GetEmailsFilter(string employeeType,string fromExp, string toExp)
         {
+            //var testDT = _context.Applicants.ToList();
+            bool hasFromExp = int.TryParse(fromExp, out int from);
+            bool hasToExp = int.TryParse(toExp, out int to);
+
             var people = _context.Applicants
-                .Where(x => !string.IsNullOrEmpty(x.Email)) 
+                .Where(x => !string.IsNullOrEmpty(x.Email))
+                .Where(x =>
+                    (!hasFromExp || x.YearsOfExperence >= from) &&
+                    (!hasToExp || x.YearsOfExperence <= to) &&
+                    (string.IsNullOrEmpty(employeeType) ||
+                     (x.ApplicantCareerPreference != null &&
+                      x.ApplicantCareerPreference.EmploymentTypePreference == employeeType))
+                )
                 .Select(x => new SPMailModel
                 {
                     Id = x.ApplicantId,
@@ -58,10 +131,12 @@ namespace FairtradePR.Controllers
 
             return Json(people);
         }
-
-
-
-
+        [HttpGet]
+        public JsonResult GetLocation()
+        {
+            var emails = _context.Applicants.Where(l=>l.Location!=null).Select(l=>l.Location).Distinct().OrderBy(l=>l).ToList();
+            return Json(emails);
+        }
         //[HttpPost]
         //public async Task<JsonResult> SendEmail([FromBody] EmailRequestModel request)
         //{
@@ -116,6 +191,8 @@ namespace FairtradePR.Controllers
                 return Json(new { success = false, errorMessage = ex.Message });
             }
         }
+
+
 
 
 

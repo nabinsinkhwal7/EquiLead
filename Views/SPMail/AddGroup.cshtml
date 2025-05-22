@@ -38,6 +38,7 @@
 
 
 <style>
+
     .custom-badge {
         background-color: blueviolet;
         color: white;
@@ -66,6 +67,85 @@
         .custom-dropdown input[type="checkbox"] {
             margin-right: 5px; /* Slightly reduce space between checkbox and text */
         }
+
+
+
+
+    .import-trigger-btn {
+        padding: 6px 6px;
+        background: #4e73df;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .import-trigger-btn:hover {
+            background: #2e59d9;
+            transform: translateY(-1px);
+        }
+
+    .import-panel {
+        position: fixed;
+        left: -400px;
+        top: 0;
+        bottom: 0;
+        width: 380px;
+        background: white;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+        z-index: 1050;
+        transition: left 0.3s ease-out;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .import-panel.open {
+            left: 0;
+        }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .panel-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .panel-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    #import-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+        #import-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
 </style>
 
 <form method="post" enctype="multipart/form-data">
@@ -77,7 +157,40 @@
             <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex flex-wrap align-items-center bg-light p-3 rounded">
+                    <!-- Employment Type -->
+                    <div class="me-4 mb-2 mb-md-0">
+                        <select class="form-select form-select-sm" id="empTypePref">
+                            <option value="">All Employment Types</option>
+                            <option value="1">Full-time</option>
+                            <option value="2">Part-time</option>
+                            <option value="3">Contract</option>
+                        </select>
+                    </div>
 
+
+                    <!-- Experience Range -->
+                    <div class="me-4 d-flex align-items-center">
+                        <span class="me-3 small">Exp:</span>
+                        <input type="number" class="form-control form-control-sm" style="width: 70px;" id="expFrom" placeholder="From" min="0">
+                        <span class="mx-3">-</span>
+                        <input type="number" class="form-control form-control-sm" style="width: 70px;" id="expTo" placeholder="To" min="0">
+                    </div>
+
+                    <!-- Search Button -->
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-sm btn-primary me-2" id="searchBtn">
+                            <i class="fas fa-search me-1"></i> Search
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="resetBtn">
+                            <i class="fas fa-undo me-1"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="card-body">
             <div class="row">
@@ -92,13 +205,54 @@
                     <div class="custom-dropdown border p-2" id="emailDropdown" style="max-height: 150px; overflow-y: auto;">
                         <!-- Checkboxes will be populated here -->
                     </div>
+                    <div id="loadingIndicator" class="text-center py-2" style="display: none;">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <small>Loading more emails...</small>
+                    </div>
                 </div>
-
                 <!-- Selected Emails Display Box -->
                 <div class="col-md-6">
                     <label><strong>Selected Emails</strong></label>
                     <div id="selectedEmailsBox" class="border p-2" style="min-height:200px; max-height:200px; overflow-y:auto; background-color: #f9f9f9;">
                         <span class="text-muted">No emails selected.</span>
+                    </div>
+                   <div class="text-right">
+                        <button id="emailImportTrigger" type="button" class="import-trigger-btn btn-sm">
+                            <i class="fas fa-paperclip"></i> Import Emails
+                        </button>
+                    </div>
+                </div>
+               
+
+            </div>
+            <div class="row">
+                <div class="email-import-container">
+                    <!-- Trigger Button -->
+                   
+
+                    <!-- Email Input Panel -->
+                    <div id="emailImportPanel" class="import-panel">
+                        <div class="panel-header">
+                            <h5>Bulk Email Import</h5>
+                            <button class="panel-close-btn">&times;</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="mb-3">
+                                <label class="form-label">Paste emails from Excel:</label>
+                                <textarea id="emailBulkInput" class="form-control" rows="6"
+                                          placeholder="user1@example.com&#10;user2@example.com&#10;user3@example.com"></textarea>
+                            </div>
+                            <div class="panel-actions">
+                                <button id="cancelEmailImport" type="button" class="btn btn-outline-secondary btn-sm">
+                                    Cancel
+                                </button>
+                                <button id="confirmEmailImport" type="button" class="btn btn-primary btn-sm">
+                                    Import Emails
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -114,7 +268,7 @@
         <!-- Body -->
         <div class="col-md-12 mb-3">
             <label for="emailBody"><strong>Email Body</strong></label><span class="text-danger"> *</span>
-           @*  <textarea id="emailBody" class="form-control" rows="6" required></textarea> *@
+            @*  <textarea id="emailBody" class="form-control" rows="6" required></textarea> *@
             <textarea id="emailBody"></textarea>
         </div>
 
@@ -142,6 +296,120 @@
             ]
         });
     });
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Elements
+    const triggerBtn = document.getElementById('emailImportTrigger');
+    const importPanel = document.getElementById('emailImportPanel');
+    const closeBtn = importPanel.querySelector('.panel-close-btn');
+    const cancelBtn = document.getElementById('cancelEmailImport');
+    const confirmBtn = document.getElementById('confirmEmailImport');
+    const emailInput = document.getElementById('emailBulkInput');
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'import-overlay';
+    document.body.appendChild(overlay);
+    
+    // Toggle panel
+    function togglePanel(show) {
+        if (show) {
+            importPanel.classList.add('open');
+            overlay.classList.add('active');
+            emailInput.focus();
+        } else {
+            importPanel.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    }
+    
+    // Event listeners with proper cleanup
+    function addEventListeners() {
+        triggerBtn.addEventListener('click', () => togglePanel(true));
+        closeBtn.addEventListener('click', () => togglePanel(false));
+        cancelBtn.addEventListener('click', () => togglePanel(false));
+        overlay.addEventListener('click', () => togglePanel(false));
+        
+        confirmBtn.addEventListener('click', processEmails);
+    }
+    
+    function removeEventListeners() {
+        triggerBtn.removeEventListener('click', () => togglePanel(true));
+        closeBtn.removeEventListener('click', () => togglePanel(false));
+        cancelBtn.removeEventListener('click', () => togglePanel(false));
+        overlay.removeEventListener('click', () => togglePanel(false));
+        confirmBtn.removeEventListener('click', processEmails);
+    }
+    
+    // Process emails
+    function processEmails() {
+        const emailText = emailInput.value.trim();
+        
+        if (!emailText) {
+            alert('Please paste some email addresses');
+            return;
+        }
+            let emails = [];
+            const lines = emailText.split('\n');
+
+                lines.forEach(line => {
+                emails = emails.concat(
+                    line.split(/[,;\s]+/)
+                        .map(email => email.trim())
+                        .filter(email => email.length > 0)
+                );
+            });
+        // Process emails
+            const validEmails = emails.filter(email => isValidEmail(email));
+
+            if (validEmails.length === 0) {
+                alert('No valid email addresses found');
+                return;
+            }
+
+           addEmailsToDisplay(validEmails);
+        togglePanel(false);
+    }
+    
+    // Initialize
+    addEventListeners();
+        function addEmailsToDisplay(emails) {
+            if (emails.length === 0) return;
+
+            // Remove "empty" message if present
+                const noEmailLabel = $('#selectedEmailsBox > span.text-muted');
+        if (noEmailLabel.length > 0) {
+            noEmailLabel.remove();
+        }
+
+            // Add each email with remove button
+            emails.forEach(email => {
+                if (!emailExistsInDisplay(email)) {
+                     $('#selectedEmailsBox').append('<div class="custom-badge m-1">' + email + '</div>');
+                }
+            });
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-email').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const emailToRemove = this.getAttribute('data-email');
+                    removeEmailFromDisplay(emailToRemove);
+                });
+            });
+        }
+        function isValidEmail(email) {
+        return /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email);
+    }
+        function emailExistsInDisplay(email) {
+            return Array.from(selectedEmailsBox.querySelectorAll('.custom-badge'))
+                .some(div => div.textContent.trim().includes(email));
+        }
+
+            // Cleanup if needed (for single-page apps)
+    window.addEventListener('beforeunload', removeEventListeners);
+});
 </script>
 
 
@@ -150,7 +418,12 @@
 
 
     $(document).ready(function () {
-        // Update the selected emails box when checkboxes change
+        let currentPage = 1;
+        const pageSize = 50;
+        let isLoading = false;
+        let allEmailsLoaded = false;
+        let currentFilter = '';
+        let allEmails = [];
         $('#emailDropdown').on('change', '.emailCheckbox', function () {
             var selectedEmails = [];
             $('.emailCheckbox:checked').each(function () {
@@ -163,48 +436,210 @@
             if (selectedEmails.length > 0) {
                 selectedEmails.forEach(function (email) {
                    displayBox.append('<div class="custom-badge m-1">' + email + '</div>');
-
                 });
             } else {
                 displayBox.html('<span class="text-muted">No emails selected.</span>');
             }
         });
+         $('#searchBtn').click(function () {
+            var employeeType = $('#empTypePref').val();
+            var fromExp = $('#expFrom').val();
+            var toExp = $('#expTo').val();
 
-        // Fetch email list from server and populate the dropdown
-        $.ajax({
-            url: '/SPMail/GetEmails',  // Ensure the URL is correct
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                console.log('Received data:', data); // Log the received data for debugging
-                if (data && data.$values && Array.isArray(data.$values)) {
-                    data.$values.forEach(function (person) {
-                        var checkboxHtml = '<label><input type="checkbox" class="emailCheckbox" value="' + person.email + '" data-id="' + person.id + '"> ' + person.name + ' - ' + person.email + '</label><br>';
-                        $('#emailDropdown').append(checkboxHtml);
-                    });
-                } else {
-                    console.error('Error: Data format issue', data);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error fetching emails:', error);
-            }
-        });
-
-        // Search functionality
-        $('#emailSearch').on('keyup', function () {
-            const filter = this.value.toLowerCase();
-            const labels = document.querySelectorAll('#emailDropdown label');
-
-            labels.forEach(label => {
-                const text = label.textContent.toLowerCase();
-                if (text.includes(filter)) {
-                    label.style.display = '';
-                } else {
-                    label.style.display = 'none';
+            $.ajax({
+                url: '/SPMail/GetEmailsFilter',
+                type: 'GET',
+                data: {
+                    employeeType: employeeType,
+                    fromExp: fromExp,
+                    toExp: toExp
+                },
+                success: function (data) {
+                    //console.log('Received data:', data);
+                    $('#emailDropdown').html('');
+                    if (data && data.$values && Array.isArray(data.$values)) {
+                        data.$values.forEach(function (person) {
+                            var checkboxHtml = '<label><input type="checkbox" class="emailCheckbox" value="' + person.email + '" data-id="' + person.id + '"> ' + person.name + ' - ' + person.email + '</label><br>';
+                            $('#emailDropdown').append(checkboxHtml);
+                        });
+                    } else {
+                        console.error('Error: Data format issue', data);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching emails:', error);
                 }
             });
         });
+
+        $('#resetBtn').click(function () {
+            $('#empTypePref').val('');
+            $('#expFrom').val('');
+            $('#expTo').val('');
+                loadEmails();
+        });
+    //     $.ajax({
+    //     url: '/SPMail/GetLocation',
+    //     type: 'GET',
+    //     dataType: 'json',
+    //     success: function (data) {
+    //         var $locationDropdown = $('#prefLocation');
+    //         $locationDropdown.empty();
+    //         $locationDropdown.append('<option value="">All Locations</option>');
+
+    //         var locations = data?.$values ?? data;
+
+    //         if (Array.isArray(locations)) {
+    //             locations.forEach(function (location) {
+    //                 var optionHtml = `<option value="${location}">${location}</option>`;
+    //                 $locationDropdown.append(optionHtml);
+    //             });
+    //         } else {
+    //             console.error('Error: Unexpected data format', data);
+    //         }
+    //     },
+    //     error: function (xhr, status, error) {
+    //         console.error('Error fetching locations:', error);
+    //     }
+    // });
+
+
+
+
+    //Load ALl EMail
+    function loadEmails(searchTerm = '') {
+        if (isLoading || allEmailsLoaded) return;
+
+        isLoading = true;
+        $('#loadingIndicator').show();
+
+        $.ajax({
+            url: '/SPMail/GetEmails',
+            type: 'GET',
+            data: {
+                page: currentPage,
+                pageSize: pageSize,
+                searchTerm: searchTerm
+            },
+            dataType: 'json',
+            success: function(response) {
+                  if (response.data && Array.isArray(response.data.$values)) {
+        allEmails = allEmails.concat(response.data.$values);
+
+        filterAndDisplayEmails(currentFilter);
+
+        if (currentPage * pageSize >= response.totalCount) {
+            allEmailsLoaded = true;
+        } else {
+            currentPage++;
+        }
+    } else {
+        console.warn('Invalid data format:', response);
+    }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching emails:', error);
+            },
+            complete: function() {
+                isLoading = false;
+                $('#loadingIndicator').hide();
+            }
+        });
+    }
+
+    // Filter and display emails from cache
+     function filterAndDisplayEmails(filter) {
+        filter = (filter || '').toLowerCase();  // ✅ safe fallback to empty string
+        currentFilter = filter;
+        $('#emailDropdown').empty();
+
+        const filtered = allEmails.filter(email =>
+            (email.name && email.name.toLowerCase().includes(currentFilter)) ||
+            (email.email && email.email.toLowerCase().includes(currentFilter))
+        );
+
+        if (filtered.length === 0 && !allEmailsLoaded) {
+            loadEmails(currentFilter);
+            return;
+        }
+
+        filtered.forEach(email => {
+            const checkboxHtml = `
+                <label class="d-block mb-2">
+                    <input type="checkbox" class="emailCheckbox" value="${email.email}" data-id="${email.id}">
+                    ${email.name} - ${email.email}
+                </label>`;
+
+
+            $('#emailDropdown').append(checkboxHtml);
+        });
+    }
+
+    // Search functionality
+       $('#emailSearch').on('input', function() {
+        const searchTerm = $(this).val().trim();
+        clearTimeout($(this).data('timeout'));
+        $(this).data('timeout', setTimeout(() => {
+            currentFilter = searchTerm;
+            currentPage = 1;
+            allEmailsLoaded = false;
+            allEmails = [];
+            loadEmails(searchTerm);
+        }, 300));
+    });
+
+
+    // Infinite scroll
+    $('#emailDropdown').on('scroll', function() {
+        const $this = $(this);
+        if ($this.scrollTop() + $this.innerHeight() >= $this[0].scrollHeight - 10) {
+            loadEmails(currentFilter);
+        }
+    });
+
+    // Initial load
+    loadEmails();
+
+
+        // $.ajax({
+        //     url: '/SPMail/GetEmails',
+        //     type: 'GET',
+        //     dataType: 'json',
+        //     success: function (data) {
+        //         console.log('Received data:', data); // Log the received data for debugging
+        //         if (data && data.$values && Array.isArray(data.$values)) {
+        //             data.$values.forEach(function (person) {
+        //                 var checkboxHtml = '<label><input type="checkbox" class="emailCheckbox" value="' + person.email + '" data-id="' + person.id + '"> ' + person.name + ' - ' + person.email + '</label><br>';
+        //                 $('#emailDropdown').append(checkboxHtml);
+        //             });
+        //         } else {
+        //             console.error('Error: Data format issue', data);
+        //         }
+        //     },
+        //     error: function (xhr, status, error) {
+        //         console.error('Error fetching emails:', error);
+        //     }
+        // });
+
+        // Search functionality
+        // $('#emailSearch').on('keyup', function () {
+        //     const filter = this.value.toLowerCase();
+        //     const labels = document.querySelectorAll('#emailDropdown label');
+
+        //     labels.forEach(label => {
+        //         const text = label.textContent.toLowerCase();
+        //         if (text.includes(filter)) {
+        //             label.style.display = '';
+        //         } else {
+        //             label.style.display = 'none';
+        //         }
+        //     });
+        // });
+    
+
+
+
+
     });
 
     // Send email function
@@ -223,7 +658,7 @@
 
         var title = $('#emailTitle').val();
         var body = $('#emailBody').summernote('code');  // Get CKEditor content
-       
+
         if (selectedEmails.length > 0) {
              console.log(body);
              console.log(title);
@@ -254,9 +689,11 @@
         }
     }
 
-    
+    /////////////////////////////
 
-  
+
+
+
 </script>
 
 @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
