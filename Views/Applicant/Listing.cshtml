@@ -53,7 +53,7 @@
 <script type="text/javascript">
     $(function () {
         $('#myDataTable').DataTable({
-            dom: 'lBfrtip',
+            dom: 'lfrtip',
             buttons: ['excelHtml5'],
             'info': false,
             'lengthChange': false,
@@ -69,11 +69,15 @@
         </div>
         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
             <div class="pull-right">
-                <a asp-action="Signup" asp-controller="Applicant" class="btn btn-primary signup-gradient mb-1 float-end" data-wow-delay="600ms">Add Applicant</a>
+                <a asp-action="Register" asp-controller="Applicant" class="btn btn-primary signup-gradient mb-1 float-end" data-wow-delay="600ms">Add Applicant</a>
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-xl-2 col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            <button id="exportBtn" class="btn btn-primary btn-sm">Export Applicants</button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" style="overflow: auto;">
             <table id="myDataTable" class="table table-bordered table-striped dt-responsive nowrap w-100">
@@ -100,7 +104,7 @@
                         <th>
                             @Html.DisplayNameFor(model => model.Location)
                         </th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -139,7 +143,7 @@
                                     @Html.DisplayFor(modelItem => item.Location)
                                 </td>
 
-                                
+
                             </tr>
                             a += 1;
                         }
@@ -148,7 +152,7 @@
             </table>
         </div>
     </div>
-    
+
 </section>
 
 <script>
@@ -170,6 +174,33 @@
                 });
             }
         });
+
+
+
+
+         document.getElementById("exportBtn").addEventListener("click", function () {
+            fetch("/Applicant/ExportApplicants", {
+                method: "post"
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Network response was not ok.");
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "Applicants.csv";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                alert("Export failed: " + error.message);
+            });
+        });
+
     });
 
 

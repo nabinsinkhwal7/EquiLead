@@ -1,4 +1,5 @@
 ﻿//using EquidCMS.Data;
+using ClosedXML.Excel;
 using EquidCMS.Dto;
 using EquidCMS.Models;
 using EquidCMS.Services;
@@ -1295,7 +1296,75 @@ namespace EquidCMS.Controllers
             }
             return Json(new { success = false, message = "Record not found." });
         }
+        [HttpPost]
+        public IActionResult ExportApplicants()
+        {
+            var applist = _context.Applicants
+                .Where(p => p.IsMigrated == false)
+                .ToList();
 
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Applicants");
+
+                var header = worksheet.Range("A1:H1");
+                header.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                header.Style.Font.Bold = true;
+                header.Style.Font.FontColor = XLColor.DarkBlue;
+                header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                worksheet.Cell(1, 1).Value = "Full Name";
+                worksheet.Cell(1, 2).Value = "Email";
+                worksheet.Cell(1, 3).Value = "Phone";
+                worksheet.Cell(1, 4).Value = "LinkedIn";
+                worksheet.Cell(1, 5).Value = "Gender";
+                worksheet.Cell(1, 6).Value = "Experience";
+                worksheet.Cell(1, 7).Value = "Location";
+
+                worksheet.Column(2).Width = 24; // Full Name
+                worksheet.Column(3).Width = 24; // Email
+                worksheet.Column(4).Width = 18; // Phone
+                worksheet.Column(5).Width = 36; // LinkedIn
+                worksheet.Column(6).Width = 11; // Gender
+                worksheet.Column(7).Width = 11; // Experience
+                worksheet.Column(8).Width = 29; // Location
+
+                for (int i = 0; i < applist.Count; i++)
+                {
+                    var row = worksheet.Row(i + 2);
+
+                    row.Style.Fill.BackgroundColor = i % 2 == 0
+                        ? XLColor.White
+                        : XLColor.LightGray;
+
+                    var applicant = applist[i];
+
+                    worksheet.Cell(i + 2, 1).Value = applicant.FullName;
+                    worksheet.Cell(i + 2, 2).Value = applicant.Email;
+                    worksheet.Cell(i + 2, 3).Value = applicant.PhoneNumber;
+                    worksheet.Cell(i + 2, 4).Value = applicant.LinkedinProfile;
+                    worksheet.Cell(i + 2, 5).Value = applicant.Gender == "2" ? "Female" : "Male";
+                    worksheet.Cell(i + 2, 6).Value = applicant.YearsOfExperence;
+                    worksheet.Cell(i + 2, 7).Value = applicant.Location;
+                }
+
+                // Freeze header row
+                worksheet.SheetView.FreezeRows(1);
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "Applicants.xlsx"
+                    );
+                }
+            }
+        }
     }
 
 }
