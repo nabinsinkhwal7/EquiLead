@@ -737,6 +737,8 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.Bannerimglink).HasColumnName("bannerimglink");
             entity.Property(e => e.Bannermainheading).HasColumnName("bannermainheading");
             entity.Property(e => e.Bannersubheading).HasColumnName("bannersubheading");
+            entity.Property(e => e.Equitychampioncount).HasColumnName("equitychampioncount");
+            entity.Property(e => e.Mentorshipcount).HasColumnName("mentorshipcount");
             entity.Property(e => e.Secdesc).HasColumnName("secdesc");
             entity.Property(e => e.Sechdtxt).HasColumnName("sechdtxt");
             entity.Property(e => e.Thirddesc).HasColumnName("thirddesc");
@@ -745,6 +747,8 @@ public partial class EquiDbContext : DbContext
             entity.Property(e => e.Thirdsubonehdtxt).HasColumnName("thirdsubonehdtxt");
             entity.Property(e => e.Thirdsubtwodesc).HasColumnName("thirdsubtwodesc");
             entity.Property(e => e.Thirdsubtwohdtxt).HasColumnName("thirdsubtwohdtxt");
+            entity.Property(e => e.Trainingcount).HasColumnName("trainingcount");
+            entity.Property(e => e.Womenhiredcount).HasColumnName("womenhiredcount");
         });
 
         modelBuilder.Entity<Tblcompany>(entity =>

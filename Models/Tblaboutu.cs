@@ -28,4 +28,12 @@ public partial class Tblaboutu
     public string? Thirdsubtwohdtxt { get; set; }
 
     public string? Thirdsubtwodesc { get; set; }
+
+    public int? Womenhiredcount { get; set; }
+
+    public int? Trainingcount { get; set; }
+
+    public int? Mentorshipcount { get; set; }
+
+    public int? Equitychampioncount { get; set; }
 }

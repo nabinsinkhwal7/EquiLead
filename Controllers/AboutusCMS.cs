@@ -56,6 +56,10 @@ namespace EquidCMS.Controllers
                     existingAboutus.Thirdsubonedesc = model.Thirdsubonedesc;
                     existingAboutus.Thirdsubtwohdtxt = model.Thirdsubtwohdtxt;
                     existingAboutus.Thirdsubtwodesc = model.Thirdsubtwodesc;
+                    existingAboutus.Equitychampioncount = model.Equitychampioncount;
+                    existingAboutus.Womenhiredcount = model.Womenhiredcount;
+                    existingAboutus.Trainingcount = model.Trainingcount;
+                    existingAboutus.Mentorshipcount = model.Mentorshipcount;
                     _context.SaveChanges();
                 }
 
