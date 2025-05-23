@@ -1,0 +1,1128 @@
+﻿@{
+    ViewData["Title"] = "Jobs Dashboard";
+    var filterOptions = ViewBag.FilterOptions as Dictionary<string, string>;
+}
+
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    <form method="get" class="row mb-4">
+        <!-- Filter Type Dropdown -->
+        <div class="col-md-4">
+            <label for="filterType" class="form-label">Filter Type</label>
+            <select id="filterType" name="filterType" class="form-select">
+                <option value="">Select Filter Type</option>
+                 @foreach (var option in filterOptions)
+                    {
+                        <option value="@option.Key" >
+                            @option.Value
+                        </option>
+                    }
+    </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="text" class="form-control" id="startDate" name="startDate"
+                   value="@ViewBag.SelectedStartDate" />
+        </div>
+        <div class="col-md-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="text" class="form-control" id="endDate" name="endDate"
+                   value="@ViewBag.SelectedEndDate" />
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+        </div>
+    </form>
+
+    <p><strong>Total Clicks:</strong> @ViewBag.TotalClicks</p>
+    @if (ViewBag.SelectedFilter == "Company" && ViewBag.JobClicksByCompany != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Company-wise counts</h4>
+                <canvas id="companyChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Company</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByCompany)
+                        {
+                            <tr>
+                                <td>@item.CompanyName</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    }
+    @if (ViewBag.SelectedFilter == "FunctionalCategory" && ViewBag.JobClicksByCategory != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Functional Category-wise counts</h4>
+                <canvas id="fcChart" height="300"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Functional Category</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByCategory)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "WorkMode" && ViewBag.JobClicksByWorkMode != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Work Mode-wise counts</h4>
+                <canvas id="workModeChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Work Mode</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByWorkMode)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "EmployeeType" && ViewBag.JobClicksByEmployeeType != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Employee Type-wise counts</h4>
+                <canvas id="employeeTypeChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Employee Type</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByEmployeeType)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "LeavePolicies" && ViewBag.JobClicksByLeavePolicy != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Leave Policy-wise counts</h4>
+                <canvas id="leavePolicyChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Leave Policy</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByLeavePolicy)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "FlexibleWorkOption" && ViewBag.JobClicksByFlexibleWorkOption != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Flexible Work Option-wise counts</h4>
+                <canvas id="flexibleWorkOptionChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Flexible Work Option</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByFlexibleWorkOption)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "LearningAndDevelopment" && ViewBag.JobClicksByLearningAndDevelopment != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Learning & Development-wise counts</h4>
+                <canvas id="learningAndDevelopmentChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Learning & Development</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByLearningAndDevelopment)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "HealthcareAndWellness" && ViewBag.JobClicksByHealthcareAndWellness != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>Healthcare & Wellness-wise counts</h4>
+                <canvas id="healthcareAndWellnessChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Healthcare & Wellness</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByHealthcareAndWellness)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    @if (ViewBag.SelectedFilter == "DEIAndWomenFriendlyPolicies" && ViewBag.JobClicksByDEIAndWomenFriendlyPolicies != null)
+    {
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h4>DEI & Women-Friendly Policies-wise counts</h4>
+                <canvas id="deiAndWomenFriendlyPoliciesChart"></canvas>
+            </div>
+
+            <div class="mt-4 col-md-6">
+                <h5>Details Table</h5>
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>DEI & Women-Friendly Policy</th>
+                            <th>Job Count</th>
+                            <th>Click Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.JobClicksByDEIAndWomenFriendlyPolicies)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.JobCount</td>
+                                <td>@item.ClickCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Flatpickr CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        const minDate = "@ViewBag.MinDate";
+        const maxDate = "@ViewBag.MaxDate";
+        const selectedStart = "@ViewBag.SelectedStartDate";
+        const selectedEnd = "@ViewBag.SelectedEndDate"; 
+        const selectedFilter = "@ViewBag.SelectedFilter"; // Get the selected filter from ViewBag
+
+        let startPicker, endPicker;
+
+        // Initialize both without dependency logic first
+        startPicker = flatpickr("#startDate", {
+            dateFormat: "d/m/Y",
+            defaultDate: selectedStart,
+            minDate: minDate,
+            maxDate: maxDate
+        });
+
+        endPicker = flatpickr("#endDate", {
+            dateFormat: "d/m/Y",
+            defaultDate: selectedEnd,
+            minDate: minDate,
+            maxDate: maxDate
+        });
+
+        // Now set the cross-constraints AFTER both are initialized
+        startPicker.config.onChange.push(function (selectedDates, dateStr) {
+            endPicker.set('minDate', dateStr);
+        });
+
+        endPicker.config.onChange.push(function (selectedDates, dateStr) {
+            startPicker.set('maxDate', dateStr);
+        });
+        // Set the selected filter in the dropdown using JavaScript
+        document.addEventListener("DOMContentLoaded", function () {
+            if (selectedFilter) {
+                const filterSelect = document.getElementById("filterType");
+                filterSelect.value = selectedFilter; // Set the selected filter value
+            }
+        });
+    </script>
+    <script>
+       const selectedFilterType = "@ViewBag.SelectedFilter";
+
+        if (selectedFilterType === "Company") {
+    const companyData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByCompany));
+
+    const companyLabels = companyData.map(x => x.CompanyName);
+    const jobCounts = companyData.map(x => x.JobCount);
+    const clickCounts = companyData.map(x => x.ClickCount);
+
+    const ctx = document.getElementById('companyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: companyLabels,
+            datasets: [
+                {
+                    label: 'Jobs Posted',
+                    data: jobCounts,
+                    backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,        // Fixed thickness
+                            maxBarThickness: 30,      // Cap the max thickness to maintain consistency
+                            categoryPercentage: 0.9, // Width of group
+                            barPercentage: 0.4       // Width of individual bar
+                        
+                },
+                {
+                    label: 'Clicks',
+                    data: clickCounts,
+                    backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,        // Fixed thickness
+                            maxBarThickness: 30,      // Cap the max thickness to maintain consistency
+                            categoryPercentage: 0.9, // Width of group
+                            barPercentage: 0.4       // Width of individual bar
+                        
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                tooltip: { enabled: true },
+                legend: { position: 'top' }
+            },
+            scales: {
+                yJobs: {
+                    type: 'linear',
+                    position: 'right',
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'No of jobs'
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        callback: function (value) {
+                            if (Number.isInteger(value)) return value;
+                        }
+                    }
+                },
+                yClicks: {
+                    type: 'linear',
+                    position: 'left',
+                    beginAtZero: true,
+                    grid: {
+                        drawOnChartArea: false // avoid overlapping grids
+                    },
+                    title: {
+                        display: true,
+                        text: 'No of clicks'
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        callback: function (value) {
+                            if (Number.isInteger(value)) return value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+          
+
+}
+        if (selectedFilterType === "FunctionalCategory") {
+            const fcData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByCategory));
+
+            const fcLabels = fcData.map(x => x.Title);
+            const fcJobCounts = fcData.map(x => x.JobCount);
+            const fcClickCounts = fcData.map(x => x.ClickCount);
+
+            const ctx = document.getElementById('fcChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: fcLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: fcJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs'
+                        },
+                        {
+                            label: 'Clicks',
+                            data: fcClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        if (selectedFilterType === "WorkMode") {
+            const workModeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByWorkMode));
+
+            const workModeLabels = workModeData.map(x => x.Title); // Work Mode titles
+            const workModeJobCounts = workModeData.map(x => x.JobCount); // Job counts for each Work Mode
+            const workModeClickCounts = workModeData.map(x => x.ClickCount); // Click counts for each Work Mode
+
+            const ctx = document.getElementById('workModeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: workModeLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: workModeJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: workModeClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        if (selectedFilterType === "EmployeeType") {
+            const employeeTypeData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByEmployeeType));
+
+            const employeeTypeLabels = employeeTypeData.map(x => x.Title); // Employee Type titles
+            const employeeTypeJobCounts = employeeTypeData.map(x => x.JobCount); // Job counts for each Employee Type
+            const employeeTypeClickCounts = employeeTypeData.map(x => x.ClickCount); // Click counts for each Employee Type
+
+            const ctx = document.getElementById('employeeTypeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: employeeTypeLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: employeeTypeJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: employeeTypeClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        if (selectedFilterType === "LeavePolicies") {
+            const leavePolicyData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByLeavePolicy));
+
+            const leavePolicyLabels = leavePolicyData.map(x => x.Title); // Leave Policy titles
+            const leavePolicyJobCounts = leavePolicyData.map(x => x.JobCount); // Job counts for each Leave Policy
+            const leavePolicyClickCounts = leavePolicyData.map(x => x.ClickCount); // Click counts for each Leave Policy
+
+            const ctx = document.getElementById('leavePolicyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: leavePolicyLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: leavePolicyJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: leavePolicyClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        if (selectedFilterType === "FlexibleWorkOption") {
+            const flexibleWorkOptionData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByFlexibleWorkOption));
+
+            const flexibleWorkOptionLabels = flexibleWorkOptionData.map(x => x.Title); // Flexible Work Option titles
+            const flexibleWorkOptionJobCounts = flexibleWorkOptionData.map(x => x.JobCount); // Job counts for each Flexible Work Option
+            const flexibleWorkOptionClickCounts = flexibleWorkOptionData.map(x => x.ClickCount); // Click counts for each Flexible Work Option
+
+            const ctx = document.getElementById('flexibleWorkOptionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: flexibleWorkOptionLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: flexibleWorkOptionJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: flexibleWorkOptionClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        if (selectedFilterType === "LearningAndDevelopment") {
+            const learningAndDevelopmentData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByLearningAndDevelopment));
+
+            const learningAndDevelopmentLabels = learningAndDevelopmentData.map(x => x.Title); // Learning & Development titles
+            const learningAndDevelopmentJobCounts = learningAndDevelopmentData.map(x => x.JobCount); // Job counts for each Learning & Development option
+            const learningAndDevelopmentClickCounts = learningAndDevelopmentData.map(x => x.ClickCount); // Click counts for each Learning & Development option
+
+            const ctx = document.getElementById('learningAndDevelopmentChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: learningAndDevelopmentLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: learningAndDevelopmentJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: learningAndDevelopmentClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        if (selectedFilterType === "HealthcareAndWellness") {
+            const healthcareAndWellnessData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByHealthcareAndWellness));
+
+            const healthcareAndWellnessLabels = healthcareAndWellnessData.map(x => x.Title); // Healthcare and Wellness titles
+            const healthcareAndWellnessJobCounts = healthcareAndWellnessData.map(x => x.JobCount); // Job counts for each Healthcare and Wellness option
+            const healthcareAndWellnessClickCounts = healthcareAndWellnessData.map(x => x.ClickCount); // Click counts for each Healthcare and Wellness option
+
+            const ctx = document.getElementById('healthcareAndWellnessChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: healthcareAndWellnessLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: healthcareAndWellnessJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: healthcareAndWellnessClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } 
+        if (selectedFilterType === "DEIAndWomenFriendlyPolicies") {
+            const deiAndWomenFriendlyPoliciesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.JobClicksByDEIAndWomenFriendlyPolicies));
+
+            const deiAndWomenFriendlyPoliciesLabels = deiAndWomenFriendlyPoliciesData.map(x => x.Title); // DEI and Women-Friendly policy titles
+            const deiAndWomenFriendlyPoliciesJobCounts = deiAndWomenFriendlyPoliciesData.map(x => x.JobCount); // Job counts for each DEI and Women-Friendly policy
+            const deiAndWomenFriendlyPoliciesClickCounts = deiAndWomenFriendlyPoliciesData.map(x => x.ClickCount); // Click counts for each DEI and Women-Friendly policy
+
+            const ctx = document.getElementById('deiAndWomenFriendlyPoliciesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: deiAndWomenFriendlyPoliciesLabels,
+                    datasets: [
+                        {
+                            label: 'Jobs Posted',
+                            data: deiAndWomenFriendlyPoliciesJobCounts,
+                            backgroundColor: '#74c0fc',
+                            yAxisID: 'yJobs',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        },
+                        {
+                            label: 'Clicks',
+                            data: deiAndWomenFriendlyPoliciesClickCounts,
+                            backgroundColor: '#ff8787',
+                            yAxisID: 'yClicks',
+                            barThickness: 30,
+                            maxBarThickness: 30,
+                            categoryPercentage: 0.9,
+                            barPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        tooltip: { enabled: true },
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        yJobs: {
+                            type: 'linear',
+                            position: 'right',
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'No of jobs'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        },
+                        yClicks: {
+                            type: 'linear',
+                            position: 'left',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'No of clicks'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: function (value) {
+                                    if (Number.isInteger(value)) return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+}

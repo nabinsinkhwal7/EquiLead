@@ -1,4 +1,5 @@
 using DocumentFormat.OpenXml.InkML;
+using EquidCMS.Dto;
 using EquidCMS.Models;
 using EquidCMS.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace EquidCMS.Controllers
         private readonly EmailService _service;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger, EquiDbContext context,EmailService service)
+        public HomeController(ILogger<HomeController> logger, EquiDbContext context, EmailService service)
         {
             _logger = logger;
             _context = context;
@@ -91,6 +92,357 @@ namespace EquidCMS.Controllers
             return View();
         }
 
+        public IActionResult JobClickAnalytics(string? startDate, string? endDate, string? filterType)
+        {
+            DateTime? parsedStart = null;
+            DateTime? parsedEnd = null;
+            var filterOptions = new Dictionary<string, string>
+                    {
+                        { "Company", "Company" },
+                        { "FunctionalCategory", "Functional Category" },
+                        { "WorkMode", "Work Mode" },
+                        { "EmployeeType", "Employee Type" },
+                        { "LeavePolicies", "Leave Policies" },
+                        { "FlexibleWorkOption", "Flexible Work Option" },
+                        { "LearningAndDevelopment", "Learning & Development" },
+                        { "HealthcareAndWellness", "Healthcare & Wellness" },
+                        { "DEIAndWomenFriendlyPolicies", "DEI & Women-Friendly Policies" }
+                    };
+            if (!string.IsNullOrEmpty(startDate))
+                parsedStart = DateTime.ParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            if (!string.IsNullOrEmpty(endDate))
+                parsedEnd = DateTime.ParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+            var minDate = _context.JobClickLogs.Min(c => c.ClickedAt);
+            var maxDate = _context.JobClickLogs.Max(c => c.ClickedAt);
+
+            var clickLogs = _context.JobClickLogs.AsQueryable();
+
+            if (parsedStart.HasValue && parsedEnd.HasValue)
+                clickLogs = clickLogs.Where(c => c.ClickedAt >= parsedStart.Value && c.ClickedAt <= parsedEnd.Value);
+            // Data result container
+            // Data result container
+            var jobClicksByCompany = new List<JobClickAnalyticsModel>();
+
+            if (filterType == "Company")
+            {
+                // Join click logs with job and company
+                jobClicksByCompany = clickLogs
+                    .Join(_context.Tbljobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Companyid.HasValue && x.job.Company != null)
+                    .GroupBy(x => new { x.job.Companyid, x.job.Company.Name })
+                    .Select(g => new JobClickAnalyticsModel
+                    {
+                        CompanyName = g.Key.Name,
+                        JobCount = _context.Tbljobs.Count(j => j.Companyid == g.Key.Companyid),
+                        ClickCount = g.Count()
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+            }
+            else if (filterType == "FunctionalCategory")
+            {
+                var functionalCategoryLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 14)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Functionalcategory != null && j.Functionalcategory.Count > 0);
+
+                // Filter and join clicks with jobs, including functional category
+                var jobClicksWithCategories = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .SelectMany(x => x.job.Functionalcategory!,
+                                (x, fc) => new { FunctionalCategoryCode = fc, x.click, x.job.Jobid });
+
+                var jobClicksByCategory = jobClicksWithCategories
+                    .GroupBy(x => x.FunctionalCategoryCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = functionalCategoryLookup.ContainsKey(g.Key) ? functionalCategoryLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Functionalcategory!.Contains(g.Key)),
+                        ClickCount = g.Count()
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass data to ViewBag
+                ViewBag.JobClicksByCategory = jobClicksByCategory;
+            }
+            else if (filterType == "WorkMode")
+            {
+                var workModeLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 56) // Work Mode filter (Lookupflag == 56)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Workmode.HasValue); // Only consider jobs with a Workmode set
+
+                // Join click logs with jobs and their work modes
+                var jobClicksWithWorkModes = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Workmode.HasValue) // Only include jobs with a Workmode
+                    .Select(x => new { WorkMode = x.job.Workmode.Value, x.click }); // Map to Workmode for grouping
+
+                // Group by Work Mode and calculate the click counts and job counts
+                var jobClicksByWorkMode = jobClicksWithWorkModes
+                    .GroupBy(x => x.WorkMode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = workModeLookup.ContainsKey(g.Key) ? workModeLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Workmode == g.Key), // Count the jobs with this Work Mode
+                        ClickCount = g.Count() // Count the clicks for this Work Mode
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByWorkMode = jobClicksByWorkMode;
+            }
+            else if (filterType == "EmployeeType")
+            {
+                var employeeTypeLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 57) // Employee Type filter (Lookupflag == 57)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Employeetype.HasValue); // Only consider jobs with a valid EmployeeType
+
+                // Join click logs with jobs and their employee types
+                var jobClicksWithEmployeeTypes = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Employeetype.HasValue) // Only include jobs with a valid EmployeeType
+                    .Select(x => new { EmployeeType = x.job.Employeetype.Value, x.click }); // Map to EmployeeType for grouping
+
+                // Group by Employee Type and calculate the click counts and job counts
+                var jobClicksByEmployeeType = jobClicksWithEmployeeTypes
+                    .GroupBy(x => x.EmployeeType)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = employeeTypeLookup.ContainsKey(g.Key) ? employeeTypeLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Employeetype == g.Key), // Count the jobs with this Employee Type
+                        ClickCount = g.Count() // Count the clicks for this Employee Type
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByEmployeeType = jobClicksByEmployeeType;
+            }
+            else if (filterType == "LeavePolicies")
+            {
+                var leavePolicyLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 17) // Leave Policies filter (Lookupflag == 17)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Leavepolicies != null && j.Leavepolicies.Count > 0); // Only consider jobs with leave policies
+
+                // Join click logs with jobs and their leave policies
+                var jobClicksWithLeavePolicies = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Leavepolicies != null && x.job.Leavepolicies.Count > 0) // Only include jobs with leave policies
+                    .SelectMany(x => x.job.Leavepolicies!,
+                                (x, leavePolicyCode) => new { LeavePolicyCode = leavePolicyCode, x.click }); // Map to leave policy for grouping
+
+                // Group by Leave Policy and calculate the click counts and job counts
+                var jobClicksByLeavePolicy = jobClicksWithLeavePolicies
+                    .GroupBy(x => x.LeavePolicyCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = leavePolicyLookup.ContainsKey(g.Key) ? leavePolicyLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Leavepolicies.Contains(g.Key)), // Count the jobs with this leave policy
+                        ClickCount = g.Count() // Count the clicks for this leave policy
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByLeavePolicy = jobClicksByLeavePolicy;
+            }
+            else if (filterType == "FlexibleWorkOption")
+            {
+                var flexibleWorkOptionLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 18) // Flexible Work Option filter (Lookupflag == 18)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Flexibleworkoption.HasValue); // Only consider jobs with a flexible work option
+
+                // Join click logs with jobs and their flexible work options
+                var jobClicksWithFlexibleWorkOptions = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Flexibleworkoption.HasValue) // Only include jobs with flexible work options
+                    .Select(x => new { FlexibleWorkOptionCode = x.job.Flexibleworkoption.Value, x.click }); // Map to flexible work option for grouping
+
+                // Group by Flexible Work Option and calculate the click counts and job counts
+                var jobClicksByFlexibleWorkOption = jobClicksWithFlexibleWorkOptions
+                    .GroupBy(x => x.FlexibleWorkOptionCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = flexibleWorkOptionLookup.ContainsKey(g.Key) ? flexibleWorkOptionLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Flexibleworkoption == g.Key), // Count the jobs with this flexible work option
+                        ClickCount = g.Count() // Count the clicks for this flexible work option
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByFlexibleWorkOption = jobClicksByFlexibleWorkOption;
+            }
+            else if (filterType == "LearningAndDevelopment")
+            {
+                var learningAndDevelopmentLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 19) // Learning and Development filter (Lookupflag == 19)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Learninganddeveloment != null && j.Learninganddeveloment.Count > 0); // Only consider jobs with Learning & Development options
+
+                // Join click logs with jobs and their Learning & Development options
+                var jobClicksWithLearningAndDevelopment = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Learninganddeveloment != null && x.job.Learninganddeveloment.Count > 0) // Ensure the job has Learning & Development options
+                    .Select(x => new { LearningAndDevelopmentCode = x.job.Learninganddeveloment!, x.click }); // Map to Learning & Development options for grouping
+
+                // Group by Learning & Development and calculate the click counts and job counts
+                var jobClicksByLearningAndDevelopment = jobClicksWithLearningAndDevelopment
+                    .SelectMany(x => x.LearningAndDevelopmentCode, (x, ld) => new { LearningAndDevelopmentCode = ld, x.click })
+                    .GroupBy(x => x.LearningAndDevelopmentCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = learningAndDevelopmentLookup.ContainsKey(g.Key) ? learningAndDevelopmentLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Learninganddeveloment.Contains(g.Key)), // Count the jobs with this Learning & Development option
+                        ClickCount = g.Count() // Count the clicks for this Learning & Development option
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByLearningAndDevelopment = jobClicksByLearningAndDevelopment;
+            }
+            else if (filterType == "HealthcareAndWellness")
+            {
+                var healthcareAndWellnessLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 20) // Healthcare and Wellness filter (Lookupflag == 20)
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Healthcareandwellness != null && j.Healthcareandwellness.Count > 0); // Only consider jobs with Healthcare and Wellness options
+
+                // Join click logs with jobs and their Healthcare and Wellness options
+                var jobClicksWithHealthcareAndWellness = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Healthcareandwellness != null && x.job.Healthcareandwellness.Count > 0) // Ensure the job has Healthcare and Wellness options
+                    .Select(x => new { HealthcareAndWellnessCode = x.job.Healthcareandwellness!, x.click }); // Map to Healthcare and Wellness options for grouping
+
+                // Group by Healthcare and Wellness and calculate the click counts and job counts
+                var jobClicksByHealthcareAndWellness = jobClicksWithHealthcareAndWellness
+                    .SelectMany(x => x.HealthcareAndWellnessCode, (x, hw) => new { HealthcareAndWellnessCode = hw, x.click })
+                    .GroupBy(x => x.HealthcareAndWellnessCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = healthcareAndWellnessLookup.ContainsKey(g.Key) ? healthcareAndWellnessLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Healthcareandwellness.Contains(g.Key)), // Count the jobs with this Healthcare and Wellness option
+                        ClickCount = g.Count() // Count the clicks for this Healthcare and Wellness option
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByHealthcareAndWellness = jobClicksByHealthcareAndWellness;
+            }
+            else if (filterType == "DEIAndWomenFriendlyPolicies")
+            {
+                // Fetch DEI & Women-Friendly Policies from the lookup table
+                var deiAndWomenFriendlyPoliciesLookup = _context.MstLookups
+                    .Where(p => p.Lookupflag == 21) // Lookupflag for DEI and Women-Friendly Policies
+                    .ToDictionary(p => p.Lookupcode, p => p.Description);
+
+                // Fetch jobs with DEI and Women-Friendly Policies options
+                var allJobs = _context.Tbljobs
+                    .Where(j => j.Deiandwomenfriendlypolicies != null && j.Deiandwomenfriendlypolicies.Count > 0); // Only consider jobs with DEI & Women-Friendly policies
+
+                // Join click logs with jobs and their DEI and Women-Friendly policies
+                var jobClicksWithDEIAndWomenFriendlyPolicies = clickLogs
+                    .Where(click => click.ClickedAt >= parsedStart.Value && click.ClickedAt <= parsedEnd.Value)
+                    .Join(allJobs,
+                          click => click.JobId,
+                          job => job.Jobid,
+                          (click, job) => new { click, job })
+                    .Where(x => x.job.Deiandwomenfriendlypolicies != null && x.job.Deiandwomenfriendlypolicies.Count > 0) // Ensure the job has DEI & Women-Friendly policies
+                    .Select(x => new { DeiAndWomenFriendlyPoliciesCode = x.job.Deiandwomenfriendlypolicies!, x.click }); // Map to DEI & Women-Friendly Policies for grouping
+
+                // Group by DEI & Women-Friendly Policies and calculate the job and click counts
+                var jobClicksByDEIAndWomenFriendlyPolicies = jobClicksWithDEIAndWomenFriendlyPolicies
+                    .SelectMany(x => x.DeiAndWomenFriendlyPoliciesCode, (x, dei) => new { DeiAndWomenFriendlyPoliciesCode = dei, x.click })
+                    .GroupBy(x => x.DeiAndWomenFriendlyPoliciesCode)
+                    .Select(g => new JobAnalyticsModel
+                    {
+                        Title = deiAndWomenFriendlyPoliciesLookup.ContainsKey(g.Key) ? deiAndWomenFriendlyPoliciesLookup[g.Key] : "Unknown",
+                        JobCount = allJobs.Count(j => j.Deiandwomenfriendlypolicies.Contains(g.Key)), // Count the jobs with this DEI & Women-Friendly policy
+                        ClickCount = g.Count() // Count the clicks for this DEI & Women-Friendly policy
+                    })
+                    .Where(x => x.JobCount > 0 || x.ClickCount > 0)
+                    .OrderByDescending(x => x.ClickCount)
+                    .ToList();
+
+                // Pass the results to the ViewBag
+                ViewBag.JobClicksByDEIAndWomenFriendlyPolicies = jobClicksByDEIAndWomenFriendlyPolicies;
+            }
+
+            ViewBag.MinDate = minDate.ToString("dd/MM/yyyy");
+            ViewBag.MaxDate = maxDate.ToString("dd/MM/yyyy");
+            ViewBag.TotalClicks = clickLogs.Count();
+            ViewBag.FilterOptions = filterOptions;
+            ViewBag.SelectedFilter = filterType;
+            ViewBag.SelectedStartDate = parsedStart?.ToString("dd/MM/yyyy") ?? ViewBag.MinDate;
+            ViewBag.SelectedEndDate = parsedEnd?.ToString("dd/MM/yyyy") ?? ViewBag.MaxDate;
+            ViewBag.JobClicksByCompany = jobClicksByCompany;
+
+            return View();
+        }
+
         [HttpGet]
         public JsonResult GetDrilldown(string type, int id, string? startDate, string? endDate)
         {
@@ -144,7 +496,7 @@ namespace EquidCMS.Controllers
         {
             // Get the existing landing page data
             Tbllandingpage landingPage = _context.Tbllandingpages.FirstOrDefault() ?? new Tbllandingpage();
-            ViewData["Jobs"] = _context.Tbljobs.Include(p=>p.Company).Where(x=>x.Isdeleted==null || x.Isdeleted==false).OrderByDescending(x=>x.Createdat).Take(3).ToList();
+            ViewData["Jobs"] = _context.Tbljobs.Include(p => p.Company).Where(x => x.Isdeleted == null || x.Isdeleted == false).OrderByDescending(x => x.Createdat).Take(3).ToList();
             ViewData["Events"] = _context.Tblevents.OrderByDescending(p => p.Enddateofevent).Where(x => x.Isdeleted == null || x.Isdeleted == false).Where(p => p.Startdateofevent > DateOnly.FromDateTime(DateTime.Now)).Take(4).ToList();
             ViewData["Linkedinuser"] = _context.TblSocialLinkdins.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
             ViewData["Successsyory"] = _context.Tblsuccesstests.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
@@ -155,9 +507,9 @@ namespace EquidCMS.Controllers
             ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
             ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
 
-            var totalRows = _context.TblSocialLinkdins.Where(p=>p.IsDeleted==false).Count();
+            var totalRows = _context.TblSocialLinkdins.Where(p => p.IsDeleted == false).Count();
             var rowsPerSet = totalRows / 3;
-            if(rowsPerSet < 3)
+            if (rowsPerSet < 3)
             {
                 ViewData["firstSet"] = _context.TblSocialLinkdins.Where(p => p.IsDeleted == false).OrderBy(x => x.ScLinkdinId).Take(1).ToList();
                 ViewData["secondSet"] = _context.TblSocialLinkdins.Where(p => p.IsDeleted == false).OrderBy(x => x.ScLinkdinId)
@@ -177,8 +529,8 @@ namespace EquidCMS.Controllers
                                                  .Skip(2 * rowsPerSet)
                                                  .Take(totalRows - 2 * rowsPerSet).ToList();
             }
-           
-            
+
+
 
             return View(landingPage);
         }
@@ -236,11 +588,11 @@ namespace EquidCMS.Controllers
                 page = 1;
 
             var query = _context.Tblresources
-                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true && x.Rsdocumenttypeid!=6)
+                .Where(x => !x.Isdeleted && x.Isverified != null && x.Isverified == true && x.Rsdocumenttypeid != 6)
                 .AsQueryable();
-            
+
             var blogsData = _context.Tblresources
-                .Where(x => !x.Isdeleted && x.Isverified!=null && x.Isverified==true && x.Rsdocumenttypeid==6)
+                .Where(x => !x.Isdeleted && x.Isverified != null && x.Isverified == true && x.Rsdocumenttypeid == 6)
                 .ToList();
             ViewBag.BlogResources = blogsData;
             if (!string.IsNullOrEmpty(searchKeyword))
@@ -292,14 +644,14 @@ namespace EquidCMS.Controllers
 
         public IActionResult Aboutus()
         {
-            var data=_context.Tblaboutus.FirstOrDefault();
-            ViewData["OurTeam"] = _context.Tblourteams.Where(x=>x.Photo!=null && x.Description!=null).ToList();
+            var data = _context.Tblaboutus.FirstOrDefault();
+            ViewData["OurTeam"] = _context.Tblourteams.Where(x => x.Photo != null && x.Description != null).ToList();
             ViewData["Successsyory"] = _context.Tblsuccesstests.Where(x => x.IsDeleted == null || x.IsDeleted == false).ToList();
             return View(data);
         }
         public IActionResult Network()
         {
-            var data=_context.TblSocialLinkdins.Where(x=>x.IsDeleted!=true).ToList();
+            var data = _context.TblSocialLinkdins.Where(x => x.IsDeleted != true).ToList();
             return View(data);
         }
 
@@ -326,16 +678,16 @@ namespace EquidCMS.Controllers
         public IActionResult JobDetail(int id)
         {
 
-            Tbljob job = _context.Tbljobs.Where(p=>p.Jobid == id).Include(p=>p.Company).FirstOrDefault() ?? new Tbljob();
+            Tbljob job = _context.Tbljobs.Where(p => p.Jobid == id).Include(p => p.Company).FirstOrDefault() ?? new Tbljob();
             ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
-            ViewData["ETid"] =_context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
-            ViewData["Companyid"] =_context.Tblcompanies.ToList();
-            ViewData["FunctionalCategory"] =_context.MstLookups.Where(p => p.Lookupflag == 14 && p.Active == true).ToList();
-            ViewData["LeavePolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true).ToList();
-            ViewData["FlexibleWorkOption"] =_context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true).ToList();
-            ViewData["LearningAndDevelopment"] =_context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true).ToList();
-            ViewData["HealthcareAndWellness"] =_context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true).ToList();
-            ViewData["DEIAndWomenFriendlyPolicies"] =_context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true).ToList();
+            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
+            ViewData["Companyid"] = _context.Tblcompanies.ToList();
+            ViewData["FunctionalCategory"] = _context.MstLookups.Where(p => p.Lookupflag == 14 && p.Active == true).ToList();
+            ViewData["LeavePolicies"] = _context.MstLookups.Where(p => p.Lookupflag == 17 && p.Active == true).ToList();
+            ViewData["FlexibleWorkOption"] = _context.MstLookups.Where(p => p.Lookupflag == 18 && p.Active == true).ToList();
+            ViewData["LearningAndDevelopment"] = _context.MstLookups.Where(p => p.Lookupflag == 19 && p.Active == true).ToList();
+            ViewData["HealthcareAndWellness"] = _context.MstLookups.Where(p => p.Lookupflag == 20 && p.Active == true).ToList();
+            ViewData["DEIAndWomenFriendlyPolicies"] = _context.MstLookups.Where(p => p.Lookupflag == 21 && p.Active == true).ToList();
             return View(job);
         }
 
@@ -344,13 +696,13 @@ namespace EquidCMS.Controllers
 
             // Get the existing landing page data
             var EventList = _context.Tblevents.Include(d => d.Tbleventbenefits).Include(d => d.Tbleventparticipants).Include(d => d.Theme).Include(d => d.EventPricingType).Include(d => d.Tblevidences).Include(d => d.EventType).Where(p => p.Eventid == id).ToList();
-            ViewData["PastEvent"] = _context.Tblevents.Where(p => p.Eventid == id).Include(d=>d.Tbleventbenefits).Include(d=>d.Tbleventparticipants).Include(d => d.Theme).Include(d => d.EventPricingType).Include(d => d.EventType).ToList();
+            ViewData["PastEvent"] = _context.Tblevents.Where(p => p.Eventid == id).Include(d => d.Tbleventbenefits).Include(d => d.Tbleventparticipants).Include(d => d.Theme).Include(d => d.EventPricingType).Include(d => d.EventType).ToList();
             return View(EventList);
         }
 
         public IActionResult LoadPartialView()
         {
-           
+
             ViewData["Jobs"] = _context.Tbljobs.Where(x => x.Isdeleted == null || x.Isdeleted == false).Include(p => p.Company).ToList();
             ViewData["Comp"] = _context.Tblcompanies.Where(x => x.Isdeleted == null || x.Isdeleted == false).ToList();
             ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
@@ -365,11 +717,12 @@ namespace EquidCMS.Controllers
             if (recommend)
             {
                 var isLoggedIn = HttpContext.Session.GetString("ApplicantId");
-                if (isLoggedIn == null || isLoggedIn == "") { 
+                if (isLoggedIn == null || isLoggedIn == "")
+                {
                 }
                 else
                 {
-                    var applicantData = _context.Applicants.Include(x=>x.ApplicantCareerPreference)
+                    var applicantData = _context.Applicants.Include(x => x.ApplicantCareerPreference)
                                     .Where(e => e.ApplicantId == Convert.ToInt32(isLoggedIn)).FirstOrDefault();
 
                     if (applicantData != null)
@@ -460,7 +813,7 @@ namespace EquidCMS.Controllers
                 {
                     // Check if either job's from or to falls on or after userMin
                     query = query.Where(j =>
-                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin)&&((j.Yearexperiencefrom ?? 0)<=userMin)
+                        ((j.Yearexperienceto ?? int.MaxValue) >= userMin) && ((j.Yearexperiencefrom ?? 0) <= userMin)
                     );
                 }
                 else if (hasMax)
@@ -548,9 +901,9 @@ namespace EquidCMS.Controllers
 
 
 
-             await _service.SendEmailAsync(
-                 emailid ,
-                  $"You're Registered for {lstevent.EventName}", body);
+            await _service.SendEmailAsync(
+                emailid,
+                 $"You're Registered for {lstevent.EventName}", body);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("landingpagenw", "Home");
@@ -620,7 +973,7 @@ namespace EquidCMS.Controllers
 
             if (existingSubscription != null)
             {
-                if (existingSubscription.Subscribed==null || existingSubscription.Subscribed==true)
+                if (existingSubscription.Subscribed == null || existingSubscription.Subscribed == true)
                 {
                     TempData["InfoMessage"] = "You are already subscribed.";
                 }
@@ -659,7 +1012,7 @@ namespace EquidCMS.Controllers
             return RedirectToAction("landingpagenw", "Home");
         }
         [HttpPost]
-        public IActionResult JobApplyClickTrack( int jobId)
+        public IActionResult JobApplyClickTrack(int jobId)
         {
             int applicantId = 0;
             int.TryParse(HttpContext.Session.GetString("ApplicantId"), out applicantId);
@@ -679,7 +1032,7 @@ namespace EquidCMS.Controllers
             return Ok();
         }
         [HttpPost]
-        public IActionResult ResourceApplyClickTrack( int resourceId)
+        public IActionResult ResourceApplyClickTrack(int resourceId)
         {
             int applicantId = 0;
             int.TryParse(HttpContext.Session.GetString("ApplicantId"), out applicantId);
