@@ -71,6 +71,7 @@ namespace FairtradePR.Controllers
             var totalCount = grouped.Count();
 
             var people = grouped
+                .OrderBy(x=>x.Name)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
@@ -127,6 +128,7 @@ namespace FairtradePR.Controllers
                 })
                 .GroupBy(x => x.Email)
                 .Select(g => g.First())
+                .OrderBy(x=>x.Name)
                 .ToList();
 
             return Json(people);

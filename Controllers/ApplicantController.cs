@@ -1299,13 +1299,13 @@ namespace EquidCMS.Controllers
         }
 
 
-
         [HttpPost]
         public IActionResult ExportApplicants()
         {
             try
             {
-                var applist = _context.Applicants
+                // First get the data from database with all includes
+                var applicants = _context.Applicants
                     .Include(a => a.ApplicantProfile)
                     .Include(a => a.ApplicantCareerPreference)
                     .Include(a => a.ApplicantSkills)
@@ -1315,85 +1315,100 @@ namespace EquidCMS.Controllers
                     .Include(a => a.ApplicantWorkExperiences)
                     .Include(a => a.ApplicantVolunteerExperiences)
                     .Where(p => p.IsMigrated == false)
-                    .Select(a => new ApplicantExportDto
-                    {
-                        // Basic Information
-                        //ApplicantId = a.ApplicantId,
-                        FullName = a.FullName,
-                        Email = a.Email,
-                        Pronouns = a.ApplicantProfile != null ? a.ApplicantProfile.Pronouns : "",
-                        Gender = a.Gender == "2" ? "Female" : (a.Gender == "1" ? "Male" : "Other"),
-                        CountryCode = a.CountryCode,
-                        PhoneNumber = a.PhoneNumber,
-                        Location = a.Location,
-                        LinkedInProfile = a.LinkedinProfile,
-                        PersonalWebsite = a.ApplicantProfile.PersonalWebsite ?? "",
-                        ReferenceCode = a.ReferenceCode,
-                        CreatedAt = a.CreatedAt.HasValue ? a.CreatedAt.Value.ToString("yyyy-MM-dd") : "",
-                       // UpdatedAt = a.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
-                        YearsOfExperience = a.YearsOfExperence.ToString() ?? "0",
+                    .ToList(); // Materialize the query first
 
-                        // Profile Information
-                        Headline = a.ApplicantProfile.Headline ?? "",
-                        JobSearchStatus = a.ApplicantProfile.JobSearchStatus.ToString() ?? "",
-                        DesiredSalaryRange = a.ApplicantProfile.DesiredSalaryRange ?? "",
-                        ShortBio = a.ApplicantProfile.ShortBio ?? "",
-                        InternationalExperience = a.ApplicantProfile.InternationalExperience ?? "",
-                        CommunityAdvocacyExperience = a.ApplicantProfile.CommunityAdvocacyExperience ?? "",
+                // Then perform the complex transformations in memory
+                var applist = applicants.Select(a => new ApplicantExportDto
+                {
+                    // Basic Information
+                    FullName = a.FullName,
+                    Email = a.Email,
+                    Pronouns = a.ApplicantProfile?.Pronouns ?? "",
+                    Gender = a.Gender == "2" ? "Female" : (a.Gender == "1" ? "Male" : a.Gender),
+                    CountryCode = a.CountryCode,
+                    PhoneNumber = a.PhoneNumber,
+                    Location = a.Location,
+                    LinkedInProfile = a.LinkedinProfile,
+                    PersonalWebsite = a.ApplicantProfile?.PersonalWebsite ?? "",
+                    ReferenceCode = a.ReferenceCode,
+                    CreatedAt = a.CreatedAt?.ToString("yyyy-MM-dd") ?? "",
+                    YearsOfExperience = a.YearsOfExperence?.ToString() ?? "0",
 
-                        // Career Preferences
-                        PreferredJobRole = a.ApplicantCareerPreference.PreferredJobRole ?? "",
-                        IndustriesOfInterest = a.ApplicantCareerPreference.IndustriesOfInterest ?? "",
-                        LeadershipAspirations = a.ApplicantCareerPreference.LeadershipAspirations ?? "",
-                        EmploymentTypePreference = a.ApplicantCareerPreference.EmploymentTypePreference ?? "",
-                        PreferredJobLocation = a.ApplicantCareerPreference.PreferredJobLocation ?? "",
-                        WillingToRelocate = a.ApplicantCareerPreference.WillingToRelocate ?? "",
+                    // Profile Information
+                    Headline = a.ApplicantProfile?.Headline ?? "",
+                    JobSearchStatus = a.ApplicantProfile != null
+                        ? (a.ApplicantProfile.JobSearchStatus == 1 ? "Actively Looking"
+                          : a.ApplicantProfile.JobSearchStatus == 2 ? "Open to Opportunities"
+                          : a.ApplicantProfile.JobSearchStatus == 3 ? "Not Looking, but Interested in Networking"
+                          : "")
+                        : "",
+                    DesiredSalaryRange = a.ApplicantProfile?.DesiredSalaryRange ?? "",
+                    ShortBio = a.ApplicantProfile?.ShortBio ?? "",
+                    InternationalExperience = a.ApplicantProfile?.InternationalExperience ?? "",
+                    CommunityAdvocacyExperience = a.ApplicantProfile?.CommunityAdvocacyExperience ?? "",
 
-                        // Work Experience
-                        WorkExperiences = string.Join(";\n", a.ApplicantWorkExperiences.Select(w =>
-                            $"{w.JobTitle} at {w.CompanyName} ({w.Industry}) | " +
-                            $"{w.EmploymentType} | " +
-                            $"{w.StartDate.ToString("yyyy-MM-dd")} to {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
-                            $"Responsibilities: {w.KeyResponsibilities}\n" +
-                            $"Leadership Impact: {w.LeadershipImpact}"
-                        )),
+                    // Career Preferences
+                    PreferredJobRole = a.ApplicantCareerPreference?.PreferredJobRole ?? "",
+                    IndustriesOfInterest = a.ApplicantCareerPreference?.IndustriesOfInterest ?? "",
+                    LeadershipAspirations = a.ApplicantCareerPreference?.LeadershipAspirations ?? "",
+                    EmploymentTypePreference = a.ApplicantCareerPreference?.EmploymentTypePreference ?? "",
+                    PreferredJobLocation = a.ApplicantCareerPreference?.PreferredJobLocation ?? "",
+                    WillingToRelocate = a.ApplicantCareerPreference?.WillingToRelocate ?? "",
 
-                        // Education
-                        Educations = string.Join(";\n", a.ApplicantEducations.Select(e =>
-                            $"{e.Degree} in {e.FieldOfStudy} | " +
-                            $"{e.InstitutionName} | " +
-                            $"Completed: {e.YearOfCompletion}"
-                        )),
+                    // Work Experience
+                    WorkExperiences = string.Join(";\n", a.ApplicantWorkExperiences.Select(w =>
+                        $"{w.JobTitle} at {w.CompanyName} ({w.Industry ?? "N/A"}) | " +
+                        $"{w.EmploymentType ?? "N/A"} | " +
+                        $"{w.StartDate.ToString("yyyy-MM-dd")} to {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
+                        $"Responsibilities: {w.KeyResponsibilities ?? "N/A"}\n" +
+                        $"Leadership Impact: {w.LeadershipImpact ?? "N/A"}"
+                    )),
 
-                        // Certifications
-                        Certifications = string.Join(";\n", a.ApplicantCertificationTranings.Select(c =>
-                            $"{c.Name} | {c.IssuingOrganization} | " +
-                            $"Year: {c.YearEarned}"
-                        )),
+                    // Education
+                    Educations = string.Join(";\n", a.ApplicantEducations.Select(e =>
+                        $"{e.Degree ?? "N/A"} in {e.FieldOfStudy ?? "N/A"} | " +
+                        $"{e.InstitutionName ?? "N/A"} | " +
+                        $"Completed: {e.YearOfCompletion?.ToString() ?? "N/A"}"
+                    )),
 
-                        //Volunteer Experience
-                        VolunteerExperiences = string.Join(";\n", a.ApplicantVolunteerExperiences.Select(v =>
-                            $"{v.Role} at {v.OrganizationName} | " +
-                            $"{v.StartDate.ToString()} to {(v.EndDate.HasValue ? v.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
-                            $"Description: {v.Description}"
-                        )),
+                    // Certifications
+                    Certifications = string.Join(";\n", a.ApplicantCertificationTranings.Select(c =>
+                        $"{c.Name ?? "N/A"} | {c.IssuingOrganization ?? "N/A"} | " +
+                        $"Year: {c.YearEarned?.ToString() ?? "N/A"}"
+                    )),
 
-                        // Skills
-                        Skills = string.Join("\n", a.ApplicantSkills
+                    // Volunteer Experience
+                    VolunteerExperiences = string.Join(";\n", a.ApplicantVolunteerExperiences.Select(v =>
+                        $"{v.Role ?? "N/A"} at {v.OrganizationName ?? "N/A"} | " +
+                        $"{v.StartDate.ToString()} to {(v.EndDate.HasValue ? v.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
+                        $"Description: {v.Description ?? "N/A"}"
+                    )),
+
+                    // Skills
+                    Skills = string.Join("\n", a.ApplicantSkills
                             .GroupBy(s => s.SkillType)
-                            .Select(g => $"{g.Key}:\n{string.Join(", ", g.Select(s => s.SkillName))}")),
+                             .Select(g => $"{g.Key}:\n{string.Join(", ", g.Select(s => s.SkillName))}")),
 
-                        // Languages
-                        Languages = string.Join(", ", a.ApplicantLanguages.Select(l =>
-                            $"{l.Language} ({l.ProficiencyLevel})"
-                        )),
+                    // Languages - now works because we're in memory
+                    Languages = string.Join(", ", a.ApplicantLanguages?.Select(l =>
+                    {
+                        short levelCode = l.ProficiencyLevel;
+                        string level = levelCode switch
+                        {
+                            1 => "Basic",
+                            2 => "Intermediate",
+                            3 => "Fluent",
+                            4 => "Native",
+                            _ => "Basic"
+                        };
+                        return $"{l.Language ?? "N/A"} ({level})";
+                    }) ?? new List<string>()),
 
-                        // Migration Status
-                        IsMigrated = a.IsMigrated.ToString() ?? "false"
-                    })
-                    .ToList();
+                    // Migration Status
+                    IsMigrated = a.IsMigrated?.ToString() ?? "false"
+                }).ToList();
 
-                if (applist == null || !applist.Any())
+                if (!applist.Any())
                 {
                     return NotFound("No applicants found to export.");
                 }
@@ -1429,42 +1444,47 @@ namespace EquidCMS.Controllers
         //            .Select(a => new ApplicantExportDto
         //            {
         //                // Basic Information
-        //                ApplicantId = a.ApplicantId,
+        //                //ApplicantId = a.ApplicantId,
         //                FullName = a.FullName,
         //                Email = a.Email,
         //                Pronouns = a.ApplicantProfile != null ? a.ApplicantProfile.Pronouns : "",
-        //                Gender = a.Gender == "2" ? "Female" : (a.Gender == "1" ? "Male" : "Other"),
+        //                Gender = a.Gender == "2" ? "Female" : (a.Gender == "1" ? "Male" : a.Gender),
         //                CountryCode = a.CountryCode,
         //                PhoneNumber = a.PhoneNumber,
         //                Location = a.Location,
         //                LinkedInProfile = a.LinkedinProfile,
-        //                PersonalWebsite = a.ApplicantProfile?.PersonalWebsite ?? "",
+        //                PersonalWebsite = a.ApplicantProfile.PersonalWebsite ?? "",
         //                ReferenceCode = a.ReferenceCode,
-        //                CreatedAt = a.CreatedAt?.ToString("yyyy-MM-dd HH:mm:ss"),
-        //                UpdatedAt = a.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss"),
-        //                YearsOfExperience = a.YearsOfExperence?.ToString() ?? "0",
+        //                CreatedAt = a.CreatedAt.HasValue ? a.CreatedAt.Value.ToString("yyyy-MM-dd") : "",
+        //               // UpdatedAt = a.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+        //                YearsOfExperience = a.YearsOfExperence.ToString() ?? "0",
 
         //                // Profile Information
-        //                Headline = a.ApplicantProfile?.Headline ?? "",
-        //                JobSearchStatus = a.ApplicantProfile?.JobSearchStatus.ToString() ?? "",
-        //                DesiredSalaryRange = a.ApplicantProfile?.DesiredSalaryRange ?? "",
-        //                ShortBio = a.ApplicantProfile?.ShortBio ?? "",
-        //                InternationalExperience = a.ApplicantProfile?.InternationalExperience ?? "",
-        //                CommunityAdvocacyExperience = a.ApplicantProfile?.CommunityAdvocacyExperience ?? "",
+        //                Headline = a.ApplicantProfile.Headline ?? "",
+        //                JobSearchStatus = a.ApplicantProfile != null
+        //              ? (a.ApplicantProfile.JobSearchStatus == 1 ? "Actively Looking"
+        //                : a.ApplicantProfile.JobSearchStatus == 2 ? "Open to Opportunities"
+        //                : a.ApplicantProfile.JobSearchStatus == 3 ? "Not Looking, but Interested in Networking"
+        //                : "")
+        //              : "",
+        //              DesiredSalaryRange = a.ApplicantProfile.DesiredSalaryRange ?? "",
+        //                ShortBio = a.ApplicantProfile.ShortBio ?? "",
+        //                InternationalExperience = a.ApplicantProfile.InternationalExperience ?? "",
+        //                CommunityAdvocacyExperience = a.ApplicantProfile.CommunityAdvocacyExperience ?? "",
 
         //                // Career Preferences
-        //                PreferredJobRole = a.ApplicantCareerPreference?.PreferredJobRole ?? "",
-        //                IndustriesOfInterest = a.ApplicantCareerPreference?.IndustriesOfInterest ?? "",
-        //                LeadershipAspirations = a.ApplicantCareerPreference?.LeadershipAspirations ?? "",
-        //                EmploymentTypePreference = a.ApplicantCareerPreference?.EmploymentTypePreference ?? "",
-        //                PreferredJobLocation = a.ApplicantCareerPreference?.PreferredJobLocation ?? "",
-        //                WillingToRelocate = a.ApplicantCareerPreference?.WillingToRelocate ?? "",
+        //                PreferredJobRole = a.ApplicantCareerPreference.PreferredJobRole ?? "",
+        //                IndustriesOfInterest = a.ApplicantCareerPreference.IndustriesOfInterest ?? "",
+        //                LeadershipAspirations = a.ApplicantCareerPreference.LeadershipAspirations ?? "",
+        //                EmploymentTypePreference = a.ApplicantCareerPreference.EmploymentTypePreference ?? "",
+        //                PreferredJobLocation = a.ApplicantCareerPreference.PreferredJobLocation ?? "",
+        //                WillingToRelocate = a.ApplicantCareerPreference.WillingToRelocate ?? "",
 
         //                // Work Experience
         //                WorkExperiences = string.Join(";\n", a.ApplicantWorkExperiences.Select(w =>
         //                    $"{w.JobTitle} at {w.CompanyName} ({w.Industry}) | " +
         //                    $"{w.EmploymentType} | " +
-        //                    $"{w.StartDate?.ToString("yyyy-MM-dd")} to {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
+        //                    $"{w.StartDate.ToString("yyyy-MM-dd")} to {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
         //                    $"Responsibilities: {w.KeyResponsibilities}\n" +
         //                    $"Leadership Impact: {w.LeadershipImpact}"
         //                )),
@@ -1482,10 +1502,10 @@ namespace EquidCMS.Controllers
         //                    $"Year: {c.YearEarned}"
         //                )),
 
-        //                // Volunteer Experience
+        //                //Volunteer Experience
         //                VolunteerExperiences = string.Join(";\n", a.ApplicantVolunteerExperiences.Select(v =>
         //                    $"{v.Role} at {v.OrganizationName} | " +
-        //                    $"{v.StartDate?.ToString("yyyy-MM-dd")} to {(v.EndDate.HasValue ? v.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
+        //                    $"{v.StartDate.ToString()} to {(v.EndDate.HasValue ? v.EndDate.Value.ToString("yyyy-MM-dd") : "Present")}\n" +
         //                    $"Description: {v.Description}"
         //                )),
 
@@ -1496,11 +1516,22 @@ namespace EquidCMS.Controllers
 
         //                // Languages
         //                Languages = string.Join(", ", a.ApplicantLanguages.Select(l =>
-        //                    $"{l.Language} ({l.ProficiencyLevel})"
-        //                )),
+        //                {
+        //                    int levelCode = (int)l.ProficiencyLevel;
+        //                    string level = levelCode switch
+        //                    {
+        //                        1 => "Basic",
+        //                        2 => "Intermediate",
+        //                        3 => "Fluent",
+        //                        4 => "Native",
+        //                        _ => "Unknown"
+        //                    };
+        //                    return $"{l.Language} ({level})";
+        //                })),
+
 
         //                // Migration Status
-        //                IsMigrated = a.IsMigrated?.ToString() ?? "false"
+        //                IsMigrated = a.IsMigrated.ToString() ?? "false"
         //            })
         //            .ToList();
 
@@ -1522,6 +1553,7 @@ namespace EquidCMS.Controllers
         //        return StatusCode(500, $"Export failed: {ex.Message}");
         //    }
         //}
+
 
 
 
