@@ -1,4 +1,5 @@
-﻿using EquidCMS.Common;
+﻿using ClosedXML.Excel;
+using EquidCMS.Common;
 using EquidCMS.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -120,6 +121,60 @@ namespace EquidCMS.Controllers
             }
             return Json(new { success = false, message = "Record not found." });
         }
+        [HttpPost]
+        public IActionResult Export()
+        {
 
+            var applist = _context.Tblinfographics.Where(x => x.Isdeleted == null || x.Isdeleted == false).ToList();
+
+
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Applicants");
+
+                var header = worksheet.Range("A1:H1");
+                header.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                header.Style.Font.Bold = true;
+                header.Style.Font.FontColor = XLColor.DarkBlue;
+                header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                worksheet.Cell(1, 1).Value = "Info Heading";
+                worksheet.Cell(1, 2).Value = "Infodesc";
+
+                worksheet.Column(2).Width = 89; 
+                worksheet.Column(3).Width = 90;
+
+
+                for (int i = 0; i < applist.Count; i++)
+                {
+                    var row = worksheet.Row(i + 2);
+
+                    row.Style.Fill.BackgroundColor = i % 2 == 0
+                        ? XLColor.White
+                        : XLColor.LightGray;
+
+                    var applicant = applist[i];
+
+                    worksheet.Cell(i + 2, 1).Value = applicant.Infoheading;
+                    worksheet.Cell(i + 2, 2).Value = applicant.Infodesc;
+                  
+                }
+
+                // Freeze header row
+                worksheet.SheetView.FreezeRows(1);
+
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+
+                    return File(
+                        content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "infographics.xlsx"
+                    );
+                }
+            }
+        }
     }
 }

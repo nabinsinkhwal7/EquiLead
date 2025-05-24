@@ -9,5 +9,6 @@
         public string Gender { get; set; }
         public string YearsOfExperience { get; set; }
         public string Location { get; set; }
+        
     }
 }
