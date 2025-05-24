@@ -58,6 +58,12 @@
 </style>
 
 <div class="row gy-lg-0 gy-4 justify-content-center">
+    @if (ViewData["ProfileMessage"] != null)
+    {
+        <div class="alert alert-warning text-center">
+            @ViewData["ProfileMessage"]
+        </div>
+    }
      @if (jobs != null && jobs.Count > 0)
     {
     @for (int i = 0; i < jobs.Count; i++)

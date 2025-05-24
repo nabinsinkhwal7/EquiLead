@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace EquidCMS.Controllers
 {
@@ -751,6 +752,32 @@ namespace EquidCMS.Controllers
                         var skillSet = applicantData.ApplicantSkills.Select(s => s.SkillName).ToList();
                         if (string.IsNullOrEmpty(skills) && skillSet.Any())
                             skills = string.Join(",", skillSet);
+
+                        bool missingCareerInfo =
+                         (string.IsNullOrEmpty(careerPref?.PreferredJobRole)) &&
+                         (string.IsNullOrEmpty(careerPref?.PreferredJobLocation)) &&
+                         (careerPref?.WorkMode == null) &&
+                         (careerPref?.FunctionalArea == null || !careerPref.FunctionalArea.Any()) &&
+                         (!skillSet.Any()) &&
+                         (applicantData.YearsOfExperence == null);
+
+                        if (missingCareerInfo)
+                        {
+                            ViewData["ProfileMessage"] = "Please update your career preferences to get personalized job recommendations in profile.";
+
+                            // Return no jobs
+                            ViewData["Jobs"] = new List<Tbljob>();
+                            ViewData["TotalPages"] = 0;
+                            ViewData["TotalJobs"] = 0;
+                            ViewData["PageNumber"] = pageNumber;
+                            ViewData["PageSize"] = pageSize;
+                            ViewData["Comp"] = _context.Tblcompanies.ToList();
+                            ViewData["Cityid"] = _context.MstLookups.Where(p => p.Lookupflag == 55 && p.Active == true).ToList();
+                            ViewData["WDid"] = _context.MstLookups.Where(p => p.Lookupflag == 56 && p.Active == true).ToList();
+                            ViewData["ETid"] = _context.MstLookups.Where(p => p.Lookupflag == 57 && p.Active == true).ToList();
+
+                            return PartialView("_JobPartial");
+                        }
                     }
                 }
             }
