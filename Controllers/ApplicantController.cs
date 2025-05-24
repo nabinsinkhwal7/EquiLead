@@ -1108,11 +1108,33 @@ namespace EquidCMS.Controllers
             }
         }
 
-        public IActionResult Listing()
+        public IActionResult Listing(int page = 1, int pageSize = 10)
         {
-            var Applist = _context.Applicants.ToList();
-            return View(Applist);
+            if (page <= 0) page = 1;
+
+            // Get the total record count
+            var totalRecords = _context.Applicants.Count();
+
+            // Calculate total pages based on pageSize
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            // Fetch the data for the current page
+            var applicants = _context.Applicants
+                .OrderBy(a => a.ApplicantId) // Adjust the order by column as needed
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Pass the paginated data to the view
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = totalRecords;
+            ViewBag.TotalPages = totalPages;
+
+            return View(applicants);
         }
+
+
 
         public IActionResult InnerAllicantIndex(string id)
         {     // Get the ApplicantId from session

@@ -50,22 +50,11 @@
     }
 </style>
 
-<script type="text/javascript">
-    $(function () {
-        $('#myDataTable').DataTable({
-            dom: 'lfrtip',
-            buttons: ['excelHtml5'],
-            'info': false,
-            'lengthChange': false,
-            'autoWidth': false
-        })
-    })
-</script>
-<section id="AboutSection" class="mt-4 mb-4">
+<section  class="mt-4 mb-4">
     <div class="row" style="border-bottom: black 2px solid; margin-bottom:5px">
         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h2 class="PagemainHeading">Applicant List </h2>
-            <p style="color: blue;font-weight: bold;">Total Count : @Model.Count()</p>
+            <p style="color: blue;font-weight: bold;">Total Count : @ViewBag.TotalRecords</p>
         </div>
         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-xs-12">
             <div class="pull-right">
@@ -152,6 +141,49 @@
             </table>
         </div>
     </div>
+    <div class="text-center mt-4">
+        @if (ViewBag.TotalPages > 1)
+        {
+            // Previous Button
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <a class="btn btn-outline-primary btn-sm m-1"
+                   asp-action="Listing"
+                   asp-route-page="@(ViewBag.CurrentPage - 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">Previous</a>
+            }
+
+            // Calculate the page range to display (let's say 2 pages before and 2 after)
+            var startPage = Math.Max(1, ViewBag.CurrentPage - 2);
+            var endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2);
+
+            // Page Numbers
+            for (int i = startPage; i <= endPage; i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <span class="btn btn-primary btn-sm m-1">@i</span>
+                }
+                else
+                {
+                    <a class="btn btn-outline-primary btn-sm m-1"
+                       asp-action="Listing"
+                       asp-route-page="@i"
+                       asp-route-pageSize="@ViewBag.PageSize">@i</a>
+                }
+            }
+
+            // Next Button
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <a class="btn btn-outline-primary btn-sm m-1"
+                   asp-action="Listing"
+                   asp-route-page="@(ViewBag.CurrentPage + 1)"
+                   asp-route-pageSize="@ViewBag.PageSize">Next</a>
+            }
+        }
+    </div>
+
 
 </section>
 
