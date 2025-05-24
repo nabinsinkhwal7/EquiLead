@@ -26,7 +26,7 @@ namespace EquidCMS.Controllers
         }
         public IActionResult AssignRightsToRole()
         {
-            ViewData["RoleID"] = new SelectList(_context.MstRoles.Where(p => p.IsDeleted == 0).OrderBy(p => p.Seq), "RoleId", "Role");
+            ViewData["RoleID"] = new SelectList(_context.MstRoles.Where(p => p.IsDeleted == 0 && p.RoleId!=1 && p.RoleId!=5 ).OrderBy(p => p.Seq), "RoleId", "Role");
             return View();
         }
 

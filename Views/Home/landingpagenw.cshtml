@@ -282,7 +282,7 @@
                             </ul>
                             <div class="post-content ">
                                 <h3 class="title ellipsis">
-                                    <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events[i].Eventid">@Events[i].EventName</a>
+                                    <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events[i].Eventid" title="@Events[i].EventName">@Events[i].EventName</a>
                                 </h3>
                                 <a class="read-more" onclick="openEvidenceModal(@Events[i].Eventid)">Register <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
                             </div>

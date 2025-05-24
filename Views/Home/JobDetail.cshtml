@@ -197,25 +197,41 @@
                             <p>@Html.Raw(@Model.Keyresponsibility?.Replace("\r\n", "<br/>"))</p>
                         </div>
                         <div>
-                            <hr />
-                            <h4 style="color:#720493 !important;">Required &amp; Preferred Qualifications</h4>
-                            <hr />
+                            @if (Model.Skill != null || Model.Education != null || Model.Experience != null)
+                            {
+                                <hr />
+                                <h4 style="color:#720493 !important;">Required &amp; Preferred Qualifications</h4>
+                                <hr />
+                            }
+                            @if(Model.Skill!=null)
+                            {
                             <h5 style="color:#720493 !important;">Skill</h5>
                             <p>@Html.Raw(@Model.Skill?.Replace("\r\n", "<br/>"))</p>
+                            }
+                            @if(Model.Education!=null)
+                            {
                             <h5 style="color:#720493 !important;">Education</h5>
                             <p>@Model.Education</p>
+                            }
+                            @if(Model.Experience!=null)
+                            {
                             <h5 style="color:#720493 !important;">Experience</h5>
-                            <p>@Model.Experience</p>
+                                <p>@Model.Experience</p>
+                            }
                         </div>
                         <div>
+
+                            @if (Model.Deiandwomenfriendlypolicies != null || Model.Leavepolicies != null || Model.Learninganddeveloment != null || Model.Healthcareandwellness != null)
+                            {
                             <hr />
                             <h4 style="color:#720493 !important;">Company Policies</h4>
                             <hr />
-                            <h5 style="color:#720493 !important;">Leave Policies</h5>
+                            }
                             @{
                                 var leavePolicies = new System.Text.StringBuilder();
                                 if (Model.Leavepolicies != null)
                                 {
+                            <h5 style="color:#720493 !important;">Leave Policies</h5>
                                     int count = Model.Leavepolicies.Count();
                                     int currentIndex = 0;
 
@@ -238,11 +254,11 @@
                             }
 
                             <p>@Html.Raw(leavePolicies.ToString())</p>
-                            <h5 style="color:#720493 !important;">Learning &amp; Development</h5>
                             @{
                                 var learningAndDevelopment = new System.Text.StringBuilder();
                                 if (Model.Learninganddeveloment != null)
                                 {
+                            <h5 style="color:#720493 !important;">Learning &amp; Development</h5>
                                     int count = Model.Learninganddeveloment.Count();
                                     int currentIndex = 0;
 
@@ -264,11 +280,11 @@
                                 }
                             }
                             <p>@Html.Raw(learningAndDevelopment.ToString())</p>
-                            <h5 style="color:#720493 !important;">Healthcare &amp; Wellness</h5>
                             @{
                                 var healthcareAndWellness = new System.Text.StringBuilder();
                                 if (Model.Healthcareandwellness != null)
                                 {
+                            <h5 style="color:#720493 !important;">Healthcare &amp; Wellness</h5>
                                     int count = Model.Healthcareandwellness.Count();
                                     int currentIndex = 0;
 
@@ -290,11 +306,11 @@
                                 }
                             }
                             <p>@Html.Raw(healthcareAndWellness.ToString())</p>
-                            <h5 style="color:#720493 !important;">DEI &amp; Women-Friendly Policies</h5>
                             @{
                                 var deiAndWomenFriendlyPolicies = new System.Text.StringBuilder();
                                 if (Model.Deiandwomenfriendlypolicies != null)
                                 {
+                            <h5 style="color:#720493 !important;">DEI &amp; Women-Friendly Policies</h5>
                                     int count = Model.Deiandwomenfriendlypolicies.Count();
                                     int currentIndex = 0;
 
@@ -316,7 +332,6 @@
                                 }
                             }
                             <p>@Html.Raw(deiAndWomenFriendlyPolicies.ToString())</p>
-                            <p></p>
                         </div>
                         
                 </div>   
@@ -327,14 +342,10 @@
             
 
             <div class="col-lg-6 mb-80" style="float:left">
-                <i class="fa-solid fa-clock"></i>
                 @if (Model.Applicationdeadline != null)
                 {
+                <i class="fa-solid fa-clock"></i>
                     @("Last Date To Apply : " + Model.Applicationdeadline?.ToString("dd-MMM-yyyy"))
-                }
-                else
-                {
-                    @: <!-- Empty value -->
                 }
                 </div>
                 <div class="col-lg-6 mb-80" >

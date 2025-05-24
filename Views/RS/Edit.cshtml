@@ -108,6 +108,14 @@
 
                             <div class="row mt-2">
                                 <div class="col-md-12">
+                                    <div class="form-group" style="margin-top: 12px;">
+                                        <label class="control-label">Resource Type <span style="color:red">*</span></label>
+                                        <select asp-for="Rsdocumenttypeid" class="form-select" asp-items="ViewBag.Rsdocumenttypeid"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Thumbnail</label>
                                         <input asp-for="Rsimage" hidden class="form-control" />
@@ -124,14 +132,6 @@
                                     <div class="form-group">
                                         <label class="control-label">Category</label>
                                         <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories"></select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2 ">
-                                <div class="col-md-12">
-                                    <div class="form-group" style="margin-top: 12px;">
-                                        <label class="control-label">Resource Type <span style="color:red">*</span></label>
-                                        <select asp-for="Rsdocumenttypeid" class="form-select" asp-items="ViewBag.Rsdocumenttypeid"></select>
                                     </div>
                                 </div>
                             </div>
