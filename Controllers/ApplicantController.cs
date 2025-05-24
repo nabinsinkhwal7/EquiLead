@@ -1110,7 +1110,7 @@ namespace EquidCMS.Controllers
 
         public IActionResult Listing()
         {
-            var Applist = _context.Applicants.Where(p=>p.IsMigrated == false).ToList();
+            var Applist = _context.Applicants.ToList();
             return View(Applist);
         }
 

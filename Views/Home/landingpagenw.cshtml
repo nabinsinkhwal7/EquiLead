@@ -87,12 +87,12 @@
                 <div class="swiper-slide">
                     <div class="post-card wow fade-in-bottom" data-wow-delay="200ms">
                         <div class="post-thumb">
-                                <a href="#"><img src="@infographic[i].Infoimage" alt="post" height="402"></a>
+                                <a><img src="@infographic[i].Infoimage" alt="post" height="402"></a>
                         </div>
                         <div class="post-content-wrap mt-30">
                             <div class="post-content">
                                 <h3 class="title">
-                                        <a href="#">@infographic[i].Infoheading</a>
+                                        <a >@infographic[i].Infoheading</a>
                                     </h3>
                                     <div class="read-more-container">
                                         <p class="read-text collapsed">
@@ -280,8 +280,8 @@
                                     <li><span>Time</span> :- @Events[i].EventTimeStart - @Events[i].EventTimeEnd</li>
                                 }
                             </ul>
-                            <div class="post-content ellipsis">
-                                <h3 class="title">
+                            <div class="post-content ">
+                                <h3 class="title ellipsis">
                                     <a asp-action="EventDetail" asp-controller="Home" asp-route-id="@Events[i].Eventid">@Events[i].EventName</a>
                                 </h3>
                                 <a class="read-more" onclick="openEvidenceModal(@Events[i].Eventid)">Register <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
@@ -340,7 +340,7 @@
         <div class="container">
             <div class="section-heading section-heading-with-btn">
                 <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">@Model.Sec7hd</h2>
-                <a href="#" style="display:none" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">@Model.Sec7btntxt <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
+                <a  style="display:none" class="commom-btn-purple wow fade-in-right" data-wow-delay="600ms">@Model.Sec7btntxt <i class="fa-sharp fa-regular fa-arrow-right"></i></a>
             </div>
             <div class="testi-content-wrap">
                 <div class="testi-carousel-4 swiper">

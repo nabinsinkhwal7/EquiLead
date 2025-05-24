@@ -202,7 +202,9 @@ namespace EquidCMS.Controllers
                    
                 foreach (var benefitDescription in eventBenefits)
                 {
-                    var eventBenefit = new Tbleventbenefit
+                        if (string.IsNullOrWhiteSpace(benefitDescription))
+                            continue;
+                        var eventBenefit = new Tbleventbenefit
                     {
                         Eventbenefit = benefitDescription,
                         Eventid = existingEvent.Eventid  // Link benefit to the event
