@@ -232,7 +232,8 @@
                             </div>
                             <div class="project-content">
                                 <div class="tag-list-new">
-
+                                    @if (RSList?.Topic != null && TopicRS != null)
+                                    {
                                     @foreach (var Topic in RSList.Topic)
                                     {
                                         @foreach (var LookTopic in TopicRS.Where(p => p.Lookupcode == Topic))
@@ -240,6 +241,8 @@
                                             <a data-titleTP="@LookTopic.Description">@LookTopic.Description</a>
                                         }
                                     }
+                                    }@if (CategoryRS != null && RSList?.CategoryId != null)
+                                    {
                                     @for (int i = 0; i < CategoryRS.Count; i++)
                                     {
                                         if (CategoryRS[i].Lookupcode == RSList.CategoryId)
@@ -247,6 +250,7 @@
                                             <a data-titleCG="@CategoryRS[i].Description">@CategoryRS[i].Description</a>
                                         }
                                         //CategoryRS
+                                    }
                                     }
 
                                 </div>
@@ -383,13 +387,17 @@
                                 @* Optional Author Info *@
                                 @if (!string.IsNullOrEmpty(blog.Author))
                                 {
-                                    <p class="mt-2">
-                                        <strong>@blog.Author</strong><br />
+                                    <p class="description row">
+                                        <strong>@blog.Author</strong>
+
                                         <small>@blog.Designation</small>
+                                        <small>@blog.Shortbio</small>
                                     </p>
                                 }
-
-                                <a href="@blog.RsvideoLink" class="rr-secondary-btn login-gradient mt-2" onclick="trackResourceClick(@blog.Resourceid)" target="_blank">Read Blog</a>
+                                @if (blog != null && blog?.RsvideoLink != null)
+                                {
+                                    <a href="@blog.RsvideoLink" class="rr-secondary-btn login-gradient mt-2" onclick="trackResourceClick(@blog.Resourceid)" target="_blank">Read Blog</a>
+                                }
                             </div>
                         </div>
                     </div>
